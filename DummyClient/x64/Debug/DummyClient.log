@@ -1,0 +1,54 @@
+﻿Protocol.proto(4,1): warning G7CF62709: Import Enum.proto is unused.
+  [8168] Failed to execute script PacketGenerator
+  Traceback (most recent call last):
+    File "PacketGenerator.py", line 30, in <module>
+    File "PacketGenerator.py", line 15, in main
+    File "ProtoParser.py", line 14, in parse_proto
+  UnicodeDecodeError: 'cp949' codec can't decode byte 0xec in position 210: illegal multibyte sequence
+  [40320] Failed to execute script PacketGenerator
+  Traceback (most recent call last):
+    File "PacketGenerator.py", line 30, in <module>
+    File "PacketGenerator.py", line 15, in main
+    File "ProtoParser.py", line 14, in parse_proto
+  UnicodeDecodeError: 'cp949' codec can't decode byte 0xec in position 210: illegal multibyte sequence
+  계속하려면 아무 키나 누르십시오 . . . 
+  D:Enum.pb.h
+  1개 파일이 복사되었습니다.
+  D:Enum.pb.cc
+  1개 파일이 복사되었습니다.
+  D:Struct.pb.h
+  1개 파일이 복사되었습니다.
+  D:Struct.pb.cc
+  1개 파일이 복사되었습니다.
+  D:Protocol.pb.h
+  1개 파일이 복사되었습니다.
+  D:Protocol.pb.cc
+  1개 파일이 복사되었습니다.
+  0개 파일이 복사되었습니다.
+  파일을 찾을 수 없습니다-ClientPacketHandler.h
+  D:Enum.pb.h
+  1개 파일이 복사되었습니다.
+  D:Enum.pb.cc
+  1개 파일이 복사되었습니다.
+  D:Struct.pb.h
+  1개 파일이 복사되었습니다.
+  D:Struct.pb.cc
+  1개 파일이 복사되었습니다.
+  D:Protocol.pb.h
+  1개 파일이 복사되었습니다.
+  D:Protocol.pb.cc
+  1개 파일이 복사되었습니다.
+  0개 파일이 복사되었습니다.
+  파일을 찾을 수 없습니다-ServerPacketHandler.h
+  D:\NetmarbleMonster\Study\portfolio-mmoserver-cpp-boost-asio\Common\Protobuf\bin\*.h을(를) 찾을 수 없습니다.
+  Enum.pb.cc
+  Protocol.pb.cc
+  Struct.pb.cc
+  코드를 생성하고 있습니다...
+  DummyClient.cpp
+D:\NetmarbleMonster\Study\portfolio-mmoserver-cpp-boost-asio\DummyClient\DummyClient.cpp(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+D:\NetmarbleMonster\Study\portfolio-mmoserver-cpp-boost-asio\packages\boost.1.80.0\lib\native\include\boost\bind.hpp(41): message : The practice of declaring the Bind placeholders (_1, _2, ...) in the global namespace is deprecated. Please use <boost/bind/bind.hpp> + using namespace boost::placeholders, or define BOOST_BIND_GLOBAL_PLACEHOLDERS to retain the current behavior.
+D:\NetmarbleMonster\Study\portfolio-mmoserver-cpp-boost-asio\ServerCore\NetHeader.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+  ServerPacketHandler.cpp
+  코드를 생성하고 있습니다...
+  DummyClient.vcxproj -> D:\NetmarbleMonster\Study\portfolio-mmoserver-cpp-boost-asio\Binary\Debug\DummyClient.exe
