@@ -1,0 +1,49 @@
+{
+  "name": "ServerLauncher",
+  "servers": [
+    {
+      "name": "NetworkServer",
+      "use": "true",
+      "servicetype": "0",
+      "executable": "../.././DLLs/NetworkServer.dll",
+      "config": "../.././Config/NetworkServer.json",
+      "log": {
+        "loglevel": "0",
+        "console": "false"
+      }
+    },
+    {
+      "name": "ConnectorServer",
+      "use": "true",
+      "servicetype": "1",
+      "executable": "../.././DLLs/ConnectorServer.dll",
+      "config": "../.././Config/ConnectorServer.json",
+      "log": {
+        "loglevel": "0",
+        "console": "false"
+      }
+    },
+    {
+      "name": "UserServer",
+      "use": "true",
+      "servicetype": "2",
+      "executable": "../.././DLLs/UserServer.dll",
+      "config": "../.././Config/UserServer.json",
+      "log": {
+        "loglevel": "0",
+        "console": "false"
+      }
+    },
+    {
+      "name": "ZoneServer",
+      "use": "true",
+      "servicetype": "2",
+      "executable": "../.././DLLs/ZoneServer.dll",
+      "config": "../.././Config/ZoneServer.json",
+      "log": {
+        "loglevel": "0",
+        "console": "false"
+      }
+    }
+  ]
+}
