@@ -1,0 +1,10 @@
+syntax = "proto3";
+package Protocol;
+
+enum PlayerType
+{
+	PLAYER_TYPE_NONE = 0;
+	PLAYER_TYPE_KNIGHT = 1;
+	PLAYER_TYPE_MAGE = 2;
+	PLAYER_TYPE_ARCHER = 3;
+}

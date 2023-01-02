@@ -1,0 +1,37 @@
+syntax = "proto3";
+package Protocol;
+
+import "Enum.proto";
+import "Struct.proto";
+
+message C_LOGIN
+{
+	string userName = 1;
+}
+
+message S_LOGIN
+{
+	bool success = 1;
+	repeated Player players = 2; // 아이디 발급 전
+}
+
+message C_ENTER_GAME
+{
+	uint64 playerIndex = 1;
+}
+
+message S_ENTER_GAME
+{
+	bool success = 1;
+}
+
+message C_CHAT
+{
+	string msg = 1;
+}
+
+message S_CHAT
+{
+	uint64 playerId = 1;
+	string msg = 2;
+}
