@@ -14,12 +14,12 @@ public:
 
 	int AddRef()
 	{
-		return ++m_ref;
+		return ++m_refs;
 	}
 
 	int Release()
 	{
-		int count = --m_ref;
+		int count = --m_refs;
 		
 		if (0 == count)
 		{

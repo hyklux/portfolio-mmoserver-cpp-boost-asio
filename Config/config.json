@@ -44,6 +44,28 @@
         "loglevel": "0",
         "console": "false"
       }
+    },
+    {
+      "name": "ChatServer",
+      "use": "true",
+      "servicetype": "2",
+      "executable": "../.././DLLs/ChatServer.dll",
+      "config": "../.././Config/ChatServer.json",
+      "log": {
+        "loglevel": "0",
+        "console": "false"
+      }
+    },
+    {
+      "name": "DBAgent",
+      "use": "true",
+      "servicetype": "2",
+      "executable": "../.././DLLs/DBAgent.dll",
+      "config": "../.././Config/DBAgent.json",
+      "log": {
+        "loglevel": "0",
+        "console": "false"
+      }
     }
   ]
 }

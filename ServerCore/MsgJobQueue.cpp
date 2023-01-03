@@ -3,8 +3,9 @@
 
 bool MsgJobQueue::Init(int32_t threadCnt)
 {
-	for (int i = 0; nI < cnt; ++nI)
+	for (int i = 0; i < threadCnt; ++i)
 	{
+		/*
 		std::unique_ptr<_thread_t> thr = std::make_unique<_thread_t>([this, timeout]()
 		{
 			while (false == m_bEnd)
@@ -27,6 +28,7 @@ bool MsgJobQueue::Init(int32_t threadCnt)
 		});
 
 		m_vecThr.push_back(std::move(thr));
+		*/
 	}
 	m_IsActivated = true;
 

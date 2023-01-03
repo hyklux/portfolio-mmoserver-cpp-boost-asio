@@ -2,6 +2,8 @@
 
 #include <queue>
 
+#include "MsgJob.h"
+
 class MsgJobQueue
 {
 public:

@@ -1,0 +1,13 @@
+﻿Binary/Debug
+ChatServer/x64/Debug
+DBAgent/x64/Debug
+DummyClient/x64/Debug
+ZoneServer/x64/Debug
+UserServer/x64/Debug
+Libraries/Libs/ServerCore/Debug
+NetworkServer/x64/Debug
+ServerLauncher/x64/Debug
+ServerCore/x64/Debug
+ConnectorServer/x64/Debug
+packages
+.vs

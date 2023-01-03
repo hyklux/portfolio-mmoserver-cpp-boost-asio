@@ -16,7 +16,7 @@ class ServerContainer : public IServerContainer
 {
 private:
 	std::atomic_int m_refs = 0;
-	std::map<std::string, IServer*> m_ServerMap;
+	std::unordered_map<std::string, IServer*> m_ServerMap;
 
 private:
 
