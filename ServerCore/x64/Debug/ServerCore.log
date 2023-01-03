@@ -1,0 +1,27 @@
+﻿  JobQueue.cpp
+  Listener.cpp
+  Lock.cpp
+  Memory.cpp
+  MemoryPool.cpp
+  MsgJob.cpp
+  NetAddress.cpp
+  NetClient.cpp
+D:\NetmarbleMonster\Study\portfolio-mmoserver-cpp-boost-asio\packages\boost.1.80.0\lib\native\include\boost\bind.hpp(41): message : The practice of declaring the Bind placeholders (_1, _2, ...) in the global namespace is deprecated. Please use <boost/bind/bind.hpp> + using namespace boost::placeholders, or define BOOST_BIND_GLOBAL_PLACEHOLDERS to retain the current behavior.
+D:\NetmarbleMonster\Study\portfolio-mmoserver-cpp-boost-asio\ServerCore\NetHeader.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+  NetServer.cpp
+D:\NetmarbleMonster\Study\portfolio-mmoserver-cpp-boost-asio\packages\boost.1.80.0\lib\native\include\boost\bind.hpp(41): message : The practice of declaring the Bind placeholders (_1, _2, ...) in the global namespace is deprecated. Please use <boost/bind/bind.hpp> + using namespace boost::placeholders, or define BOOST_BIND_GLOBAL_PLACEHOLDERS to retain the current behavior.
+D:\NetmarbleMonster\Study\portfolio-mmoserver-cpp-boost-asio\ServerCore\NetServer.h(27,1): warning C4150: 불완전한 형식 'NetSession'에 대한 포인터를 삭제했습니다. 소멸자가 호출되지 않습니다.
+D:\NetmarbleMonster\Study\portfolio-mmoserver-cpp-boost-asio\ServerCore\NetServer.h(8): message : 'NetSession' 선언을 참조하십시오.
+  NetSession.cpp
+D:\NetmarbleMonster\Study\portfolio-mmoserver-cpp-boost-asio\packages\boost.1.80.0\lib\native\include\boost\bind.hpp(41): message : The practice of declaring the Bind placeholders (_1, _2, ...) in the global namespace is deprecated. Please use <boost/bind/bind.hpp> + using namespace boost::placeholders, or define BOOST_BIND_GLOBAL_PLACEHOLDERS to retain the current behavior.
+D:\NetmarbleMonster\Study\portfolio-mmoserver-cpp-boost-asio\ServerCore\NetHeader.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+  RecvBuffer.cpp
+  RefCounting.cpp
+  SendBuffer.cpp
+  Service.cpp
+  Session.cpp
+  SocketUtils.cpp
+  ThreadManager.cpp
+  XmlParser.cpp
+  코드를 생성하고 있습니다...
+  ServerCore.vcxproj -> D:\NetmarbleMonster\Study\portfolio-mmoserver-cpp-boost-asio\Libraries\Libs\ServerCore\Debug\ServerCore.lib
