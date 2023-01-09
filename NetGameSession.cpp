@@ -9,33 +9,11 @@ void NetGameSession::RegisterReceive()
 
 	boost::asio::async_read(m_Socket, boost::asio::buffer(m_Msg.GetData(), m_Msg.GetLength()), [this, self](boost::system::error_code error, std::size_t /*length*/)
 	{
-		if (!error && m_Msg.DecodeHeader())
-		{
-			//RegisterReceiveBody();
-
-			if (m_Msg.GetPktId() == MSG_C_LOGIN)
-			{
-				Protocol::C_LOGIN loginPkt;
-				bool parseResult = loginPkt.ParseFromArray(m_Msg.GetBody(), m_Msg.GetBodyLength());
-				if (parseResult)
-				{
-					cout << "Msg content : " << loginPkt.username() << endl;
-				}
-
-				m_pNetworkServer->DispatchClientMsg(EUserServer, m_Msg);
-
-			}
-		}
-		else
-		{
-			RegisterReceive();
-		}
-
 		if (!error)
 		{
 			if (m_Msg.DecodeHeader())
 			{
-
+				m_pNetworkServer->DispatchClientMsg(EUserServer, m_Msg);
 			}
 
 			RegisterReceive();

@@ -22,21 +22,6 @@ void NetClient::Disconnect()
 	m_IsConnected = false;
 }
 
-void NetClient::SendToServer()
-{
-	if (m_IsConnected == false)
-	{
-		return;
-	}
-
-	if (m_Socket.is_open() == false)
-	{
-		return;
-	}
-
-	RegisterSend();
-}
-
 void NetClient::SendMsgToServer(std::string msgStr)
 {
 	if (m_IsConnected == false)
@@ -67,16 +52,6 @@ void NetClient::SendMsgToServer(NetMsg msg)
 	RegisterSend(msg);
 }
 
-void NetClient::RegisterSend()
-{
-	std::cout << "RegisterSend" << endl;
-
-	char szMessage[128] = { 0, };
-	sprintf_s(szMessage, 128 - 1, "Send Message");
-	m_WriteMessage = szMessage;
-	boost::asio::async_write(m_Socket, boost::asio::buffer(m_WriteMessage), boost::bind(&NetClient::OnSend, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
-}
-
 void NetClient::RegisterSend(std::string msgStr)
 {
 	std::cout << "RegisterSend msg:" << msgStr << endl;
@@ -93,7 +68,7 @@ void NetClient::RegisterSend(std::string msgStr)
 		std::cout << "All data has been sent. Bytes transferred:" << bytes_transferred << std::endl;
 	});
 
-	//RegisterReceive();
+	RegisterReceive();
 }
 
 void NetClient::RegisterSend(NetMsg msg)
@@ -103,13 +78,25 @@ void NetClient::RegisterSend(NetMsg msg)
 		// All data has been sent
 		std::cout << "All data has been sent. Bytes transferred:" << bytes_transferred << std::endl;
 	});
+
+	RegisterReceive();
 }
 
 void NetClient::RegisterReceive()
 {
-	memset(&m_ReceiveBuffer, '\0', sizeof(m_ReceiveBuffer));
+	//auto self(shared_from_this());
 
-	m_Socket.async_read_some(boost::asio::buffer(m_ReceiveBuffer), boost::bind(&NetClient::OnReceive, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
+	boost::asio::async_read(m_Socket, boost::asio::buffer(m_Msg.GetData(), m_Msg.GetLength()), [this](boost::system::error_code error, std::size_t /*length*/)
+	{
+		if (!error)
+		{
+			//khy todo : Handle 처리
+		}
+		else
+		{
+			//khy todo : disconnect
+		}
+	});
 }
 
 void NetClient::OnConnect(const boost::system::error_code& error)
@@ -147,7 +134,5 @@ void NetClient::OnReceive(const boost::system::error_code& error, size_t bytes_t
 	}
 	else
 	{
-		const std::string strRecvMessage = m_ReceiveBuffer.data();
-		std::cout << "Message from server: " << strRecvMessage << ", size: " << bytes_transferred << std::endl;
 	}
 }

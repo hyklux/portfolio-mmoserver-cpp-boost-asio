@@ -24,9 +24,6 @@
     <ClInclude Include="NetTcpServer.h">
       <Filter>Main</Filter>
     </ClInclude>
-    <ClInclude Include="NetGameSession.h">
-      <Filter>Main</Filter>
-    </ClInclude>
     <ClInclude Include="pch.h">
       <Filter>Utils</Filter>
     </ClInclude>
@@ -51,9 +48,6 @@
       <Filter>Main</Filter>
     </ClCompile>
     <ClCompile Include="NetTcpServer.cpp">
-      <Filter>Main</Filter>
-    </ClCompile>
-    <ClCompile Include="NetGameSession.cpp">
       <Filter>Main</Filter>
     </ClCompile>
     <ClCompile Include="pch.cpp">

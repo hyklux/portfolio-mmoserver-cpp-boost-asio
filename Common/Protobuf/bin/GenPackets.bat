@@ -24,6 +24,22 @@ XCOPY /Y Protocol.pb.h "../../../DummyClient"
 XCOPY /Y Protocol.pb.cc "../../../DummyClient"
 XCOPY /Y ServerPacketHandler.h "../../../DummyClient"
 
+XCOPY /Y Enum.pb.h "../../../NetworkServer"
+XCOPY /Y Enum.pb.cc "../../../NetworkServer"
+XCOPY /Y Struct.pb.h "../../../NetworkServer"
+XCOPY /Y Struct.pb.cc "../../../NetworkServer"
+XCOPY /Y Protocol.pb.h "../../../NetworkServer"
+XCOPY /Y Protocol.pb.cc "../../../NetworkServer"
+XCOPY /Y ServerPacketHandler.h "../../../NetworkServer"
+
+XCOPY /Y Enum.pb.h "../../../UserServer"
+XCOPY /Y Enum.pb.cc "../../../UserServer"
+XCOPY /Y Struct.pb.h "../../../UserServer"
+XCOPY /Y Struct.pb.cc "../../../UserServer"
+XCOPY /Y Protocol.pb.h "../../../UserServer"
+XCOPY /Y Protocol.pb.cc "../../../UserServer"
+XCOPY /Y ServerPacketHandler.h "../../../UserServer"
+
 DEL /Q /F *.pb.h
 DEL /Q /F *.pb.cc
 DEL /Q /F *.h

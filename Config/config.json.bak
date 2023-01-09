@@ -1,0 +1,16 @@
+{
+  "name": "ServerLauncher",
+  "servers": [
+    {
+      "name": "UserServer",
+      "use": "true",
+      "servicetype": "2",
+      "executable": "../.././DLLs/ZoneServer.dll",
+      "config": "../.././Config/UserServer.json",
+      "log": {
+        "loglevel": "0",
+        "console": "false"
+      }
+    }
+  ]
+}

@@ -77,5 +77,6 @@ public:
 	virtual int AddRef(void) override;
 	virtual int ReleaseRef(void) override;
 	virtual void* GetConnectorServer() override;
-	virtual int DispatchMsg(uint16_t targetServer, NetMsg msg) override;
+	virtual void* GetUserServer() override;
+	virtual void* GetTargetServer(uint16_t targetServer) override;
 };

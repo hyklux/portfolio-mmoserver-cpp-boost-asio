@@ -2,6 +2,8 @@
 #include "ZoneServer.h"
 #include "IServer.h"
 
+#include "Protocol.pb.h"
+
 int CreateServerInstance(IServerContainer* pServerContainer, IServer*& pServer)
 {
 	cout << "[ZoneServer] Creating zone server instance..." << endl;
@@ -69,9 +71,11 @@ int ZoneServer::OnUnload()
 	return 0;
 }
 
-int ZoneServer::HandleMsg(NetMsg msg)
+int ZoneServer::HandleMsg(const NetMsg msg)
 {
 	cout << "[ZoneServer] HandleMsg. PktId:" << msg.GetPktId() << endl;
+
+	Protocol::C_LOGIN pkt;
 
 	switch (msg.GetPktId())
 	{

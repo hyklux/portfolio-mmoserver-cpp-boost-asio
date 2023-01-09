@@ -33,12 +33,6 @@ public:
 
 	virtual void OnConnected() override
 	{
-		//khy temp
-		/*
-		Protocol::C_LOGIN pkt;
-		auto sendBuffer = ServerPacketHandler::MakeSendBuffer(pkt);
-		Send(sendBuffer);
-		*/
 	}
 
 	virtual void OnRecvPacket(BYTE* buffer, int32 len) override
@@ -63,25 +57,19 @@ public:
 
 int main()
 {
-	ServerPacketHandler::Init();
 	this_thread::sleep_for(1s);
-	///////////////////////////////////////////////////////////////////////
 
+	//서버 연결
 	boost::asio::io_service io_service;
 	boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::address::from_string(SERVER_IP), PORT_NUMBER);
 
 	NetClient netClient1(io_service);
 	netClient1.Connect(endpoint);
 
-	NetClient netClient2(io_service);
-	netClient2.Connect(endpoint);
-
 	io_service.run();
 	this_thread::sleep_for(1s);
-	////////////////////////////////////////////////////////////////////////
 
-	std::string msgStr;
-
+	//로그인 
 	Protocol::C_LOGIN loginPkt1;
 	loginPkt1.set_username("Chulsoo");
 
@@ -91,9 +79,6 @@ int main()
 	NetMsg msg;
 	msg.MakeBuffer(loginPkt1, MSG_C_LOGIN);
 	netClient1.SendMsgToServer(msg);
-
-	//loginPkt1.SerializeToString(&msgStr);
-	//netClient1.SendMsgToServer(msgStr);
 
 	//Protocol::C_LOGIN loginPkt2;
 	//loginPkt2.set_username("Younghee");

@@ -3,12 +3,16 @@
 #include <string>
 #include "IServerContainer.h"
 #include "NetMsg.h"
+#include <memory>
+
+class NetGameSession;
 
 enum : uint16_t
 {
 	ENetworkServer = 0,
 	EUserServer = 1,
 	EZoneServer = 2,
+	EChatServer = 3,
 };
 
 enum : uint16_t
@@ -37,5 +41,7 @@ struct IServer
 	virtual int SetConnector() { return -1; }
 	virtual int ConnectToConnector() { return -1; }
 	virtual int SendMsg(uint16_t targetServer) { return -1; }
-	virtual int HandleMsg(NetMsg msg) { return -1; }
+	virtual int HandleMsg(const NetMsg msg, const std::shared_ptr<NetGameSession>& session) { return -1; }
+	virtual void CreateUserConnection(std::shared_ptr<NetGameSession> session) {}
+	virtual void DispatchClientMsg(uint16_t targetServer, NetMsg m_Msg, const std::shared_ptr<NetGameSession>& session) {}
 };

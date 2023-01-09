@@ -189,10 +189,12 @@
     <ClInclude Include="NetMsg.h">
       <Filter>AsioNetwork</Filter>
     </ClInclude>
-    <ClInclude Include="MsgJob.h">
+    <ClInclude Include="NetGameSession.h">
       <Filter>AsioNetwork</Filter>
     </ClInclude>
-    <ClInclude Include="MsgJobQueue.h" />
+    <ClInclude Include="UserConnection.h">
+      <Filter>AsioNetwork</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CorePch.cpp">
@@ -309,7 +311,12 @@
     <ClCompile Include="NetServer.cpp">
       <Filter>AsioNetwork</Filter>
     </ClCompile>
-    <ClCompile Include="MsgJobQueue.cpp" />
+    <ClCompile Include="NetGameSession.cpp">
+      <Filter>AsioNetwork</Filter>
+    </ClCompile>
+    <ClCompile Include="UserConnection.cpp">
+      <Filter>AsioNetwork</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

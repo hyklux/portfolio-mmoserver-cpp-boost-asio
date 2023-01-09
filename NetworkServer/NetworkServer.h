@@ -50,8 +50,8 @@ public:
 	virtual int OnStart() override;
 	virtual int OnUnload() override;
 
-	void DispatchClientMsg(uint16_t targetServer, NetMsg msg);
-
+	void DispatchClientMsg(uint16_t targetServer, NetMsg msg, const std::shared_ptr<NetGameSession>& session);
+	IServer* GetUserServer();
 private:
 	virtual int SetConnector() override;
 

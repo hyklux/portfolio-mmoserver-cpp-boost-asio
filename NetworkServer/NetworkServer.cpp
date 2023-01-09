@@ -207,8 +207,14 @@ void NetworkServer::RegisterAccept()
 
 			std::shared_ptr<NetGameSession> newSession = std::make_shared<NetGameSession>(this, ++m_SessionIdIdx, socket);
 			newSession->RegisterReceive();
-			m_GameSessions.push_back(std::move(newSession));
+			//m_GameSessions.push_back(std::move(newSession));
 			//m_GameSessions.push_back(new NetGameSession(++m_SessionIdIdx, socket));
+
+			IServer* userServer = GetUserServer();
+			if (userServer)
+			{
+				userServer->CreateUserConnection(newSession);
+			}
 		}
 
 		RegisterAccept();
@@ -219,9 +225,26 @@ void NetworkServer::OnAccept(const boost::system::error_code& error, const boost
 {
 }
 
-void NetworkServer::DispatchClientMsg(uint16_t targetServer, NetMsg msg)
+IServer* NetworkServer::GetUserServer()
+{
+	void* pContainerPtr = m_pServerContainer->GetUserServer();
+	if (pContainerPtr)
+	{
+		return static_cast<IServer*>(pContainerPtr);
+	}
+
+	return nullptr;
+}
+
+void NetworkServer::DispatchClientMsg(uint16_t targetServer, NetMsg msg, const std::shared_ptr<NetGameSession>& session)
 {
 	cout << "[NetworkServer] DispatchClientMsg" << endl;
 
-	m_pServerContainer->DispatchMsg(targetServer, msg);
+	IServer* pTargetServer = static_cast<IServer*>(m_pServerContainer->GetTargetServer(targetServer));
+
+	if (pTargetServer)
+	{
+		pTargetServer->HandleMsg(msg, session);
+	}
 }
+

@@ -12,5 +12,6 @@ public:
 	virtual int ReleaseRef(void) { return 0; }
 
 	virtual void* GetConnectorServer() { return nullptr; }
-	virtual int DispatchMsg(uint16_t targetServer, NetMsg msg) { return -1; }
+	virtual void* GetUserServer() { return nullptr; }
+	virtual void* GetTargetServer(uint16_t targetServer) { return nullptr; }
 };

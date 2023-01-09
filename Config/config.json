@@ -24,20 +24,9 @@
       }
     },
     {
-      "name": "UserServer",
-      "use": "true",
-      "servicetype": "2",
-      "executable": "../.././DLLs/UserServer.dll",
-      "config": "../.././Config/UserServer.json",
-      "log": {
-        "loglevel": "0",
-        "console": "false"
-      }
-    },
-    {
       "name": "ZoneServer",
       "use": "true",
-      "servicetype": "2",
+      "servicetype": "3",
       "executable": "../.././DLLs/ZoneServer.dll",
       "config": "../.././Config/ZoneServer.json",
       "log": {
@@ -48,7 +37,7 @@
     {
       "name": "ChatServer",
       "use": "true",
-      "servicetype": "2",
+      "servicetype": "4",
       "executable": "../.././DLLs/ChatServer.dll",
       "config": "../.././Config/ChatServer.json",
       "log": {
@@ -59,9 +48,20 @@
     {
       "name": "DBAgent",
       "use": "true",
-      "servicetype": "2",
+      "servicetype": "5",
       "executable": "../.././DLLs/DBAgent.dll",
       "config": "../.././Config/DBAgent.json",
+      "log": {
+        "loglevel": "0",
+        "console": "false"
+      }
+    },
+    {
+      "name": "UserServer",
+      "use": "true",
+      "servicetype": "2",
+      "executable": "../.././DLLs/UserServer.dll",
+      "config": "../.././Config/UserServer.json",
       "log": {
         "loglevel": "0",
         "console": "false"

@@ -34,6 +34,8 @@ USING_SHARED_PTR(SendBuffer);
 USING_SHARED_PTR(SendBufferChunk);
 USING_SHARED_PTR(Job);
 USING_SHARED_PTR(JobQueue);
+USING_SHARED_PTR(MsgJob);
+USING_SHARED_PTR(MsgJobQueue);
 
 #define size16(val)		static_cast<int16>(sizeof(val))
 #define size32(val)		static_cast<int32>(sizeof(val))
@@ -41,3 +43,10 @@ USING_SHARED_PTR(JobQueue);
 #define len32(arr)		static_cast<int32>(sizeof(arr)/sizeof(arr[0]))
 
 #define _STOMP
+
+enum class ERRORTYPE : uint16_t
+{
+	NO_ERROR = 0,
+	PKT_ERROR,
+	UNKNOWN_ERROR,
+};

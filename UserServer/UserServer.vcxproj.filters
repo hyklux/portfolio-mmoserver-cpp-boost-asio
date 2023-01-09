@@ -2,20 +2,29 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Main">
-      <UniqueIdentifier>{102063ab-5029-4c8b-b34f-39158095ab28}</UniqueIdentifier>
+      <UniqueIdentifier>{b521aab6-11ef-4940-a28e-84dc4684fcfb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Protocol">
+      <UniqueIdentifier>{c1e30043-70b5-4c5b-8b78-2e66a22d8134}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="framework.h">
-      <Filter>Main</Filter>
-    </ClInclude>
     <ClInclude Include="pch.h">
       <Filter>Main</Filter>
     </ClInclude>
-    <ClInclude Include="UserServer.h">
+    <ClInclude Include="framework.h">
       <Filter>Main</Filter>
     </ClInclude>
-    <ClInclude Include="userbase.h">
+    <ClInclude Include="Enum.pb.h">
+      <Filter>Protocol</Filter>
+    </ClInclude>
+    <ClInclude Include="Protocol.pb.h">
+      <Filter>Protocol</Filter>
+    </ClInclude>
+    <ClInclude Include="Struct.pb.h">
+      <Filter>Protocol</Filter>
+    </ClInclude>
+    <ClInclude Include="UserServer.h">
       <Filter>Main</Filter>
     </ClInclude>
   </ItemGroup>
@@ -26,8 +35,23 @@
     <ClCompile Include="dllmain.cpp">
       <Filter>Main</Filter>
     </ClCompile>
+    <ClCompile Include="Enum.pb.cc">
+      <Filter>Protocol</Filter>
+    </ClCompile>
+    <ClCompile Include="Protocol.pb.cc">
+      <Filter>Protocol</Filter>
+    </ClCompile>
+    <ClCompile Include="Struct.pb.cc">
+      <Filter>Protocol</Filter>
+    </ClCompile>
     <ClCompile Include="UserServer.cpp">
       <Filter>Main</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="..\Common\Protobuf\bin\GenPackets.bat">
+      <Filter>Protocol</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -1,25 +1,29 @@
 #pragma once
 
+#include <memory>
+
 #include <SDKDDKVer.h>
 #include <iostream>
 #include <boost/bind.hpp>
 #include <boost/asio.hpp>
 
+#include "NetMsg.h"
+
 class NetMsg;
 
-class NetClient
+class NetClient : public std::enable_shared_from_this<NetClient>
 {
 private:
 	boost::asio::io_service& m_io_service;
 	boost::asio::ip::tcp::socket m_Socket;
 
-	int m_nSeqNumber;
-	std::array<char, 128> m_ReceiveBuffer;
 	std::string m_WriteMessage;
 	bool m_IsConnected;
 
+	NetMsg m_Msg;
+
 public:
-	NetClient(boost::asio::io_service& io_service) : m_io_service(io_service), m_Socket(io_service), m_nSeqNumber(0), m_IsConnected(false)
+	NetClient(boost::asio::io_service& io_service) : m_io_service(io_service), m_Socket(io_service), m_IsConnected(false)
 	{}
 
 	bool IsConnected() const { return m_IsConnected; }
@@ -28,15 +32,11 @@ public:
 
 	void Disconnect();
 
-	void SendToServer();
-
 	void SendMsgToServer(std::string msgStr);
 
 	void SendMsgToServer(NetMsg msg);
 
 private:
-	void RegisterSend();
-
 	void RegisterSend(std::string msgStr);
 
 	void RegisterSend(NetMsg msg);

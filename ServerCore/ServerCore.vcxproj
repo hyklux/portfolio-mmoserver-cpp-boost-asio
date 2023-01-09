@@ -188,10 +188,9 @@
     <ClInclude Include="Lock.h" />
     <ClInclude Include="Memory.h" />
     <ClInclude Include="MemoryPool.h" />
-    <ClInclude Include="MsgJob.h" />
-    <ClInclude Include="MsgJobQueue.h" />
     <ClInclude Include="NetAddress.h" />
     <ClInclude Include="NetClient.h" />
+    <ClInclude Include="NetGameSession.h" />
     <ClInclude Include="NetHeader.h" />
     <ClInclude Include="NetMsg.h" />
     <ClInclude Include="NetServer.h" />
@@ -212,6 +211,7 @@
     <ClInclude Include="ThreadSafeQueue.h" />
     <ClInclude Include="TypeCast.h" />
     <ClInclude Include="Types.h" />
+    <ClInclude Include="UserConnection.h" />
     <ClInclude Include="XmlParser.h" />
   </ItemGroup>
   <ItemGroup>
@@ -240,9 +240,9 @@
     <ClCompile Include="Lock.cpp" />
     <ClCompile Include="Memory.cpp" />
     <ClCompile Include="MemoryPool.cpp" />
-    <ClCompile Include="MsgJobQueue.cpp" />
     <ClCompile Include="NetAddress.cpp" />
     <ClCompile Include="NetClient.cpp" />
+    <ClCompile Include="NetGameSession.cpp" />
     <ClCompile Include="NetServer.cpp" />
     <ClCompile Include="NetSession.cpp" />
     <ClCompile Include="pch.cpp">
@@ -258,6 +258,7 @@
     <ClCompile Include="Session.cpp" />
     <ClCompile Include="SocketUtils.cpp" />
     <ClCompile Include="ThreadManager.cpp" />
+    <ClCompile Include="UserConnection.cpp" />
     <ClCompile Include="XmlParser.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -277,6 +278,10 @@
     <Import Project="..\packages\boost_thread-vc141.1.80.0\build\boost_thread-vc141.targets" Condition="Exists('..\packages\boost_thread-vc141.1.80.0\build\boost_thread-vc141.targets')" />
     <Import Project="..\packages\boost_system-vc141.1.80.0\build\boost_system-vc141.targets" Condition="Exists('..\packages\boost_system-vc141.1.80.0\build\boost_system-vc141.targets')" />
     <Import Project="..\packages\boost_filesystem-vc141.1.80.0\build\boost_filesystem-vc141.targets" Condition="Exists('..\packages\boost_filesystem-vc141.1.80.0\build\boost_filesystem-vc141.targets')" />
+    <Import Project="..\packages\inteltbb.redist.win.2021.8.0.25874\build\native\inteltbb.redist.win.targets" Condition="Exists('..\packages\inteltbb.redist.win.2021.8.0.25874\build\native\inteltbb.redist.win.targets')" />
+    <Import Project="..\packages\inteltbb.devel.win.2021.8.0.25874\build\native\inteltbb.devel.win.targets" Condition="Exists('..\packages\inteltbb.devel.win.2021.8.0.25874\build\native\inteltbb.devel.win.targets')" />
+    <Import Project="..\packages\tbb.redist.4.2.3.1\build\native\tbb.redist.targets" Condition="Exists('..\packages\tbb.redist.4.2.3.1\build\native\tbb.redist.targets')" />
+    <Import Project="..\packages\tbb.4.2.3.1\build\native\tbb.targets" Condition="Exists('..\packages\tbb.4.2.3.1\build\native\tbb.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -294,5 +299,9 @@
     <Error Condition="!Exists('..\packages\boost_thread-vc141.1.80.0\build\boost_thread-vc141.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\boost_thread-vc141.1.80.0\build\boost_thread-vc141.targets'))" />
     <Error Condition="!Exists('..\packages\boost_system-vc141.1.80.0\build\boost_system-vc141.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\boost_system-vc141.1.80.0\build\boost_system-vc141.targets'))" />
     <Error Condition="!Exists('..\packages\boost_filesystem-vc141.1.80.0\build\boost_filesystem-vc141.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\boost_filesystem-vc141.1.80.0\build\boost_filesystem-vc141.targets'))" />
+    <Error Condition="!Exists('..\packages\inteltbb.redist.win.2021.8.0.25874\build\native\inteltbb.redist.win.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\inteltbb.redist.win.2021.8.0.25874\build\native\inteltbb.redist.win.targets'))" />
+    <Error Condition="!Exists('..\packages\inteltbb.devel.win.2021.8.0.25874\build\native\inteltbb.devel.win.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\inteltbb.devel.win.2021.8.0.25874\build\native\inteltbb.devel.win.targets'))" />
+    <Error Condition="!Exists('..\packages\tbb.redist.4.2.3.1\build\native\tbb.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\tbb.redist.4.2.3.1\build\native\tbb.redist.targets'))" />
+    <Error Condition="!Exists('..\packages\tbb.4.2.3.1\build\native\tbb.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\tbb.4.2.3.1\build\native\tbb.targets'))" />
   </Target>
 </Project>
