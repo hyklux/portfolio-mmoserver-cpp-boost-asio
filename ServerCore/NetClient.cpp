@@ -7,6 +7,26 @@ void NetClient::Connect(boost::asio::ip::tcp::endpoint& endpoint)
 	std::cout << "Connecting to server(" << endpoint.address() << "," << endpoint.port() << ")..." << std::endl;
 
 	m_Socket.async_connect(endpoint, boost::bind(&NetClient::OnConnect, this, boost::asio::placeholders::error));
+
+	m_io_service.restart();
+	m_io_service.run();
+}
+
+void NetClient::OnConnect(const boost::system::error_code& error)
+{
+	if (error)
+	{
+		std::cout << "Connection failed : " << error.message() << std::endl;
+		m_Socket.close();
+		m_IsConnected = false;
+	}
+	else
+	{
+		std::cout << "Connected to server." << std::endl;
+		m_IsConnected = true;
+	}
+
+	m_io_service.stop();
 }
 
 void NetClient::Disconnect()
@@ -79,7 +99,8 @@ void NetClient::RegisterSend(NetMsg msg)
 		std::cout << "All data has been sent. Bytes transferred:" << bytes_transferred << std::endl;
 	});
 
-	RegisterReceive();
+	m_io_service.restart();
+	m_io_service.run();
 }
 
 void NetClient::RegisterReceive()
@@ -97,21 +118,6 @@ void NetClient::RegisterReceive()
 			//khy todo : disconnect
 		}
 	});
-}
-
-void NetClient::OnConnect(const boost::system::error_code& error)
-{
-	if (error)
-	{
-		std::cout << "Connection failed : " << error.message() << std::endl;
-		m_Socket.close();
-		m_IsConnected = false;
-	}
-	else
-	{
-		std::cout << "Connected to server." << std::endl;
-		m_IsConnected = true;
-	}
 }
 
 void NetClient::OnSend(const boost::system::error_code& error, size_t bytes_transferred)

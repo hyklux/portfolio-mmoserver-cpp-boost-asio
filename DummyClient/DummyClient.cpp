@@ -59,15 +59,30 @@ int main()
 {
 	this_thread::sleep_for(1s);
 
-	//서버 연결
+	//[boost asio 초기화]
+
+	//as a class variable
 	boost::asio::io_service io_service;
+	std::shared_ptr<boost::asio::io_service::work> worker;
+
+	//before you call run() of the io_service yourIOService
+	worker = std::make_shared<boost::asio::io_service::work>(io_service);
+
+	//If you want the service to stop
+	//worker.restart();
+
+
+	//[서버 연결]
 	boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::address::from_string(SERVER_IP), PORT_NUMBER);
 
 	NetClient netClient1(io_service);
 	netClient1.Connect(endpoint);
+	//io_service.run();
 
-	io_service.run();
-	this_thread::sleep_for(1s);
+	while (!netClient1.IsConnected())
+	{
+		continue;
+	}
 
 	//로그인 
 	Protocol::C_LOGIN loginPkt1;
@@ -79,6 +94,7 @@ int main()
 	NetMsg msg;
 	msg.MakeBuffer(loginPkt1, MSG_C_LOGIN);
 	netClient1.SendMsgToServer(msg);
+	//io_service.run();
 
 	//Protocol::C_LOGIN loginPkt2;
 	//loginPkt2.set_username("Younghee");
