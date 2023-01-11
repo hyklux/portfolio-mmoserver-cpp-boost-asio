@@ -56,6 +56,9 @@ int ZoneServer::OnCreate(IServerContainer* pServerContainer, IServer*& pServer)
 int ZoneServer::OnLoad()
 {
 	cout << "[ZoneServer] OnLoad" << endl;
+
+	SetConnector();
+
 	return 0;
 }
 
@@ -71,14 +74,15 @@ int ZoneServer::OnUnload()
 	return 0;
 }
 
-int ZoneServer::HandleMsg(const NetMsg msg)
+int ZoneServer::HandleMsg(const NetMsg msg, const std::shared_ptr<NetGameSession>& session)
 {
 	cout << "[ZoneServer] HandleMsg. PktId:" << msg.GetPktId() << endl;
 
-	Protocol::C_LOGIN pkt;
-
 	switch (msg.GetPktId())
 	{
+	case MSG_C_ENTER_GAME:
+		Handle_C_ENTER_GAME(msg);
+		break;
 	case MSG_C_CHAT:
 		break;
 	default:
@@ -105,7 +109,29 @@ int ZoneServer::SetConnector()
 }
 
 //handlers
-int ZoneServer::Handle_C_CHAT(std::string msgStr)
+int ZoneServer::Handle_C_ENTER_GAME(NetMsg msg)
+{
+	cout << "[ZoneServer] Handle_C_ENTER_GAME" << endl;
+
+	//패킷 분해
+	Protocol::C_ENTER_GAME pkt;
+	if (false == ParsePkt(pkt, msg))
+	{
+		return static_cast<uint16_t>(ERRORTYPE::PKT_ERROR);
+	}
+
+	std::string playerName = "Player" + to_string(pkt.playerindex());
+
+	cout << playerName << " entering game..." << endl;
+
+	m_PlayerList.push_back(new CPlayer(pkt.playerindex(), playerName));
+
+	cout << playerName << " enter game success." << endl;
+
+	return 0;
+}
+
+int ZoneServer::Handle_C_CHAT(NetMsg msg)
 {
 	return 0;
 }

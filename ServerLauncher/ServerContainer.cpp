@@ -58,7 +58,7 @@ int32_t ServerContainer::Unload()
 void* ServerContainer::GetConnectorServer()
 {
 	const auto itr = m_ServerMap.find("ConnectorServer");
-	return itr == m_ServerMap.end() ? nullptr : &(itr->second);
+	return itr == m_ServerMap.end() ? nullptr : (itr->second);
 }
 
 void* ServerContainer::GetUserServer()

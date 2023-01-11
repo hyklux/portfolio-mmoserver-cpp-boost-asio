@@ -33,7 +33,7 @@ public:
 	virtual int OnStart() override;
 	virtual int OnUnload() override;
 
-	virtual int HandleMsg(NetMsg msg) override;
+	virtual int HandleMsg(const NetMsg msg, const std::shared_ptr<NetGameSession>& session) override;
 
 private:
 	virtual int SetConnector() override;

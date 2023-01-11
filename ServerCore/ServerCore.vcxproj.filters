@@ -34,6 +34,9 @@
     <Filter Include="Protocol">
       <UniqueIdentifier>{231059d1-8673-4c5f-bf80-a220f219d9f6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Scene">
+      <UniqueIdentifier>{82f478fd-5973-4ade-9df0-c74a3cb07438}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CorePch.h">
@@ -207,6 +210,7 @@
     <ClInclude Include="Enum.pb.h">
       <Filter>Protocol</Filter>
     </ClInclude>
+    <ClInclude Include="CPlayer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CorePch.cpp">
@@ -338,6 +342,7 @@
     <ClCompile Include="Enum.pb.cc">
       <Filter>Protocol</Filter>
     </ClCompile>
+    <ClCompile Include="CPlayer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

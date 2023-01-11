@@ -194,6 +194,23 @@ class C_LOGIN final :
 
   // accessors -------------------------------------------------------
 
+  enum : int {
+    kUserNameFieldNumber = 1,
+  };
+  // string userName = 1;
+  void clear_username();
+  const std::string& username() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_username(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_username();
+  PROTOBUF_FUTURE_MUST_USE_RESULT std::string* release_username();
+  void set_allocated_username(std::string* username);
+  private:
+  const std::string& _internal_username() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_username(const std::string& value);
+  std::string* _internal_mutable_username();
+  public:
+
   // @@protoc_insertion_point(class_scope:Protocol.C_LOGIN)
  private:
   class _Internal;
@@ -201,6 +218,7 @@ class C_LOGIN final :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr username_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_Protocol_2eproto;
 };
@@ -915,6 +933,51 @@ class S_CHAT final :
   #pragma GCC diagnostic ignored "-Wstrict-aliasing"
 #endif  // __GNUC__
 // C_LOGIN
+
+// string userName = 1;
+inline void C_LOGIN::clear_username() {
+  username_.ClearToEmpty();
+}
+inline const std::string& C_LOGIN::username() const {
+  // @@protoc_insertion_point(field_get:Protocol.C_LOGIN.userName)
+  return _internal_username();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void C_LOGIN::set_username(ArgT0&& arg0, ArgT... args) {
+ 
+ username_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:Protocol.C_LOGIN.userName)
+}
+inline std::string* C_LOGIN::mutable_username() {
+  // @@protoc_insertion_point(field_mutable:Protocol.C_LOGIN.userName)
+  return _internal_mutable_username();
+}
+inline const std::string& C_LOGIN::_internal_username() const {
+  return username_.Get();
+}
+inline void C_LOGIN::_internal_set_username(const std::string& value) {
+  
+  username_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* C_LOGIN::_internal_mutable_username() {
+  
+  return username_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* C_LOGIN::release_username() {
+  // @@protoc_insertion_point(field_release:Protocol.C_LOGIN.userName)
+  return username_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+}
+inline void C_LOGIN::set_allocated_username(std::string* username) {
+  if (username != nullptr) {
+    
+  } else {
+    
+  }
+  username_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), username,
+      GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set_allocated:Protocol.C_LOGIN.userName)
+}
 
 // -------------------------------------------------------------------
 

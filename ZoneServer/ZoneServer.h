@@ -2,6 +2,7 @@
 
 #include "IServer.h"
 #include "IServerContainer.h"
+#include "CPlayer.h"
 
 #include <iostream>
 #include <vector>
@@ -24,6 +25,8 @@ private:
 	IServerContainer* m_pServerContainer;
 	IServer* m_pConnectorServer;
 
+	std::vector<CPlayer*> m_PlayerList;
+
 public:
 	virtual int AddRef(void) override;
 	virtual int ReleaseRef(void) override;
@@ -33,12 +36,13 @@ public:
 	virtual int OnStart() override;
 	virtual int OnUnload() override;
 
-	virtual int HandleMsg(const NetMsg msg) override;
+	virtual int HandleMsg(const NetMsg msg, const std::shared_ptr<NetGameSession>& session) override;
 
 private:
 	virtual int SetConnector() override;
 
 	//handlers
-	int Handle_C_CHAT(std::string msgStr);
+	int Handle_C_ENTER_GAME(NetMsg msg);
+	int Handle_C_CHAT(NetMsg msg);
 };
 

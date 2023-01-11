@@ -69,21 +69,6 @@ int DBAgent::OnUnload()
 	return 0;
 }
 
-int DBAgent::HandleMsg(NetMsg msg)
-{
-	cout << "[DBAgent] HandleMsg. PktId:" << msg.GetPktId() << endl;
-
-	switch (msg.GetPktId())
-	{
-	case MSG_C_CHAT:
-		break;
-	default:
-		break;
-	}
-
-	return 0;
-}
-
 int DBAgent::SetConnector()
 {
 	if (!m_pServerContainer)

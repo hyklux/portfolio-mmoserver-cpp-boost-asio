@@ -52,6 +52,7 @@ public:
 	virtual int OnLoad() override;
 	virtual int OnStart() override;
 	virtual int OnUnload() override;
+	virtual void DispatchMsgToServer(uint16_t targetServer, NetMsg msg) override;
 
 private:
 	bool InitIOService();

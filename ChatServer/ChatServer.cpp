@@ -54,6 +54,9 @@ int ChatServer::OnCreate(IServerContainer* pServerContainer, IServer*& pServer)
 int ChatServer::OnLoad()
 {
 	cout << "[ChatServer] OnLoad" << endl;
+
+	SetConnector();
+
 	return 0;
 }
 
@@ -69,12 +72,15 @@ int ChatServer::OnUnload()
 	return 0;
 }
 
-int ChatServer::HandleMsg(NetMsg msg)
+int ChatServer::HandleMsg(const NetMsg msg, const std::shared_ptr<NetGameSession>& session)
 {
 	cout << "[ChatServer] HandleMsg. PktId:" << msg.GetPktId() << endl;
 
 	switch (msg.GetPktId())
 	{
+	case MSG_C_ENTER_GAME:
+		//khy todo : user가 room 입장
+		break;
 	case MSG_C_CHAT:
 		break;
 	default:

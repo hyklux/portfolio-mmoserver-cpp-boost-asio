@@ -4,6 +4,7 @@
 #include "NetGameSession.h"
 #include "NetMsg.h"
 #include "UserConnection.h"
+#include "Types.h"
 
 #include "Protocol.pb.h"
 
@@ -75,6 +76,8 @@ int UserServer::OnLoad()
 		*/
 	}
 
+	SetConnector();
+
 	return 0;
 }
 
@@ -138,23 +141,18 @@ int UserServer::SetConnector()
 
 uint16_t UserServer::Handle_C_LOGIN(const NetMsg msg, const std::shared_ptr<NetGameSession>& session)
 {
-	//패킷 분해
-	Protocol::C_LOGIN pkt;
-	if (false == ParsePkt(pkt, msg))
-	{
-		return static_cast<uint16_t>(ERRORTYPE::PKT_ERROR);
-	}
+	//khy todo : 해야할 작업을 MsgJobQueue에 함수 + 인자를 넣는다.
 
-	//해야할 작업을 MsgJobQueue에 함수 + 인자를 넣는다.
 	//로그인
-	Login(pkt.username());
-
 	Protocol::S_LOGIN loginPkt;
-	loginPkt.set_success(true);
+
+	if (0 == Login(msg))
+	{
+		loginPkt.set_success(true);
+	}
 
 	NetMsg resMsg;
 	resMsg.MakeBuffer(loginPkt, MSG_S_LOGIN);
-
 	session->SendMsgToClient(resMsg);
 
 	return 0;
@@ -162,57 +160,55 @@ uint16_t UserServer::Handle_C_LOGIN(const NetMsg msg, const std::shared_ptr<NetG
 
 uint16_t UserServer::Handle_C_ENTER_GAME(const NetMsg msg, const std::shared_ptr<NetGameSession>& session)
 {
+	//khy todo : 해야할 작업을 MsgJobQueue에 함수 + 인자를 넣는다.
+
+	//게임 진입
+	Protocol::S_ENTER_GAME enterGamePkt;
+
+	if (0 == EnterGame(msg))
+	{
+		enterGamePkt.set_success(true);
+	}
+
+	NetMsg resMsg;
+	resMsg.MakeBuffer(enterGamePkt, MSG_S_ENTER_GAME);
+	session->SendMsgToClient(resMsg);
+
+	return 0;
+}
+
+uint16_t UserServer::Login(const NetMsg msg)
+{
+	cout << "[UserServer] Login" << endl;
+
 	//패킷 분해
-	Protocol::C_ENTER_GAME pkt;
+	Protocol::C_LOGIN pkt;
 	if (false == ParsePkt(pkt, msg))
 	{
 		return static_cast<uint16_t>(ERRORTYPE::PKT_ERROR);
 	}
 
-	//해야할 작업을 MsgJobQueue에 함수 + 인자를 넣는다.
-	//게임 진입
-	EnterGame("Chulsoo", pkt.playerindex());
+	cout << "[UserServer] " << pkt.username() << " logging in..." << endl;
 
-	Protocol::S_ENTER_GAME enterGamePkt;
-	enterGamePkt.set_success(true);
+	//khy todo : create user connection
 
-	NetMsg resMsg;
-	resMsg.MakeBuffer(enterGamePkt, MSG_S_ENTER_GAME);
+	cout << "[UserServer] " << pkt.username() << " login success." << endl;
 
-	session->SendMsgToClient(resMsg);
-	//m_JobQueue.push(UserServer::EnterGame);
-
-	return 0;
+	return static_cast<uint16_t>(ERRORTYPE::NONE_ERROR);
 }
 
-void UserServer::Login(std::string userName)
+uint16_t UserServer::EnterGame(const NetMsg msg)
 {
-	cout << "[UserServer] " << userName << " logging in..." << endl;
-	cout << "[UserServer] " << userName << " login success." << endl;
+	cout << "[UserServer] EnterGame" << endl;
 
-	//create user connection
-}
-
-void UserServer::EnterGame(std::string userName, int32_t playerIndex)
-{
-	cout << "[UserServer] " << userName << " entering game..." << endl;
-	cout << "[UserServer] " << userName << " entering game success." << endl;
-
-	//khy todo : zone에 플레이어 생성
-	ZoneServer* pZoneServer = static_cast<ZoneServer*>(m_pServerContainer->GetTargetServer(EZoneServer));
-	if (!pZoneServer)
+	if (!m_pConnectorServer)
 	{
-		return false;
-	}
-	
-	//pZoneServer->CreatePlayer();
-
-	//chat에 room 입장
-	ChatServer* pChatServer = static_cast<ChatServer*>(m_pServerContainer->GetTargetServer(EChatServer));
-	if (!pChatServer)
-	{
-		return false;
+		cout << "[UserServer] Error : Connector server is null." << endl;
+		return static_cast<uint16_t>(ERRORTYPE::NULL_ERROR);
 	}
 
-	//pChatServer->Enter();
+	m_pConnectorServer->DispatchMsgToServer(EZoneServer, msg);
+	m_pConnectorServer->DispatchMsgToServer(EChatServer, msg);
+
+	return static_cast<uint16_t>(ERRORTYPE::NONE_ERROR);
 }

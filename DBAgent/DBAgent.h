@@ -33,8 +33,6 @@ public:
 	virtual int OnStart() override;
 	virtual int OnUnload() override;
 
-	virtual int HandleMsg(NetMsg msg) override;
-
 private:
 	virtual int SetConnector() override;
 

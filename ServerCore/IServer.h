@@ -40,8 +40,16 @@ struct IServer
 
 	virtual int SetConnector() { return -1; }
 	virtual int ConnectToConnector() { return -1; }
+	
+	template<typename T>
+	bool ParsePkt(T& pkt, const NetMsg& msg)
+	{
+		return pkt.ParseFromArray(msg.GetBody(), msg.GetBodyLength());
+	}
+
 	virtual int SendMsg(uint16_t targetServer) { return -1; }
 	virtual int HandleMsg(const NetMsg msg, const std::shared_ptr<NetGameSession>& session) { return -1; }
 	virtual void CreateUserConnection(std::shared_ptr<NetGameSession> session) {}
 	virtual void DispatchClientMsg(uint16_t targetServer, NetMsg m_Msg, const std::shared_ptr<NetGameSession>& session) {}
+	virtual void DispatchMsgToServer(uint16_t targetServer, NetMsg msg)  {}
 };

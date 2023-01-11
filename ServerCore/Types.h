@@ -46,7 +46,8 @@ USING_SHARED_PTR(MsgJobQueue);
 
 enum class ERRORTYPE : uint16_t
 {
-	NO_ERROR = 0,
+	NONE_ERROR,
+	NULL_ERROR,
 	PKT_ERROR,
 	UNKNOWN_ERROR,
 };
