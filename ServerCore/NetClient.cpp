@@ -1,37 +1,39 @@
 #include "pch.h"
 #include "NetClient.h"
 #include "NetMsg.h"
+#include "IServer.h"
+
+#include "Protocol.pb.h"
 
 void NetClient::Connect(boost::asio::ip::tcp::endpoint& endpoint)
 {
-	std::cout << "Connecting to server(" << endpoint.address() << "," << endpoint.port() << ")..." << std::endl;
+	std::cout << "[NetClient] Connecting to server(" << endpoint.address() << "," << endpoint.port() << ")..." << std::endl;
 
 	m_Socket.async_connect(endpoint, boost::bind(&NetClient::OnConnect, this, boost::asio::placeholders::error));
 
-	m_io_service.restart();
-	m_io_service.run();
+	StartIOService();
 }
 
 void NetClient::OnConnect(const boost::system::error_code& error)
 {
 	if (error)
 	{
-		std::cout << "Connection failed : " << error.message() << std::endl;
+		std::cout << "[NetClient] Connection failed : " << error.message() << std::endl;
 		m_Socket.close();
 		m_IsConnected = false;
 	}
 	else
 	{
-		std::cout << "Connected to server." << std::endl;
+		std::cout << "[NetClient] Connected to server." << std::endl;
 		m_IsConnected = true;
 	}
 
-	m_io_service.stop();
+	StopIOService();
 }
 
 void NetClient::Disconnect()
 {
-	std::cout << "Disconnect from server." << endl;
+	std::cout << "[NetClient] Disconnect from server." << endl;
 
 	if (m_Socket.is_open() == false)
 	{
@@ -72,6 +74,17 @@ void NetClient::SendMsgToServer(NetMsg msg)
 	RegisterSend(msg);
 }
 
+void NetClient::StartIOService()
+{
+	m_io_service.restart();
+	m_io_service.run();
+}
+
+void NetClient::StopIOService()
+{
+	m_io_service.stop();
+}
+
 void NetClient::RegisterSend(std::string msgStr)
 {
 	std::cout << "RegisterSend msg:" << msgStr << endl;
@@ -85,7 +98,7 @@ void NetClient::RegisterSend(std::string msgStr)
 	boost::asio::async_write(m_Socket, b, boost::asio::transfer_exactly(128), [&](error_code error, std::size_t bytes_transferred)
 	{
 		// All data has been sent
-		std::cout << "All data has been sent. Bytes transferred:" << bytes_transferred << std::endl;
+		std::cout << "[NetClient] All data has been sent. Bytes transferred:" << bytes_transferred << std::endl;
 	});
 
 	RegisterReceive();
@@ -96,33 +109,43 @@ void NetClient::RegisterSend(NetMsg msg)
 	boost::asio::async_write(m_Socket, boost::asio::buffer(msg.GetData(), msg.GetLength()), [&](error_code error, std::size_t bytes_transferred)
 	{
 		// All data has been sent
-		std::cout << "All data has been sent. Bytes transferred:" << bytes_transferred << std::endl;
+		std::cout << "[NetClient] All data has been sent. Bytes transferred:" << bytes_transferred << std::endl;
+		
+		StopIOService();
+		RegisterReceive();
 	});
 
-	m_io_service.restart();
-	m_io_service.run();
+	StartIOService();
 }
 
 void NetClient::RegisterReceive()
 {
+	//khy todo : clear msg
 	//auto self(shared_from_this());
 
-	boost::asio::async_read(m_Socket, boost::asio::buffer(m_Msg.GetData(), m_Msg.GetLength()), [this](boost::system::error_code error, std::size_t /*length*/)
+	boost::asio::async_read(m_Socket, boost::asio::buffer(m_Msg.GetData(), m_Msg.GetLength()), [&](boost::system::error_code error, std::size_t /*length*/)
 	{
 		if (!error)
 		{
-			//khy todo : Handle 처리
+			if (m_Msg.DecodeHeader())
+			{
+				HandleMsg(m_Msg);
+			}
 		}
 		else
 		{
 			//khy todo : disconnect
 		}
+
+		StopIOService();
 	});
+
+	StartIOService();
 }
 
 void NetClient::OnSend(const boost::system::error_code& error, size_t bytes_transferred)
 {
-	std::cout << "Send success!" << std::endl;
+	std::cout << "[NetClient] Send success!" << std::endl;
 }
 
 void NetClient::OnReceive(const boost::system::error_code& error, size_t bytes_transferred)
@@ -131,14 +154,79 @@ void NetClient::OnReceive(const boost::system::error_code& error, size_t bytes_t
 	{
 		if (error == boost::asio::error::eof)
 		{
-			std::cout << "Connection with server failed." << std::endl;
+			std::cout << "[NetClient] Connection with server failed." << std::endl;
 		}
 		else
 		{
-			std::cout << "Error No: " << error.value() << " Error Message: " << error.message() << std::endl;
+			std::cout << "[NetClient] Error No: " << error.value() << " Error Message: " << error.message() << std::endl;
 		}
 	}
 	else
 	{
 	}
+}
+
+int NetClient::HandleMsg(const NetMsg msg)
+{
+	cout << "[NetClient] HandleMsg. PktId:" << msg.GetPktId() << endl;
+
+	switch (msg.GetPktId())
+	{
+	case MSG_S_LOGIN:
+		Handle_S_LOGIN(msg);
+		break;
+	case MSG_S_ENTER_GAME:
+		Handle_S_ENTER_GAME(msg);
+		break;
+	default:
+		break;
+	}
+
+	return 0;
+}
+
+uint16_t NetClient::Handle_S_LOGIN(const NetMsg msg)
+{
+	//패킷 분해
+	Protocol::S_LOGIN pkt;
+	if (false == ParsePkt(pkt, msg))
+	{
+		return static_cast<uint16_t>(ERRORTYPE::PKT_ERROR);
+	}
+
+	//로그인 결과에 따른 처리
+	m_IsLoggedIn = pkt.success();
+	if (m_IsLoggedIn)
+	{
+		cout << "[NetClient] Login success!" << endl;
+	}
+	else
+	{
+		cout << "[NetClient] Login failed." << endl;
+	}
+
+	return 0;
+}
+
+uint16_t NetClient::Handle_S_ENTER_GAME(const NetMsg msg)
+{
+	//패킷 분해
+	Protocol::S_ENTER_GAME pkt;
+	if (false == ParsePkt(pkt, msg))
+	{
+		return static_cast<uint16_t>(ERRORTYPE::PKT_ERROR);
+	}
+
+	//게임 진입 결과에 따른 처리
+	m_HasEnteredGame = pkt.success();
+	if (m_HasEnteredGame)
+	{
+		cout << "[NetClient] Enter game success!" << endl;
+	}
+	else
+	{
+		cout << "[NetClient] Enter game failed." << endl;
+	}
+
+	return 0;
 }

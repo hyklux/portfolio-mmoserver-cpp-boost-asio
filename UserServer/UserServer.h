@@ -55,6 +55,6 @@ private:
 	uint16_t Handle_C_ENTER_GAME(const NetMsg msg, const std::shared_ptr<NetGameSession>& session);
 
 	void Login(std::string userName);
-	void EnterGame();
+	void EnterGame(std::string userName, int32_t playerIndex);
 };
 

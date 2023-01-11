@@ -115,7 +115,7 @@ int UserServer::HandleMsg(const NetMsg msg, const std::shared_ptr<NetGameSession
 
 void UserServer::CreateUserConnection(std::shared_ptr<NetGameSession> session)
 {
-	UserConnection* userConnection = new UserConnection(session);
+	//UserConnection* userConnection = new UserConnection(session);
 	//userConnection.SetSession(session);
 	//userConnectionList.push_back(userConnection);
 }
@@ -170,6 +170,16 @@ uint16_t UserServer::Handle_C_ENTER_GAME(const NetMsg msg, const std::shared_ptr
 	}
 
 	//해야할 작업을 MsgJobQueue에 함수 + 인자를 넣는다.
+	//게임 진입
+	EnterGame("Chulsoo", pkt.playerindex());
+
+	Protocol::S_ENTER_GAME enterGamePkt;
+	enterGamePkt.set_success(true);
+
+	NetMsg resMsg;
+	resMsg.MakeBuffer(enterGamePkt, MSG_S_ENTER_GAME);
+
+	session->SendMsgToClient(resMsg);
 	//m_JobQueue.push(UserServer::EnterGame);
 
 	return 0;
@@ -183,7 +193,26 @@ void UserServer::Login(std::string userName)
 	//create user connection
 }
 
-void UserServer::EnterGame()
+void UserServer::EnterGame(std::string userName, int32_t playerIndex)
 {
-	//cout << "[UserServer] " << m_Username << "entering game..." << endl;
+	cout << "[UserServer] " << userName << " entering game..." << endl;
+	cout << "[UserServer] " << userName << " entering game success." << endl;
+
+	//khy todo : zone에 플레이어 생성
+	ZoneServer* pZoneServer = static_cast<ZoneServer*>(m_pServerContainer->GetTargetServer(EZoneServer));
+	if (!pZoneServer)
+	{
+		return false;
+	}
+	
+	//pZoneServer->CreatePlayer();
+
+	//chat에 room 입장
+	ChatServer* pChatServer = static_cast<ChatServer*>(m_pServerContainer->GetTargetServer(EChatServer));
+	if (!pChatServer)
+	{
+		return false;
+	}
+
+	//pChatServer->Enter();
 }

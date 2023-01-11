@@ -17,7 +17,7 @@ void NetGameSession::RegisterSend(NetMsg msg)
 	boost::asio::async_write(m_Socket, boost::asio::buffer(msg.GetData(), msg.GetLength()), [&](error_code error, std::size_t bytes_transferred)
 	{
 		// All data has been sent
-		std::cout << "All data has been sent. Bytes transferred:" << bytes_transferred << std::endl;
+		std::cout << "[NetGameSession] All data has been sent. Bytes transferred:" << bytes_transferred << std::endl;
 	});
 }
 
@@ -47,7 +47,7 @@ void NetGameSession::OnSend(const boost::system::error_code& error, size_t bytes
 {
 	if (!error)
 	{
-		std::cout << "Send to client success." << std::endl;
+		std::cout << "[NetGameSession] Send to client success." << std::endl;
 	}
 }
 

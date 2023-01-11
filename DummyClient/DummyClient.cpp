@@ -57,6 +57,8 @@ public:
 
 int main()
 {
+	bool m_IsServerOn = false;
+
 	this_thread::sleep_for(1s);
 
 	//[boost asio 초기화]
@@ -68,43 +70,47 @@ int main()
 	//before you call run() of the io_service yourIOService
 	worker = std::make_shared<boost::asio::io_service::work>(io_service);
 
-	//If you want the service to stop
-	//worker.restart();
-
-
 	//[서버 연결]
 	boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::address::from_string(SERVER_IP), PORT_NUMBER);
 
 	NetClient netClient1(io_service);
 	netClient1.Connect(endpoint);
-	//io_service.run();
 
 	while (!netClient1.IsConnected())
 	{
 		continue;
 	}
 
+	m_IsServerOn = true;
+
 	//로그인 
-	Protocol::C_LOGIN loginPkt1;
-	loginPkt1.set_username("Chulsoo");
+	Protocol::C_LOGIN loginPkt;
+	loginPkt.set_username("Chulsoo");
 
-	const uint16_t pktDataSize1 = static_cast<uint16>(loginPkt1.ByteSizeLong());
-	const uint16_t pktId1 = MSG_C_LOGIN;
-	
-	NetMsg msg;
-	msg.MakeBuffer(loginPkt1, MSG_C_LOGIN);
-	netClient1.SendMsgToServer(msg);
-	//io_service.run();
+	NetMsg loginMsg;
+	loginMsg.MakeBuffer(loginPkt, MSG_C_LOGIN);
+	netClient1.SendMsgToServer(loginMsg);
 
-	//Protocol::C_LOGIN loginPkt2;
-	//loginPkt2.set_username("Younghee");
-	//const uint16 pktDataSize2 = static_cast<uint16>(loginPkt2.ByteSizeLong());
-	//loginPkt2.SerializeToString(&msgStr);
-	//netClient2.SendMsgToServer(msgStr);
+	while (!netClient1.IsLoggedIn())
+	{
+		continue;
+	}
 
-	//this_thread::sleep_for(3s);
-	//netClient1.Disconnect();
-	//netClient2.Disconnect();
+	this_thread::sleep_for(1s);
+
+	Protocol::C_ENTER_GAME enterGamePkt;
+	enterGamePkt.set_playerindex(1);
+
+	NetMsg enterGameMsg;
+	enterGameMsg.MakeBuffer(enterGamePkt, MSG_C_ENTER_GAME);
+	netClient1.SendMsgToServer(enterGameMsg);
+
+	while (m_IsServerOn)
+	{
+		continue;
+	}
+
+	netClient1.Disconnect();
 
 	/*
 	ClientServiceRef service = MakeShared<ClientService>(
@@ -161,11 +167,6 @@ int main()
 
 	msg >> d >> c >> b >> a;
 	*/
-
-	while (true)
-	{
-
-	}
 
 	return 0;
 }
