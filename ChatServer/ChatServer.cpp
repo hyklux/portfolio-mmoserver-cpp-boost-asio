@@ -1,6 +1,9 @@
 #include "pch.h"
 #include "ChatServer.h"
 #include "IServer.h"
+#include "NetGameSession.h"
+
+#include "Protocol.pb.h"
 
 int CreateServerInstance(IServerContainer* pServerContainer, IServer*& pServer)
 {
@@ -79,9 +82,10 @@ int ChatServer::HandleMsg(const NetMsg msg, const std::shared_ptr<NetGameSession
 	switch (msg.GetPktId())
 	{
 	case MSG_C_ENTER_GAME:
-		//khy todo : user가 room 입장
+		Handle_C_ENTER_GAME(msg, session);
 		break;
 	case MSG_C_CHAT:
+		Handle_C_CHAT(msg, session);
 		break;
 	default:
 		break;
@@ -106,8 +110,57 @@ int ChatServer::SetConnector()
 	return m_pConnectorServer ? 0 : -1;
 }
 
-//handlers
-int ChatServer::Handle_C_CHAT(std::string msgStr)
+void ChatServer::BroadCastAll(std::string broadcastMsgStr)
 {
+	NetMsg broadcastMsg;
+	Protocol::S_CHAT chatPkt;
+	chatPkt.set_msg(broadcastMsgStr);
+	broadcastMsg.MakeBuffer(chatPkt, MSG_S_CHAT);
+
+	for (std::shared_ptr<NetGameSession> session : m_UserSessionList)
+	{
+		session->SendMsgToClient(broadcastMsg);
+	}
+}
+
+//handlers
+int ChatServer::Handle_C_ENTER_GAME(const NetMsg msg, const std::shared_ptr<NetGameSession>& session)
+{
+	cout << "[ChatServer] Handle_C_ENTER_GAME" << endl;
+
+	//패킷 분해
+	Protocol::C_ENTER_GAME pkt;
+	if (false == ParsePkt(pkt, msg))
+	{
+		return static_cast<uint16_t>(ERRORTYPE::PKT_ERROR);
+	}
+
+	cout << "[ChatServer] Player" << to_string(pkt.playerid()) << " has entered chat room." << endl;
+
+	m_UserSessionList.push_back(session);
+
+	std::string broadcastMsgStr = "Player" + to_string(pkt.playerid()) + " has entered chat room.";
+	BroadCastAll(broadcastMsgStr);
+
+	return 0;
+}
+
+int ChatServer::Handle_C_CHAT(const NetMsg msg, const std::shared_ptr<NetGameSession>& session)
+{
+	cout << "[ChatServer] Handle_C_CHAT" << endl;
+
+	//패킷 분해
+	Protocol::C_CHAT pkt;
+	if (false == ParsePkt(pkt, msg))
+	{
+		return static_cast<uint16_t>(ERRORTYPE::PKT_ERROR);
+	}
+
+	cout << "[ChatServer] Player" << to_string(pkt.playerid()) << " " << pkt.msg() << endl;
+	return 0;
+
+	std::string broadcastMsgStr = "[Player" + to_string(pkt.playerid()) + "] : " + pkt.msg();
+	BroadCastAll(broadcastMsgStr);
+
 	return 0;
 }

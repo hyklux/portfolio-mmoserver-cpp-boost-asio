@@ -81,13 +81,13 @@ int ConnectorServer::OnUnload()
 	return 0;
 }
 
-void ConnectorServer::DispatchMsgToServer(uint16_t targetServer, NetMsg msg)
+void ConnectorServer::DispatchMsgToServer(uint16_t targetServer, NetMsg msg, const std::shared_ptr<NetGameSession>& session)
 {
 	IServer* pTargetServer = static_cast<IServer*>(m_pServerContainer->GetTargetServer(targetServer));
 
 	if (pTargetServer)
 	{
-		pTargetServer->HandleMsg(msg, nullptr);
+		pTargetServer->HandleMsg(msg, session);
 	}
 }
 

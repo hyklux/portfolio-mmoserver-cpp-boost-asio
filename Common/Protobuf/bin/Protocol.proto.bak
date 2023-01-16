@@ -28,7 +28,7 @@ message S_ENTER_GAME
 message C_CHAT
 {
 	uint64 playerId = 1;
-	string msg = 2;
+	string msg = 1;
 }
 
 message S_CHAT

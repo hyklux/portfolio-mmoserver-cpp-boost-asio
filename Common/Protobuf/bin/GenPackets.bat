@@ -24,6 +24,14 @@ XCOPY /Y Protocol.pb.h "../../../DummyClient"
 XCOPY /Y Protocol.pb.cc "../../../DummyClient"
 XCOPY /Y ServerPacketHandler.h "../../../DummyClient"
 
+XCOPY /Y Enum.pb.h "../../../ServerCore"
+XCOPY /Y Enum.pb.cc "../../../ServerCore"
+XCOPY /Y Struct.pb.h "../../../ServerCore"
+XCOPY /Y Struct.pb.cc "../../../ServerCore"
+XCOPY /Y Protocol.pb.h "../../../ServerCore"
+XCOPY /Y Protocol.pb.cc "../../../ServerCore"
+XCOPY /Y ServerPacketHandler.h "../../../ServerCore"
+
 XCOPY /Y Enum.pb.h "../../../NetworkServer"
 XCOPY /Y Enum.pb.cc "../../../NetworkServer"
 XCOPY /Y Struct.pb.h "../../../NetworkServer"
@@ -55,6 +63,14 @@ XCOPY /Y Struct.pb.cc "../../../ZoneServer"
 XCOPY /Y Protocol.pb.h "../../../ZoneServer"
 XCOPY /Y Protocol.pb.cc "../../../ZoneServer"
 XCOPY /Y ServerPacketHandler.h "../../../ZoneServer"
+
+XCOPY /Y Enum.pb.h "../../../ChatServer"
+XCOPY /Y Enum.pb.cc "../../../ChatServer"
+XCOPY /Y Struct.pb.h "../../../ChatServer"
+XCOPY /Y Struct.pb.cc "../../../ChatServer"
+XCOPY /Y Protocol.pb.h "../../../ChatServer"
+XCOPY /Y Protocol.pb.cc "../../../ChatServer"
+XCOPY /Y ServerPacketHandler.h "../../../ChatServer"
 
 DEL /Q /F *.pb.h
 DEL /Q /F *.pb.cc
