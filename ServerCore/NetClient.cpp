@@ -110,7 +110,7 @@ void NetClient::RegisterSend(NetMsg msg)
 	{
 		// All data has been sent
 		std::cout << "[NetClient] All data has been sent. Bytes transferred:" << bytes_transferred << std::endl;
-		
+
 		StopIOService();
 		RegisterReceive();
 	});
@@ -120,9 +120,6 @@ void NetClient::RegisterSend(NetMsg msg)
 
 void NetClient::RegisterReceive()
 {
-	//khy todo : clear msg
-	//auto self(shared_from_this());
-
 	boost::asio::async_read(m_Socket, boost::asio::buffer(m_Msg.GetData(), m_Msg.GetLength()), [&](boost::system::error_code error, std::size_t /*length*/)
 	{
 		if (!error)
@@ -178,6 +175,9 @@ int NetClient::HandleMsg(const NetMsg msg)
 	case MSG_S_ENTER_GAME:
 		Handle_S_ENTER_GAME(msg);
 		break;
+	case MSG_S_CHAT:
+		Handle_S_CHAT(msg);
+		break;
 	default:
 		break;
 	}
@@ -227,6 +227,22 @@ uint16_t NetClient::Handle_S_ENTER_GAME(const NetMsg msg)
 	{
 		cout << "[NetClient] Enter game failed." << endl;
 	}
+
+	return 0;
+}
+
+uint16_t NetClient::Handle_S_CHAT(const NetMsg msg)
+{
+	//패킷 분해
+	Protocol::S_CHAT pkt;
+	if (false == ParsePkt(pkt, msg))
+	{
+		return static_cast<uint16_t>(ERRORTYPE::PKT_ERROR);
+	}
+
+	//채팅 메세지 출력
+	std::string chatMsg = pkt.msg();
+	cout << "[NetClient] " << chatMsg << endl;
 
 	return 0;
 }

@@ -43,6 +43,5 @@ private:
 
 	//handlers
 	int Handle_C_ENTER_GAME(NetMsg msg);
-	int Handle_C_CHAT(NetMsg msg);
 };
 

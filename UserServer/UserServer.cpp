@@ -165,7 +165,7 @@ uint16_t UserServer::Handle_C_ENTER_GAME(const NetMsg msg, const std::shared_ptr
 	//게임 진입
 	Protocol::S_ENTER_GAME enterGamePkt;
 
-	if (0 == EnterGame(msg))
+	if (0 == EnterGame(msg, session))
 	{
 		enterGamePkt.set_success(true);
 	}
@@ -197,7 +197,7 @@ uint16_t UserServer::Login(const NetMsg msg)
 	return static_cast<uint16_t>(ERRORTYPE::NONE_ERROR);
 }
 
-uint16_t UserServer::EnterGame(const NetMsg msg)
+uint16_t UserServer::EnterGame(const NetMsg msg, const std::shared_ptr<NetGameSession>& session)
 {
 	cout << "[UserServer] EnterGame" << endl;
 
@@ -207,8 +207,22 @@ uint16_t UserServer::EnterGame(const NetMsg msg)
 		return static_cast<uint16_t>(ERRORTYPE::NULL_ERROR);
 	}
 
-	m_pConnectorServer->DispatchMsgToServer(EZoneServer, msg);
-	m_pConnectorServer->DispatchMsgToServer(EChatServer, msg);
+	m_pConnectorServer->DispatchMsgToServer(EZoneServer, msg, session);
+
+	return static_cast<uint16_t>(ERRORTYPE::NONE_ERROR);
+}
+
+uint16_t UserServer::Chat(const NetMsg msg, const std::shared_ptr<NetGameSession>& session)
+{
+	cout << "[UserServer] Chat" << endl;
+
+	if (!m_pConnectorServer)
+	{
+		cout << "[UserServer] Error : Connector server is null." << endl;
+		return static_cast<uint16_t>(ERRORTYPE::NULL_ERROR);
+	}
+
+	m_pConnectorServer->DispatchMsgToServer(EChatServer, msg, session);
 
 	return static_cast<uint16_t>(ERRORTYPE::NONE_ERROR);
 }

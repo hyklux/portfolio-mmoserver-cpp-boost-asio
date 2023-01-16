@@ -40,7 +40,7 @@ int main(int argc, const char** argv)
 			//todo : throw error
 		}
 
-		std::cout << "\n==================== Press 'Q' key for quit =====================\n" << std::endl;
+		std::cout << "\n==================== SERVER HAS STARTED!!! =====================\n" << std::endl;
 
 		int checkRet;
 		bool isContinue = true;

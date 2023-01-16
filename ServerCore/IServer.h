@@ -51,5 +51,5 @@ struct IServer
 	virtual int HandleMsg(const NetMsg msg, const std::shared_ptr<NetGameSession>& session) { return -1; }
 	virtual void CreateUserConnection(std::shared_ptr<NetGameSession> session) {}
 	virtual void DispatchClientMsg(uint16_t targetServer, NetMsg m_Msg, const std::shared_ptr<NetGameSession>& session) {}
-	virtual void DispatchMsgToServer(uint16_t targetServer, NetMsg msg)  {}
+	virtual void DispatchMsgToServer(uint16_t targetServer, NetMsg msg, const std::shared_ptr<NetGameSession>& session) {}
 };

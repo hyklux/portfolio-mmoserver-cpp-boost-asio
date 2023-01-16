@@ -120,18 +120,13 @@ int ZoneServer::Handle_C_ENTER_GAME(NetMsg msg)
 		return static_cast<uint16_t>(ERRORTYPE::PKT_ERROR);
 	}
 
-	std::string playerName = "Player" + to_string(pkt.playerindex());
+	std::string playerName = "Player" + to_string(pkt.playerid());
 
-	cout << playerName << " entering game..." << endl;
+	cout << "[ZoneServer] " << playerName << " entering game..." << endl;
 
-	m_PlayerList.push_back(new CPlayer(pkt.playerindex(), playerName));
+	m_PlayerList.push_back(new CPlayer(pkt.playerid(), playerName));
 
-	cout << playerName << " enter game success." << endl;
+	cout << "[ZoneServer] " << playerName << " enter game success." << endl;
 
-	return 0;
-}
-
-int ZoneServer::Handle_C_CHAT(NetMsg msg)
-{
 	return 0;
 }

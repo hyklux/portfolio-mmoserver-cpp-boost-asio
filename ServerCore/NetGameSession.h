@@ -22,13 +22,14 @@ class NetGameSession : public std::enable_shared_from_this<NetGameSession>
 private:
 	IServer* m_pNetworkServer;
 	uint32_t m_SessionId;
+	uint64_t m_PlayerId;
 
 	boost::asio::ip::tcp::socket m_Socket;
 	boost::asio::streambuf streamBuf;
 	NetMsg m_Msg;
 
 public:
-	NetGameSession(IServer* pNetworkServer, uint32_t sessionId, boost::asio::ip::tcp::socket& _socket) : m_pNetworkServer(pNetworkServer), m_SessionId(sessionId), m_Socket(std::move(_socket))
+	NetGameSession(IServer* pNetworkServer, uint32_t sessionId, boost::asio::ip::tcp::socket& _socket) : m_pNetworkServer(pNetworkServer), m_SessionId(sessionId), m_PlayerId(0), m_Socket(std::move(_socket))
 	{
 		cout << "Session created. SessionId:" << m_SessionId << endl;
 	}
@@ -46,6 +47,11 @@ public:
 	uint32_t GetSessionId()
 	{
 		return m_SessionId;
+	}
+
+	uint64_t GetPlayerId()
+	{
+		return m_PlayerId;
 	}
 
 	void SendMsgToClient(NetMsg msg);
