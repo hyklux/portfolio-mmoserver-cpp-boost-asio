@@ -109,6 +109,9 @@ int UserServer::HandleMsg(const NetMsg msg, const std::shared_ptr<NetGameSession
 	case MSG_C_ENTER_GAME:
 		Handle_C_ENTER_GAME(msg, session);
 		break;
+	case MSG_C_CHAT:
+		Handle_C_CHAT(msg, session);
+		break;
 	default:
 		break;
 	}
@@ -177,6 +180,12 @@ uint16_t UserServer::Handle_C_ENTER_GAME(const NetMsg msg, const std::shared_ptr
 	return 0;
 }
 
+uint16_t UserServer::Handle_C_CHAT(const NetMsg msg, const std::shared_ptr<NetGameSession>& session)
+{
+	//khy todo : 해야할 작업을 MsgJobQueue에 함수 + 인자를 넣는다.
+	return Chat(msg, session);
+}
+
 uint16_t UserServer::Login(const NetMsg msg)
 {
 	cout << "[UserServer] Login" << endl;
@@ -208,6 +217,7 @@ uint16_t UserServer::EnterGame(const NetMsg msg, const std::shared_ptr<NetGameSe
 	}
 
 	m_pConnectorServer->DispatchMsgToServer(EZoneServer, msg, session);
+	m_pConnectorServer->DispatchMsgToServer(EChatServer, msg, session);
 
 	return static_cast<uint16_t>(ERRORTYPE::NONE_ERROR);
 }

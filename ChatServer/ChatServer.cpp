@@ -139,9 +139,6 @@ int ChatServer::Handle_C_ENTER_GAME(const NetMsg msg, const std::shared_ptr<NetG
 
 	m_UserSessionList.push_back(session);
 
-	std::string broadcastMsgStr = "Player" + to_string(pkt.playerid()) + " has entered chat room.";
-	BroadCastAll(broadcastMsgStr);
-
 	return 0;
 }
 
@@ -156,8 +153,7 @@ int ChatServer::Handle_C_CHAT(const NetMsg msg, const std::shared_ptr<NetGameSes
 		return static_cast<uint16_t>(ERRORTYPE::PKT_ERROR);
 	}
 
-	cout << "[ChatServer] Player" << to_string(pkt.playerid()) << " " << pkt.msg() << endl;
-	return 0;
+	cout << "[ChatServer] [Player" << to_string(pkt.playerid()) << "] " << pkt.msg() << endl;
 
 	std::string broadcastMsgStr = "[Player" + to_string(pkt.playerid()) + "] : " + pkt.msg();
 	BroadCastAll(broadcastMsgStr);

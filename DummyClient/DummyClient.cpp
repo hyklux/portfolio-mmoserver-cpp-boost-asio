@@ -10,6 +10,8 @@
 #include "NetMsg.h"
 #include "Protocol.pb.h"
 
+#include <thread>
+
 const char SERVER_IP[] = "127.0.0.1";
 const unsigned short PORT_NUMBER = 10000;
 
@@ -58,6 +60,8 @@ public:
 int main()
 {
 	bool m_IsServerOn = false;
+	int m_ThreadCnt = 1;
+	std::vector<std::unique_ptr<std::thread>> m_ThreadList;
 
 	this_thread::sleep_for(1s);
 
@@ -69,22 +73,23 @@ int main()
 
 	//before you call run() of the io_service yourIOService
 	worker = std::make_shared<boost::asio::io_service::work>(io_service);
-	worker->get_io_context.restart();
+	worker->get_io_context().restart();
 
-	for (int i = 0; i < m_ThreadCnt; ++i)
-	{
-		auto thr = std::make_unique<std::thread>([this]()
-		{
-			io_service.run();
-		});
-		m_ThreadList.push_back(std::move(thr));
-	}
+	//for (int i = 0; i < m_ThreadCnt; ++i)
+	//{
+	//	auto thr = std::make_unique<std::thread>([this]()
+	//	{
+	//		io_service.run();
+	//	});
+	//	m_ThreadList.push_back(std::move(thr));
+	//}
 
 	//[서버 연결]
 	boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::address::from_string(SERVER_IP), PORT_NUMBER);
 
 	NetClient netClient1(io_service);
 	netClient1.Connect(endpoint);
+	io_service.run();
 
 	while (!netClient1.IsConnected())
 	{
@@ -128,6 +133,7 @@ int main()
 	{
 		this_thread::sleep_for(1s);
 		
+		cout << "[Client] Writing message..." << endl;
 		Protocol::C_CHAT chatPkt;
 		chatPkt.set_msg("Blah blah blah...");
 

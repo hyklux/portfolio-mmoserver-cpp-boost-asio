@@ -10,8 +10,6 @@ void NetClient::Connect(boost::asio::ip::tcp::endpoint& endpoint)
 	std::cout << "[NetClient] Connecting to server(" << endpoint.address() << "," << endpoint.port() << ")..." << std::endl;
 
 	m_Socket.async_connect(endpoint, boost::bind(&NetClient::OnConnect, this, boost::asio::placeholders::error));
-
-	StartIOService();
 }
 
 void NetClient::OnConnect(const boost::system::error_code& error)
