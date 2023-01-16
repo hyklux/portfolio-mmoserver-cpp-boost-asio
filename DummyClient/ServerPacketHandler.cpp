@@ -3,7 +3,7 @@
 
 PacketHandlerFunc GPacketHandler[UINT16_MAX];
 
-// Á÷Á¢ ÄÁÅÙÃ÷ ÀÛ¾÷ÀÚ
+// ì§ì ‘ ì»¨í…ì¸  ì‘ì—…ì
 
 bool Handle_INVALID(PacketSessionRef& session, BYTE* buffer, int32 len)
 {
@@ -19,12 +19,12 @@ bool Handle_S_LOGIN(PacketSessionRef& session, Protocol::S_LOGIN& pkt)
 
 	if (pkt.players().size() == 0)
 	{
-		// Ä³¸¯ÅÍ »ı¼ºÃ¢
+		// ìºë¦­í„° ìƒì„±ì°½
 	}
 
-	// ÀÔÀå UI ¹öÆ° ´­·¯¼­ °ÔÀÓ ÀÔÀå
+	// ì…ì¥ UI ë²„íŠ¼ ëˆŒëŸ¬ì„œ ê²Œì„ ì…ì¥
 	Protocol::C_ENTER_GAME enterGamePkt;
-	enterGamePkt.set_playerindex(0); // Ã¹¹øÂ° Ä³¸¯ÅÍ·Î ÀÔÀå
+	enterGamePkt.set_playerid(0); // ì²«ë²ˆì§¸ ìºë¦­í„°ë¡œ ì…ì¥
 	auto sendBuffer = ServerPacketHandler::MakeSendBuffer(enterGamePkt);
 	session->Send(sendBuffer);
 

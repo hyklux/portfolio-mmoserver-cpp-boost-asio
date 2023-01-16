@@ -69,6 +69,16 @@ int main()
 
 	//before you call run() of the io_service yourIOService
 	worker = std::make_shared<boost::asio::io_service::work>(io_service);
+	worker->get_io_context.restart();
+
+	for (int i = 0; i < m_ThreadCnt; ++i)
+	{
+		auto thr = std::make_unique<std::thread>([this]()
+		{
+			io_service.run();
+		});
+		m_ThreadList.push_back(std::move(thr));
+	}
 
 	//[서버 연결]
 	boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::address::from_string(SERVER_IP), PORT_NUMBER);
@@ -85,8 +95,9 @@ int main()
 
 	//로그인 
 	Protocol::C_LOGIN loginPkt;
-	loginPkt.set_username("Chulsoo");
+	loginPkt.set_username("Player1");
 
+	cout << "[Client] " << loginPkt.username() << " requesting login..." << endl;
 	NetMsg loginMsg;
 	loginMsg.MakeBuffer(loginPkt, MSG_C_LOGIN);
 	netClient1.SendMsgToServer(loginMsg);
@@ -98,12 +109,34 @@ int main()
 
 	this_thread::sleep_for(1s);
 
+	//게임 진입
 	Protocol::C_ENTER_GAME enterGamePkt;
-	enterGamePkt.set_playerindex(1);
+	enterGamePkt.set_playerid(1);
 
+	cout << "[Client] Player" << enterGamePkt.playerid() << " requesting enter game..." << endl;
 	NetMsg enterGameMsg;
 	enterGameMsg.MakeBuffer(enterGamePkt, MSG_C_ENTER_GAME);
 	netClient1.SendMsgToServer(enterGameMsg);
+
+	while (!netClient1.HasEnteredGame())
+	{
+		continue;
+	}
+
+	int cnt = 0;
+	while (cnt < 10)
+	{
+		this_thread::sleep_for(1s);
+		
+		Protocol::C_CHAT chatPkt;
+		chatPkt.set_msg("Blah blah blah...");
+
+		NetMsg chatMsg;
+		chatMsg.MakeBuffer(chatPkt, MSG_C_CHAT);
+		netClient1.SendMsgToServer(chatMsg);
+
+		cnt++;
+	}
 
 	while (m_IsServerOn)
 	{
