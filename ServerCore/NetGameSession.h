@@ -60,6 +60,8 @@ public:
 
 	void RegisterReceive();
 
+	void Disconnect();
+
 private:
 	void OnSend(const boost::system::error_code& error, size_t bytes_transferred);
 

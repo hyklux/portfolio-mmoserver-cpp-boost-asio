@@ -164,22 +164,14 @@ bool NetworkServer::StartTcpServer()
 	try
 	{
 		boost::asio::ip::tcp::endpoint endpoint_;
-
 		endpoint_.address(boost::asio::ip::address::from_string(m_IpAddr));
 		endpoint_.port(m_PortNo);
 
-		//m_Acceptor = std::make_shared<boost::asio::ip::tcp::acceptor>(m_IOService);
 		m_Acceptor.open(endpoint_.protocol());
-
 		boost::asio::socket_base::reuse_address option(true);
 		m_Acceptor.set_option(option);
 		m_Acceptor.bind(endpoint_);
 		m_Acceptor.listen();
-
-		//m_Acceptors.push_back(std::move(m_Acceptor));
-
-		//boost::asio::ip::tcp::socket acceptorSocket(m_IOService);
-		//m_AcceptorSockets.push_back(acceptorSocket);
 
 		RegisterAccept();
 	}
@@ -207,8 +199,6 @@ void NetworkServer::RegisterAccept()
 
 			std::shared_ptr<NetGameSession> newSession = std::make_shared<NetGameSession>(this, ++m_SessionIdIdx, socket);
 			newSession->RegisterReceive();
-			//m_GameSessions.push_back(std::move(newSession));
-			//m_GameSessions.push_back(new NetGameSession(++m_SessionIdIdx, socket));
 
 			IServer* userServer = GetUserServer();
 			if (userServer)

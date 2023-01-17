@@ -95,7 +95,6 @@ void NetClient::RegisterSend(std::string msgStr)
 
 	boost::asio::async_write(m_Socket, b, boost::asio::transfer_exactly(128), [&](error_code error, std::size_t bytes_transferred)
 	{
-		// All data has been sent
 		std::cout << "[NetClient] All data has been sent. Bytes transferred:" << bytes_transferred << std::endl;
 	});
 
@@ -106,7 +105,6 @@ void NetClient::RegisterSend(NetMsg msg)
 {
 	boost::asio::async_write(m_Socket, boost::asio::buffer(msg.GetData(), msg.GetLength()), [&](error_code error, std::size_t bytes_transferred)
 	{
-		// All data has been sent
 		std::cout << "[NetClient] All data has been sent. Bytes transferred:" << bytes_transferred << std::endl;
 
 		StopIOService();
@@ -129,7 +127,7 @@ void NetClient::RegisterReceive()
 		}
 		else
 		{
-			//khy todo : disconnect
+			Disconnect();
 		}
 
 		StopIOService();
@@ -155,9 +153,6 @@ void NetClient::OnReceive(const boost::system::error_code& error, size_t bytes_t
 		{
 			std::cout << "[NetClient] Error No: " << error.value() << " Error Message: " << error.message() << std::endl;
 		}
-	}
-	else
-	{
 	}
 }
 
