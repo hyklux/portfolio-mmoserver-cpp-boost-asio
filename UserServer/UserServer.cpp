@@ -61,22 +61,8 @@ int UserServer::OnLoad()
 {
 	cout << "[UserServer] OnLoad" << endl;
 
-	for (int i = 0; i < m_JobQueueThreadCnt; ++i)
-	{
-		/*
-		std::unique_ptr<std::thread> thr = std::make_unique<std::thread>([this]()
-		{
-			CallbackType callback;
-
-			while (m_JobQueue.try_pop(callback))
-			{
-				callback();
-			}
-		});
-		*/
-	}
-
 	SetConnector();
+	m_ThreadPool.Activate(m_JobQueueThreadCnt);
 
 	return 0;
 }
@@ -104,13 +90,19 @@ int UserServer::HandleMsg(const NetMsg msg, const std::shared_ptr<NetGameSession
 	switch (msg.GetPktId())
 	{
 	case MSG_C_LOGIN:
-		Handle_C_LOGIN(msg, session);
+		m_ThreadPool.EnqueueJob([this, msg, session]() {
+			this->Handle_C_LOGIN(msg, session);
+		});
 		break;
 	case MSG_C_ENTER_GAME:
-		Handle_C_ENTER_GAME(msg, session);
+		m_ThreadPool.EnqueueJob([this, msg, session]() {
+			this->Handle_C_ENTER_GAME(msg, session);
+		});
 		break;
 	case MSG_C_CHAT:
-		Handle_C_CHAT(msg, session);
+		m_ThreadPool.EnqueueJob([this, msg, session]() {
+			this->Handle_C_CHAT(msg, session);
+		});
 		break;
 	default:
 		break;

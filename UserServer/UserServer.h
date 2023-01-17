@@ -16,6 +16,8 @@
 #include <tbb/concurrent_queue.h>
 #include <memory>
 
+#include "ThreadPool.h"
+
 using namespace std;
 
 extern "C" __declspec(dllexport) int CreateServerInstance(IServerContainer * pServerContainer, IServer * &pServer);
@@ -29,8 +31,9 @@ private:
 	std::atomic_int m_refs = 0;
 	IServerContainer* m_pServerContainer;
 	IServer* m_pConnectorServer;
-	int8_t m_JobQueueThreadCnt = 1;
 	vector<UserConnection> userConnectionList;
+	int8_t m_JobQueueThreadCnt = 3;
+	ThreadPool m_ThreadPool;
 
 public:
 	virtual int AddRef(void) override;
@@ -43,13 +46,14 @@ public:
 
 	virtual int HandleMsg(const NetMsg msg, const std::shared_ptr<NetGameSession>& session) override;
 	virtual void CreateUserConnection(std::shared_ptr<NetGameSession> session) override;
-private:
-	virtual int SetConnector() override;
 
 	// Handlers
 	uint16_t Handle_C_LOGIN(const NetMsg msg, const std::shared_ptr<NetGameSession>& session);
 	uint16_t Handle_C_ENTER_GAME(const NetMsg msg, const std::shared_ptr<NetGameSession>& session);
 	uint16_t Handle_C_CHAT(const NetMsg msg, const std::shared_ptr<NetGameSession>& session);
+private:
+	virtual int SetConnector() override;
+
 
 	uint16_t Login(const NetMsg msg);
 	uint16_t EnterGame(const NetMsg msg, const std::shared_ptr<NetGameSession>& session);

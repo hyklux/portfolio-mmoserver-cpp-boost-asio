@@ -27,6 +27,9 @@
     <ClInclude Include="UserServer.h">
       <Filter>Main</Filter>
     </ClInclude>
+    <ClInclude Include="ThreadPool.h">
+      <Filter>Main</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -45,6 +48,9 @@
       <Filter>Protocol</Filter>
     </ClCompile>
     <ClCompile Include="UserServer.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="ThreadPool.cpp">
       <Filter>Main</Filter>
     </ClCompile>
   </ItemGroup>

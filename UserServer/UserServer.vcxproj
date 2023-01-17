@@ -180,6 +180,7 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="Protocol.pb.h" />
     <ClInclude Include="Struct.pb.h" />
+    <ClInclude Include="ThreadPool.h" />
     <ClInclude Include="UserServer.h" />
   </ItemGroup>
   <ItemGroup>
@@ -208,6 +209,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="ThreadPool.cpp" />
     <ClCompile Include="UserServer.cpp" />
   </ItemGroup>
   <ItemGroup>

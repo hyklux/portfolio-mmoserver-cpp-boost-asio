@@ -171,9 +171,6 @@
     <ClInclude Include="DBSynchronizer.h">
       <Filter>DB</Filter>
     </ClInclude>
-    <ClInclude Include="IServer.h">
-      <Filter>Main</Filter>
-    </ClInclude>
     <ClInclude Include="ThreadSafeQueue.h">
       <Filter>Network</Filter>
     </ClInclude>
@@ -188,9 +185,6 @@
     </ClInclude>
     <ClInclude Include="NetHeader.h">
       <Filter>AsioNetwork</Filter>
-    </ClInclude>
-    <ClInclude Include="IServerContainer.h">
-      <Filter>Main</Filter>
     </ClInclude>
     <ClInclude Include="NetMsg.h">
       <Filter>AsioNetwork</Filter>
@@ -211,6 +205,12 @@
       <Filter>Protocol</Filter>
     </ClInclude>
     <ClInclude Include="CPlayer.h" />
+    <ClInclude Include="IServerContainer.h">
+      <Filter>AsioNetwork</Filter>
+    </ClInclude>
+    <ClInclude Include="IServer.h">
+      <Filter>AsioNetwork</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CorePch.cpp">
