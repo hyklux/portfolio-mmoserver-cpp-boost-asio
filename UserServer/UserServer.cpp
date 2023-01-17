@@ -76,9 +76,6 @@ int UserServer::OnStart()
 int UserServer::OnUnload()
 {
 	cout << "[UserServer] OnUnload" << endl;
-
-	//m_JobQueue.Terminate();
-
 	return 0;
 }
 
@@ -136,8 +133,6 @@ int UserServer::SetConnector()
 
 uint16_t UserServer::Handle_C_LOGIN(const NetMsg msg, const std::shared_ptr<NetGameSession>& session)
 {
-	//khy todo : 해야할 작업을 MsgJobQueue에 함수 + 인자를 넣는다.
-
 	//로그인
 	Protocol::S_LOGIN loginPkt;
 
@@ -155,8 +150,6 @@ uint16_t UserServer::Handle_C_LOGIN(const NetMsg msg, const std::shared_ptr<NetG
 
 uint16_t UserServer::Handle_C_ENTER_GAME(const NetMsg msg, const std::shared_ptr<NetGameSession>& session)
 {
-	//khy todo : 해야할 작업을 MsgJobQueue에 함수 + 인자를 넣는다.
-
 	//게임 진입
 	Protocol::S_ENTER_GAME enterGamePkt;
 
@@ -174,7 +167,6 @@ uint16_t UserServer::Handle_C_ENTER_GAME(const NetMsg msg, const std::shared_ptr
 
 uint16_t UserServer::Handle_C_CHAT(const NetMsg msg, const std::shared_ptr<NetGameSession>& session)
 {
-	//khy todo : 해야할 작업을 MsgJobQueue에 함수 + 인자를 넣는다.
 	return Chat(msg, session);
 }
 
