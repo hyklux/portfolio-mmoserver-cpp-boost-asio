@@ -100,6 +100,15 @@ void* ServerContainer::GetTargetServer(uint16_t targetServer)
 		}
 		break;
 	}
+	case EDBAgent:
+	{
+		auto itr = m_ServerMap.find("DBAgent");
+		if (itr != m_ServerMap.end())
+		{
+			pTargetServer = itr->second;
+		}
+		break;
+	}
 	default:
 		break;
 	}

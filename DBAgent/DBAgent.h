@@ -2,6 +2,9 @@
 
 #include "IServer.h"
 #include "IServerContainer.h"
+#include "DBConn.h"
+
+#include "Protocol.pb.h"
 
 #include <iostream>
 #include <vector>
@@ -13,6 +16,7 @@
 
 #include <memory>
 
+
 using namespace std;
 
 extern "C" __declspec(dllexport) int CreateServerInstance(IServerContainer * pServerContainer, IServer*& pServer);
@@ -23,6 +27,8 @@ private:
 	std::atomic_int m_refs = 0;
 	IServerContainer* m_pServerContainer;
 	IServer* m_pConnectorServer;
+	DBConn m_DbConn;
+	int m_UserIdx = 0;
 
 public:
 	virtual int AddRef(void) override;
@@ -33,10 +39,18 @@ public:
 	virtual int OnStart() override;
 	virtual int OnUnload() override;
 
+	virtual int HandleMsg(const NetMsg msg, const std::shared_ptr<NetGameSession>& session) override;
+
+	bool ExistsUserInDB(std::string userName);
+	int CreateUserToDB(std::string userName);
+
 private:
 	virtual int SetConnector() override;
 
+	int ConnectToDB();
+	int InitDBTable();
+
 	//handlers
-	int Handle_C_CHAT(std::string msgStr);
+	int Handle_C_LOGIN(const NetMsg msg, const std::shared_ptr<NetGameSession>& session);
 };
 

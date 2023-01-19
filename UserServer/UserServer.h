@@ -55,7 +55,7 @@ private:
 	virtual int SetConnector() override;
 
 
-	uint16_t Login(const NetMsg msg);
+	uint16_t Login(const NetMsg msg, const std::shared_ptr<NetGameSession>& session);
 	uint16_t EnterGame(const NetMsg msg, const std::shared_ptr<NetGameSession>& session);
 	uint16_t Chat(const NetMsg msg, const std::shared_ptr<NetGameSession>& session);
 };

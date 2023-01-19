@@ -9,10 +9,12 @@ class NetGameSession;
 
 enum : uint16_t
 {
+	EConnectorServer = 100,
 	ENetworkServer = 0,
 	EUserServer = 1,
 	EZoneServer = 2,
 	EChatServer = 3,
+	EDBAgent = 4,
 };
 
 enum : uint16_t

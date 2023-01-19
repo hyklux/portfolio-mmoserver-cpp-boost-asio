@@ -4,6 +4,9 @@
     <Filter Include="Main">
       <UniqueIdentifier>{051899b5-f151-4b75-8cf0-d89501eadfda}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Protocol">
+      <UniqueIdentifier>{46f7dbf8-16d8-4fc1-9c58-d4e59751c50c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -14,6 +17,16 @@
     </ClInclude>
     <ClInclude Include="DBAgent.h">
       <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="DBConn.h" />
+    <ClInclude Include="Enum.pb.h">
+      <Filter>Protocol</Filter>
+    </ClInclude>
+    <ClInclude Include="Protocol.pb.h">
+      <Filter>Protocol</Filter>
+    </ClInclude>
+    <ClInclude Include="Struct.pb.h">
+      <Filter>Protocol</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -26,5 +39,20 @@
     <ClCompile Include="DBAgent.cpp">
       <Filter>Main</Filter>
     </ClCompile>
+    <ClCompile Include="DBConn.cpp" />
+    <ClCompile Include="Enum.pb.cc">
+      <Filter>Protocol</Filter>
+    </ClCompile>
+    <ClCompile Include="Protocol.pb.cc">
+      <Filter>Protocol</Filter>
+    </ClCompile>
+    <ClCompile Include="Struct.pb.cc">
+      <Filter>Protocol</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Common\Protobuf\bin\GenPackets.bat">
+      <Filter>Protocol</Filter>
+    </None>
   </ItemGroup>
 </Project>

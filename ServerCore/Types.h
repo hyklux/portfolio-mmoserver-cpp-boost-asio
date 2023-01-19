@@ -37,10 +37,10 @@ USING_SHARED_PTR(JobQueue);
 USING_SHARED_PTR(MsgJob);
 USING_SHARED_PTR(MsgJobQueue);
 
-#define size16(val)		static_cast<int16>(sizeof(val))
-#define size32(val)		static_cast<int32>(sizeof(val))
-#define len16(arr)		static_cast<int16>(sizeof(arr)/sizeof(arr[0]))
-#define len32(arr)		static_cast<int32>(sizeof(arr)/sizeof(arr[0]))
+#define size16(val)		static_cast<int16_t>(sizeof(val))
+#define size32(val)		static_cast<int32_t>(sizeof(val))
+#define len16(arr)		static_cast<int16_t>(sizeof(arr)/sizeof(arr[0]))
+#define len32(arr)		static_cast<int32_t>(sizeof(arr)/sizeof(arr[0]))
 
 #define _STOMP
 
@@ -49,5 +49,8 @@ enum class ERRORTYPE : uint16_t
 	NONE_ERROR,
 	NULL_ERROR,
 	PKT_ERROR,
+	DBCONN_ERROR,
+	DBQUERY_ERROR,
 	UNKNOWN_ERROR,
+	COMMON_ERROR,
 };

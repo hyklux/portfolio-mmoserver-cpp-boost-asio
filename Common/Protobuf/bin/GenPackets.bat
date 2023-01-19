@@ -72,6 +72,14 @@ XCOPY /Y Protocol.pb.h "../../../ChatServer"
 XCOPY /Y Protocol.pb.cc "../../../ChatServer"
 XCOPY /Y ServerPacketHandler.h "../../../ChatServer"
 
+XCOPY /Y Enum.pb.h "../../../DBAgent"
+XCOPY /Y Enum.pb.cc "../../../DBAgent"
+XCOPY /Y Struct.pb.h "../../../DBAgent"
+XCOPY /Y Struct.pb.cc "../../../DBAgent"
+XCOPY /Y Protocol.pb.h "../../../DBAgent"
+XCOPY /Y Protocol.pb.cc "../../../DBAgent"
+XCOPY /Y ServerPacketHandler.h "../../../DBAgent"
+
 DEL /Q /F *.pb.h
 DEL /Q /F *.pb.cc
 DEL /Q /F *.h

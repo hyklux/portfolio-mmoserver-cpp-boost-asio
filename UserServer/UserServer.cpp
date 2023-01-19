@@ -136,7 +136,7 @@ uint16_t UserServer::Handle_C_LOGIN(const NetMsg msg, const std::shared_ptr<NetG
 	//로그인
 	Protocol::S_LOGIN loginPkt;
 
-	if (0 == Login(msg))
+	if (0 == Login(msg, session))
 	{
 		loginPkt.set_success(true);
 	}
@@ -170,22 +170,17 @@ uint16_t UserServer::Handle_C_CHAT(const NetMsg msg, const std::shared_ptr<NetGa
 	return Chat(msg, session);
 }
 
-uint16_t UserServer::Login(const NetMsg msg)
+uint16_t UserServer::Login(const NetMsg msg, const std::shared_ptr<NetGameSession>& session)
 {
 	cout << "[UserServer] Login" << endl;
 
-	//패킷 분해
-	Protocol::C_LOGIN pkt;
-	if (false == ParsePkt(pkt, msg))
+	if (!m_pConnectorServer)
 	{
-		return static_cast<uint16_t>(ERRORTYPE::PKT_ERROR);
+		cout << "[UserServer] Error : Connector server is null." << endl;
+		return static_cast<uint16_t>(ERRORTYPE::NULL_ERROR);
 	}
 
-	cout << "[UserServer] " << pkt.username() << " logging in..." << endl;
-
-	//khy todo : create user connection
-
-	cout << "[UserServer] " << pkt.username() << " login success." << endl;
+	m_pConnectorServer->DispatchMsgToServer(EDBAgent, msg, session);
 
 	return static_cast<uint16_t>(ERRORTYPE::NONE_ERROR);
 }
