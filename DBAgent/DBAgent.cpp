@@ -134,7 +134,7 @@ bool DBAgent::ExistsUserInDB(std::string userName)
 	SQLLEN len = 0;
 	m_DbConn.BindParam(1, SQL_C_WCHAR, SQL_WCHAR, sizeof(userName), &userName, &len);
 
-	auto query = L"SELECT name FROM [dbo].[User] WHERE name = (?)";
+	auto query = L"SELECT name FROM [dbo].[User] WHERE username = (?)";
 
 	int outId = 0;
 	SQLLEN outIdLen = 0;
@@ -159,15 +159,15 @@ int DBAgent::CreateUserToDB(std::string userName)
 
 	SQLLEN len = 0;
 
-	m_UserIdx++;
-	int queryUserId = m_UserIdx;
+	m_UserId++;
+	int userIdParam = m_UserId;
 	std::wstring usernameWStr = std::wstring(userName.begin(), userName.end());
-	const WCHAR* queryUserName = usernameWStr.c_str();
+	const WCHAR* userNameParam = usernameWStr.c_str();
 
-	m_DbConn.BindParam(1, &queryUserId, &len);
-	m_DbConn.BindParam(2, queryUserName, &len);
-	auto query = L"SET IDENTITY_INSERT [dbo].[User] ON INSERT INTO [dbo].[User]([id], [name]) VALUES(?, ?) SET IDENTITY_INSERT [dbo].[User] OFF";
+	m_DbConn.BindParam(1, &userIdParam, &len);
+	m_DbConn.BindParam(2, userNameParam, &len);
 
+	auto query = L"INSERT INTO [dbo].[User]([userid], [username]) VALUES(?, ?)";
 	bool queryResult = m_DbConn.Execute(query);
 	if (!queryResult)
 	{
@@ -214,7 +214,7 @@ int DBAgent::InitDBTable()
 {
 	cout << "[DBAgent] Initializing DB table..." << endl;
 
-	auto query = L"DROP TABLE IF EXISTS [dbo].[User]; CREATE TABLE [dbo].[User] ([id] INT NOT NULL PRIMARY KEY IDENTITY, [name] VARCHAR(100) NULL);";
+	auto query = L"DROP TABLE IF EXISTS [dbo].[User]; CREATE TABLE [dbo].[User] ([id] INT NOT NULL PRIMARY KEY IDENTITY, [userid] INT NOT NULL, [username] VARCHAR(100) NOT NULL);";
 
 	bool createTableResult = m_DbConn.Execute(query);
 	if (!createTableResult)

@@ -28,7 +28,7 @@ private:
 	IServerContainer* m_pServerContainer;
 	IServer* m_pConnectorServer;
 	DBConn m_DbConn;
-	int m_UserIdx = 0;
+	int m_UserId = 0;
 
 public:
 	virtual int AddRef(void) override;
