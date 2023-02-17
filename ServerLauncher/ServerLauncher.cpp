@@ -30,14 +30,16 @@ int main(int argc, const char** argv)
 		if (ret != 0)
 		{
 			cout << "[Server Launcher] Server container load error." << endl;
-			//todo : throw error
+			cout << "Server shutdown." << std::endl;
+			return;
 		}
 
 		ret = serverContainer.Start();
 		if (ret != 0)
 		{
 			cout << "[Server Launcher] Server container start error." << endl;
-			//todo : throw error
+			cout << "Server shutdown." << std::endl;
+			return;
 		}
 
 		std::cout << "\n==================== SERVER HAS STARTED!!! =====================\n" << std::endl;
@@ -56,18 +58,15 @@ int main(int argc, const char** argv)
 			}
 		} while (isContinue);
 
-		std::cout << "Ending server..." << std::endl;
+		cout << "Shutting down server..." << std::endl;
 
 		//mainContainer.Unload();
 
-		std::cout << "Server end." << std::endl;
+		cout << "Server shutdown." << std::endl;
 	}
 	catch (const std::exception& e)
 	{
 		cout << e.what() << endl;
-	}
-	catch (...)
-	{
 	}
 
 	return 0;

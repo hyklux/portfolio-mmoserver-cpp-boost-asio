@@ -18,8 +18,6 @@ private:
 	std::atomic_int m_refs = 0;
 	std::unordered_map<std::string, IServer*> m_ServerMap;
 
-private:
-
 public:
 	ServerContainer(const std::string& appDir, const std::string& serverRevision)
 	{
