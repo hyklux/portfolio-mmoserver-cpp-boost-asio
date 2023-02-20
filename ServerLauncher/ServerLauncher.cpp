@@ -31,7 +31,7 @@ int main(int argc, const char** argv)
 		{
 			cout << "[Server Launcher] Server container load error." << endl;
 			cout << "Server shutdown." << std::endl;
-			return;
+			return 0;
 		}
 
 		ret = serverContainer.Start();
@@ -39,7 +39,7 @@ int main(int argc, const char** argv)
 		{
 			cout << "[Server Launcher] Server container start error." << endl;
 			cout << "Server shutdown." << std::endl;
-			return;
+			return 0;
 		}
 
 		std::cout << "\n==================== SERVER HAS STARTED!!! =====================\n" << std::endl;
