@@ -19,6 +19,9 @@ C++ Boost asio 라이브러리 기반 MMO 서버 프레임워크입니다.
 :heavy_check_mark: User 모듈
 
 
+:heavy_check_mark: DBAgent 모듈
+
+
 :heavy_check_mark: Zone 모듈
 
 
@@ -34,15 +37,21 @@ C++ Boost asio 라이브러리 기반 MMO 서버 프레임워크입니다.
 
 
 # Server Container
-- 서버가 시작되면 config.json 파일에 정의된 user, zone 등의 모듈을 로드합니다.
+- 서버가 시작되면 config.json 파일에 정의된 user, zone 등의 모듈을 로드합니다. 각 모듈은 개별 DLL 파일로 구성되어 있습니다.
 - 로드할 모듈은 해당 서버의 구성에 따라 달라질 수 있습니다. 예를 들어 어떤 서버에는 zone 모듈이 없다거나 어떤 서버에는 dbagent 모듈이 없을 수 있습니다.
 - Server Container는 해당 서버에 업로드된 모든 모듈을 관리하는 컨테이너로 모든 서버 모듈에 대한 참조를 갖고 있습니다.
 
 
 # Network 모듈
-
+- Network 모듈은 유저 클라이언트와의 통신을 담당하는 모듈입니다.
+- 클라이언트가 접속하면 NetGameSession 클래스를 생성하여 이 객체를 통해 각 클라이언트와 통신하게 됩니다.
+- Boost Asio 네트워크 라이브러리를 사용하여 네트워크 통신을 구현했기 문에 윈도우와 리눅스 모두에서 해당 프로그램을 실행할 수 있습니다. 
+- Boost Asio 네트워크 라이브러리를 사용하면 윈도우OS는 내부적으로 IOCP 방식, 리눅스는 EPOLL 방식으로 동작합니다.
 
 # User 모듈
+
+
+# DBAgent 모듈
 
 
 # Zone 모듈
