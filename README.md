@@ -3,7 +3,7 @@ C++ Boost asio 라이브러리 기반 MMO 서버 프레임워크
 
 
 # 소개
-C++ Boost asio 라이브러리 기반 MMO 서버 프레임워크
+C++ Boost asio 라이브러리 기반 MMO 서버 프레임워크입니다.
 
 
 # 기능
