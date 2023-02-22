@@ -108,13 +108,6 @@ int UserServer::HandleMsg(const NetMsg msg, const std::shared_ptr<NetGameSession
 	return 0;
 }
 
-void UserServer::CreateUserConnection(std::shared_ptr<NetGameSession> session)
-{
-	//UserConnection* userConnection = new UserConnection(session);
-	//userConnection.SetSession(session);
-	//userConnectionList.push_back(userConnection);
-}
-
 int UserServer::SetConnector()
 {
 	if (!m_pServerContainer)

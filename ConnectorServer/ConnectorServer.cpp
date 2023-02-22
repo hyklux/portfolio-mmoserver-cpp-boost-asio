@@ -120,14 +120,11 @@ bool ConnectorServer::InitThreads()
 	{
 		for (int nI = 0; nI < m_ThreadCnt; ++nI)
 		{
-			/*
-			m_ThreadGroup.create_thread(boost::bind(&boost::asio::io_service::run, &m_IOService));
 			auto thr = std::make_unique<std::thread>([this]()
 			{
 				m_IOService.run();
 			});
 			m_ThreadList.push_back(std::move(thr));
-			*/
 		}
 	}
 	catch (std::bad_weak_ptr& e)
@@ -149,12 +146,10 @@ bool ConnectorServer::StartTcpServer()
 	try
 	{
 		boost::asio::ip::tcp::endpoint endpoint_;
-
 		endpoint_.address(boost::asio::ip::address::from_string(m_IpAddr));
 		endpoint_.port(m_ListenPortNo);
 
 		m_Acceptor.open(endpoint_.protocol());
-
 		boost::asio::socket_base::reuse_address option(true);
 		m_Acceptor.set_option(option);
 		m_Acceptor.bind(endpoint_);

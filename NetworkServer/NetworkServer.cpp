@@ -199,12 +199,6 @@ void NetworkServer::RegisterAccept()
 
 			std::shared_ptr<NetGameSession> newSession = std::make_shared<NetGameSession>(this, ++m_SessionIdIdx, socket);
 			newSession->RegisterReceive();
-
-			IServer* userServer = GetUserServer();
-			if (userServer)
-			{
-				userServer->CreateUserConnection(newSession);
-			}
 		}
 
 		RegisterAccept();

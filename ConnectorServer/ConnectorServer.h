@@ -24,8 +24,6 @@ private:
 	IServer* m_pConnectorServer;
 
 	std::shared_ptr<boost::asio::io_service::work> m_Work;
-	boost::asio::detail::thread_group m_ThreadGroup;
-
 	boost::asio::io_service m_IOService;
 	boost::asio::ip::tcp::acceptor m_Acceptor;
 	boost::asio::ip::tcp::socket m_Socket;

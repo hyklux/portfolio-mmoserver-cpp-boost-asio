@@ -45,7 +45,6 @@ public:
 	virtual int OnUnload() override;
 
 	virtual int HandleMsg(const NetMsg msg, const std::shared_ptr<NetGameSession>& session) override;
-	virtual void CreateUserConnection(std::shared_ptr<NetGameSession> session) override;
 
 	// Handlers
 	uint16_t Handle_C_LOGIN(const NetMsg msg, const std::shared_ptr<NetGameSession>& session);
