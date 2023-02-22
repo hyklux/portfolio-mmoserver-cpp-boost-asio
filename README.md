@@ -1,9 +1,9 @@
 # portfolio-mmoserver-cpp-boost-asio
-Boost asio 라이브러리 기반 MMO 서버 엔진 포트폴리오
+C++ Boost asio 라이브러리 기반 MMO 서버 프레임워크
 
 
 # 소개
-C# MMO 게임서버 포트폴리오입니다.
+C++ Boost asio 라이브러리 기반 MMO 서버 프레임워크
 
 
 게임룸에 입장한 모든 플레이어들의 이동 및 전투를 동기화 하는 게임서버입니다. 
