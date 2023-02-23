@@ -115,14 +115,14 @@ int DBAgent::Handle_C_LOGIN(const NetMsg msg, const std::shared_ptr<NetGameSessi
 		return static_cast<uint16_t>(ERRORTYPE::PKT_ERROR);
 	}
 
-	cout << "[UserServer] " << pkt.username() << " logging in..." << endl;
+	cout << "[DBAgent] " << pkt.username() << " logging in..." << endl;
 
 	if (!ExistsUserInDB(pkt.username()))
 	{
 		CreateUserToDB(pkt.username());
 	}
 
-	cout << "[UserServer] " << pkt.username() << " login success." << endl;
+	cout << "[DBAgent] " << pkt.username() << " login success." << endl;
 
 	return static_cast<uint16_t>(ERRORTYPE::NONE_ERROR);
 }
