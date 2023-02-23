@@ -166,6 +166,8 @@
     <ClInclude Include="Allocator.h" />
     <ClInclude Include="BufferReader.h" />
     <ClInclude Include="BufferWriter.h" />
+    <ClInclude Include="CActor.h" />
+    <ClInclude Include="CMonster.h" />
     <ClInclude Include="ConsoleLog.h" />
     <ClInclude Include="Container.h" />
     <ClInclude Include="CoreGlobal.h" />
@@ -226,6 +228,8 @@
     <ClCompile Include="Allocator.cpp" />
     <ClCompile Include="BufferReader.cpp" />
     <ClCompile Include="BufferWriter.cpp" />
+    <ClCompile Include="CActor.cpp" />
+    <ClCompile Include="CMonster.cpp" />
     <ClCompile Include="ConsoleLog.cpp" />
     <ClCompile Include="CoreGlobal.cpp" />
     <ClCompile Include="CorePch.cpp" />

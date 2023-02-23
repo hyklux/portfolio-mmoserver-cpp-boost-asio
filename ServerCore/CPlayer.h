@@ -1,21 +1,19 @@
 #pragma once
 
 #include <string>
+#include "CActor.h"
 
-class CPlayer
+class CPlayer : public CActor
 {
 private:
-	int32_t m_PlayerId;
 	std::string m_PlayerName;
-	
-	float m_PosX;
-	float m_PosY;
-	float m_PosZ;
+	uint8_t m_Level;
+	uint64_t m_Exp;
+	uint64_t m_Gold;
 
 public:
-	CPlayer(int32_t playeId, std::string playerName) : m_PlayerId(playeId), m_PlayerName(playerName), m_PosX(0.0f), m_PosY(0.0f), m_PosZ(0.0f)
+	CPlayer(int32_t entityId, std::string playerName) : CActor(entityId), m_PlayerName(playerName), m_Level(1), m_Exp(0), m_Gold(0)
 	{
 
 	}
 };
-

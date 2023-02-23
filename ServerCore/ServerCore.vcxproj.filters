@@ -37,6 +37,9 @@
     <Filter Include="Scene">
       <UniqueIdentifier>{82f478fd-5973-4ade-9df0-c74a3cb07438}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Actor">
+      <UniqueIdentifier>{c477de6b-743c-4390-a8a4-d92be3b16c7b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CorePch.h">
@@ -204,12 +207,20 @@
     <ClInclude Include="Enum.pb.h">
       <Filter>Protocol</Filter>
     </ClInclude>
-    <ClInclude Include="CPlayer.h" />
     <ClInclude Include="IServerContainer.h">
       <Filter>AsioNetwork</Filter>
     </ClInclude>
     <ClInclude Include="IServer.h">
       <Filter>AsioNetwork</Filter>
+    </ClInclude>
+    <ClInclude Include="CPlayer.h">
+      <Filter>Actor</Filter>
+    </ClInclude>
+    <ClInclude Include="CActor.h">
+      <Filter>Actor</Filter>
+    </ClInclude>
+    <ClInclude Include="CMonster.h">
+      <Filter>Actor</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -342,7 +353,15 @@
     <ClCompile Include="Enum.pb.cc">
       <Filter>Protocol</Filter>
     </ClCompile>
-    <ClCompile Include="CPlayer.cpp" />
+    <ClCompile Include="CPlayer.cpp">
+      <Filter>Actor</Filter>
+    </ClCompile>
+    <ClCompile Include="CActor.cpp">
+      <Filter>Actor</Filter>
+    </ClCompile>
+    <ClCompile Include="CMonster.cpp">
+      <Filter>Actor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

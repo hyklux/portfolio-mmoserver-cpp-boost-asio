@@ -3,6 +3,7 @@
 #include "IServer.h"
 #include "IServerContainer.h"
 #include "CPlayer.h"
+#include "CMonster.h"
 
 #include <iostream>
 #include <vector>
@@ -26,6 +27,7 @@ private:
 	IServer* m_pConnectorServer;
 
 	std::vector<CPlayer*> m_PlayerList;
+	std::vector<CMonster*> m_MonsterList;
 	bool m_CanTick = false;
 
 public:
@@ -43,6 +45,7 @@ private:
 	virtual int SetConnector() override;
 	void RunTick();
 	void Tick();
+	void CreateNPCs();
 
 	//handlers
 	int Handle_C_ENTER_GAME(NetMsg msg);

@@ -69,6 +69,7 @@ int ZoneServer::OnStart()
 	cout << "[ZoneServer] OnStart" << endl;
 
 	RunTick();
+	CreateNPCs();
 
 	return 0;
 }
@@ -78,6 +79,20 @@ int ZoneServer::OnUnload()
 	cout << "[ZoneServer] OnUnload" << endl;
 
 	m_CanTick = false;
+
+	//존에 존재하는 모든 플레이어 삭제
+	for (auto player : m_PlayerList)
+	{
+		delete player;
+	}
+	m_PlayerList.clear();
+
+	//존에 존재하는 모든 몬스터 삭제
+	for (auto monster : m_MonsterList)
+	{
+		delete monster;
+	}
+	m_MonsterList.clear();
 
 	return 0;
 }
@@ -130,6 +145,18 @@ void ZoneServer::RunTick()
 void ZoneServer::Tick()
 {
 	//매 프레임 처리해야 할 작업 수행
+}
+
+void ZoneServer::CreateNPCs()
+{
+	cout << "[ZoneServer] CreateNPCs" << endl;
+
+	for (int i = 0; i < 5; i++)
+	{
+		CMonster* monster = new CMonster(1000 + i, "Monster" + i);
+		monster->SetPosition(i, 0);
+		m_MonsterList.push_back(monster);
+	}
 }
 
 //handlers
