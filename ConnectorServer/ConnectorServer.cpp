@@ -76,7 +76,6 @@ int ConnectorServer::OnUnload()
 
 	m_Work->get_io_context().restart();
 	m_IOService.stop();
-	m_ThreadGroup.join();
 
 	return 0;
 }
