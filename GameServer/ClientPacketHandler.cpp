@@ -6,7 +6,7 @@
 
 PacketHandlerFunc GPacketHandler[UINT16_MAX];
 
-// Á÷Á¢ ÄÁÅÙÃ÷ ÀÛ¾÷ÀÚ
+// ì§ì ‘ ì»¨í…ì¸  ì‘ì—…ì
 
 bool Handle_INVALID(PacketSessionRef& session, BYTE* buffer, int32 len)
 {
@@ -19,20 +19,20 @@ bool Handle_C_LOGIN(PacketSessionRef& session, Protocol::C_LOGIN& pkt)
 {
 	GameSessionRef gameSession = static_pointer_cast<GameSession>(session);
 
-	// TODO : Validation Ã¼Å©
+	// TODO : Validation ì²´í¬
 
 	Protocol::S_LOGIN loginPkt;
 	loginPkt.set_success(true);
 
-	// DB¿¡¼­ ÇÃ·¹ÀÌ Á¤º¸¸¦ ±Ü¾î¿Â´Ù
-	// GameSession¿¡ ÇÃ·¹ÀÌ Á¤º¸¸¦ ÀúÀå (¸Ş¸ğ¸®)
+	// DBì—ì„œ í”Œë ˆì´ ì •ë³´ë¥¼ ê¸ì–´ì˜¨ë‹¤
+	// GameSessionì— í”Œë ˆì´ ì •ë³´ë¥¼ ì €ì¥ (ë©”ëª¨ë¦¬)
 
-	// ID ¹ß±Ş (DB ¾ÆÀÌµğ°¡ ¾Æ´Ï°í, ÀÎ°ÔÀÓ ¾ÆÀÌµğ)
+	// ID ë°œê¸‰ (DB ì•„ì´ë””ê°€ ì•„ë‹ˆê³ , ì¸ê²Œì„ ì•„ì´ë””)
 	static Atomic<uint64> idGenerator = 1;
 
 	{
 		auto player = loginPkt.add_players();
-		player->set_name(u8"DB¿¡¼­±Ü¾î¿ÂÀÌ¸§1");
+		player->set_name(u8"DBì—ì„œê¸ì–´ì˜¨ì´ë¦„1");
 		player->set_playertype(Protocol::PLAYER_TYPE_KNIGHT);
 
 		PlayerRef playerRef = MakeShared<Player>();
@@ -46,7 +46,7 @@ bool Handle_C_LOGIN(PacketSessionRef& session, Protocol::C_LOGIN& pkt)
 
 	{
 		auto player = loginPkt.add_players();
-		player->set_name(u8"DB¿¡¼­±Ü¾î¿ÂÀÌ¸§2");
+		player->set_name(u8"DBì—ì„œê¸ì–´ì˜¨ì´ë¦„2");
 		player->set_playertype(Protocol::PLAYER_TYPE_MAGE);
 
 		PlayerRef playerRef = MakeShared<Player>();
