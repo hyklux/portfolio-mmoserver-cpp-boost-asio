@@ -4,6 +4,8 @@
 
 #include "Protocol.pb.h"
 
+#define TICK_LENGTH_MILLISEC 16 //60 ticks per second
+
 int CreateServerInstance(IServerContainer* pServerContainer, IServer*& pServer)
 {
 	cout << "[ZoneServer] Creating zone server instance..." << endl;
@@ -65,12 +67,18 @@ int ZoneServer::OnLoad()
 int ZoneServer::OnStart()
 {
 	cout << "[ZoneServer] OnStart" << endl;
+
+	RunTick();
+
 	return 0;
 }
 
 int ZoneServer::OnUnload()
 {
 	cout << "[ZoneServer] OnUnload" << endl;
+
+	m_CanTick = false;
+
 	return 0;
 }
 
@@ -106,6 +114,22 @@ int ZoneServer::SetConnector()
 	}
 
 	return m_pConnectorServer ? 0 : -1;
+}
+
+void ZoneServer::RunTick()
+{
+	m_CanTick = true;
+
+	while (m_CanTick)
+	{
+		Tick();
+		std::this_thread::sleep_for(std::chrono::milliseconds(TICK_LENGTH_MILLISEC));
+	}
+}
+
+void ZoneServer::Tick()
+{
+	//매 프레임 처리해야 할 작업 수행
 }
 
 //handlers

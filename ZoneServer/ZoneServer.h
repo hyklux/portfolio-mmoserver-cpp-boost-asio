@@ -26,6 +26,7 @@ private:
 	IServer* m_pConnectorServer;
 
 	std::vector<CPlayer*> m_PlayerList;
+	bool m_CanTick = false;
 
 public:
 	virtual int AddRef(void) override;
@@ -40,6 +41,8 @@ public:
 
 private:
 	virtual int SetConnector() override;
+	void RunTick();
+	void Tick();
 
 	//handlers
 	int Handle_C_ENTER_GAME(NetMsg msg);
