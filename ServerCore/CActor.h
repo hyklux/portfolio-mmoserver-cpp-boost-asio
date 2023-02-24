@@ -13,6 +13,11 @@ public:
 
 	}
 
+	void Update(float deltaTime)
+	{
+
+	}
+
 	void SetPosition(float posX, float posY)
 	{
 		m_PosX = posX;

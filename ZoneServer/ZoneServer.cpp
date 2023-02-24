@@ -68,8 +68,8 @@ int ZoneServer::OnStart()
 {
 	cout << "[ZoneServer] OnStart" << endl;
 
+	InitZone();
 	RunTick();
-	CreateNPCs();
 
 	return 0;
 }
@@ -81,17 +81,9 @@ int ZoneServer::OnUnload()
 	m_CanTick = false;
 
 	//존에 존재하는 모든 플레이어 삭제
-	for (auto player : m_PlayerList)
-	{
-		delete player;
-	}
 	m_PlayerList.clear();
 
 	//존에 존재하는 모든 몬스터 삭제
-	for (auto monster : m_MonsterList)
-	{
-		delete monster;
-	}
 	m_MonsterList.clear();
 
 	return 0;
@@ -131,20 +123,46 @@ int ZoneServer::SetConnector()
 	return m_pConnectorServer ? 0 : -1;
 }
 
+void ZoneServer::InitZone()
+{
+	CreateNPCs();
+}
+
 void ZoneServer::RunTick()
 {
 	m_CanTick = true;
 
 	while (m_CanTick)
 	{
-		Tick();
-		std::this_thread::sleep_for(std::chrono::milliseconds(TICK_LENGTH_MILLISEC));
+		// Calculate the time since the last tick
+		std::clock_t currentTime = std::clock();
+		float deltaTime = ((float)(currentTime - lastTickTime)) / CLOCKS_PER_SEC;
+
+		// Check if it's time to update the game state
+		if (deltaTime >= (1.0f / TICK_RATE)) 
+		{
+			Tick(deltaTime);
+
+			// Update the last tick time
+			lastTickTime = currentTime;
+		}
 	}
 }
 
-void ZoneServer::Tick()
+void ZoneServer::Tick(float deltaTime)
 {
 	//매 프레임 처리해야 할 작업 수행
+	cout << "Tick() : deltaTime " << deltaTime << endl;
+
+	for (auto player : m_PlayerList)
+	{
+		player->Update(deltaTime);
+	}
+
+	for (auto monster : m_MonsterList)
+	{
+		monster->Update(deltaTime);
+	}
 }
 
 void ZoneServer::CreateNPCs()
@@ -153,7 +171,7 @@ void ZoneServer::CreateNPCs()
 
 	for (int i = 0; i < 5; i++)
 	{
-		CMonster* monster = new CMonster(1000 + i, "Monster" + i);
+		std::shared_ptr<CMonster> monster(new CMonster(1000 + i, "Monster" + i));
 		monster->SetPosition(i, 0);
 		m_MonsterList.push_back(monster);
 	}
@@ -175,7 +193,8 @@ int ZoneServer::Handle_C_ENTER_GAME(NetMsg msg)
 
 	cout << "[ZoneServer] " << playerName << " entering game..." << endl;
 
-	m_PlayerList.push_back(new CPlayer(pkt.playerid(), playerName));
+	std::shared_ptr<CPlayer> player(new CPlayer(pkt.playerid(), playerName));
+	m_PlayerList.push_back(player);
 
 	cout << "[ZoneServer] " << playerName << " enter game success." << endl;
 
