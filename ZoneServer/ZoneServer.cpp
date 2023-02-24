@@ -152,7 +152,6 @@ void ZoneServer::RunTick()
 void ZoneServer::Tick(float deltaTime)
 {
 	//매 프레임 처리해야 할 작업 수행
-	cout << "Tick() : deltaTime " << deltaTime << endl;
 
 	for (auto player : m_PlayerList)
 	{
