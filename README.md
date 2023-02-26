@@ -168,7 +168,38 @@ void NetworkServer::RegisterAccept()
 	});
 }
 ```
+### **NetGameSession.cpp** ###
+``` c++
+void NetGameSession::RegisterSend(NetMsg msg)
+{
+	boost::asio::async_write(m_Socket, boost::asio::buffer(msg.GetData(), msg.GetLength()), [&](error_code error, std::size_t bytes_transferred)
+	{
+		std::cout << "[NetGameSession] All data has been sent. Bytes transferred:" << bytes_transferred << std::endl;
+	});
+}
 
+void NetGameSession::RegisterReceive()
+{
+	auto self(shared_from_this());
+
+	boost::asio::async_read(m_Socket, boost::asio::buffer(m_Msg.GetData(), m_Msg.GetLength()), [this, self](boost::system::error_code error, std::size_t /*length*/)
+	{
+		if (!error)
+		{
+			if (m_Msg.DecodeHeader())
+			{
+				m_pNetworkServer->DispatchClientMsg(EUserServer, m_Msg, self);
+			}
+
+			RegisterReceive();
+		}
+		else
+		{
+			Disconnect();
+		}
+	});
+}
+```
 
 # User 모듈
 - User 모듈은 클라이언트로부터 온 요청을 실제로 실행하기 시작하는 시작점이 되는 모듈입니다.
