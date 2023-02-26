@@ -448,3 +448,59 @@ void ZoneServer::Tick(float deltaTime)
 
 
 # Chat 모듈
+- 채팅 메세지를 처리하는 모듈입니다.
+- 유저가 게임에 진입하면 유저 세션 리스트에 추가해 줍니다.
+``` c++
+int ChatServer::Handle_C_ENTER_GAME(const NetMsg msg, const std::shared_ptr<NetGameSession>& session)
+{
+	cout << "[ChatServer] Handle_C_ENTER_GAME" << endl;
+
+	//패킷 분해
+	Protocol::C_ENTER_GAME pkt;
+	if (false == ParsePkt(pkt, msg))
+	{
+		return static_cast<uint16_t>(ERRORTYPE::PKT_ERROR);
+	}
+
+	cout << "[ChatServer] Player" << to_string(pkt.playerid()) << " has entered chat room." << endl;
+
+	//세션 리스트에 유저 추가
+	m_UserSessionList.push_back(session);
+
+	return 0;
+}
+```
+- 특정 유저가 채팅 메세지를 전송하면 다른 유저에게 브로드 캐스팅합니다.
+``` c++
+int ChatServer::Handle_C_CHAT(const NetMsg msg, const std::shared_ptr<NetGameSession>& session)
+{
+	cout << "[ChatServer] Handle_C_CHAT" << endl;
+
+	//패킷 분해
+	Protocol::C_CHAT pkt;
+	if (false == ParsePkt(pkt, msg))
+	{
+		return static_cast<uint16_t>(ERRORTYPE::PKT_ERROR);
+	}
+
+	cout << "[ChatServer] [Player" << to_string(pkt.playerid()) << "] " << pkt.msg() << endl;
+
+	std::string broadcastMsgStr = "[Player" + to_string(pkt.playerid()) + "] : " + pkt.msg();
+	BroadCastAll(broadcastMsgStr);
+
+	return 0;
+}
+
+void ChatServer::BroadCastAll(std::string broadcastMsgStr)
+{
+	NetMsg broadcastMsg;
+	Protocol::S_CHAT chatPkt;
+	chatPkt.set_msg(broadcastMsgStr);
+	broadcastMsg.MakeBuffer(chatPkt, MSG_S_CHAT);
+
+	for (std::shared_ptr<NetGameSession> session : m_UserSessionList)
+	{
+		session->SendMsgToClient(broadcastMsg);
+	}
+}
+```
