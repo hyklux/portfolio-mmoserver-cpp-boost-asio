@@ -37,7 +37,7 @@ C++ Boost asio 라이브러리 기반 MMO 서버 프레임워크입니다.
 
 # Server Container
 - 서버가 시작되면 config.json 파일에 정의된 user, zone, chat 등의 모듈을 로드합니다.
-- 로드할 모듈은 해당 서버의 구성에 따라 달라질 수 있습니다. 예를 들어 어떤 서버에는 zone 모듈이 없다거나 어떤 서버에는 dbagent 모듈이 없을 수 있습니다.
+- 로드할 모듈은 해당 서버의 구성에 따라 달라질 수 있습니다. 예를 들어 어떤 서버에는 zone 모듈이 없거나 dbagent 모듈이 없을 수 있습니다.
 ``` json
     {
       "name": "ZoneServer",
