@@ -374,6 +374,8 @@ bool DBConn::Execute(const WCHAR* query)
 	return false;
 }
 ```
+![서버 DB에 유저 생성](https://user-images.githubusercontent.com/96270683/221409525-69297530-1fa6-49e7-aa19-4f8ddeb63eca.PNG)
+
 
 # Zone 모듈
 - 게임에서 월드(맵)이 존재하는 모듈로 이 월드에서 플레이어가 다른 플레이어 또는 NPC와 인터랙션합니다.
