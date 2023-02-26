@@ -368,12 +368,83 @@ bool DBConn::Execute(const WCHAR* query)
 ```
 
 # Zone 모듈
-- 게임에서 월드(맵)이 존재하는 모듈입니다.
-- 월드에서 플레이어가 다른 플레이어 또는 NPC와 인터랙션합니다.
+- 게임에서 월드(맵)이 존재하는 모듈로 이 월드에서 플레이어가 다른 플레이어 또는 NPC와 인터랙션합니다.
 - Zone 모듈 실행 시 NPC를 생성하고, 유저가 게임에 입장하며 Player 객체를 생성하도록 했습니다.
-- Zone 모듈에는 Tick 함수가 존재합니다.
-- Tick 함수는 약속된 주기(1초에 60번)로 반복적으로 실행하는 함수로 월드, 플레이어, NPC 등의 상태를 계속적으로 업데이트하고 이를 모든 유저에게 브로드캐스팅 하는 역할을 합니다.
-- Tick 함수에서 Player, Monster의 Update 함수를 호출하도록 하여 player와 Monster 클래스는 Update 함수룰 통해 매 프레임 처리해야 할 작업을 가능하게 하였습니다.
+``` c++
+void ZoneServer::CreateNPCs()
+{
+	cout << "[ZoneServer] CreateNPCs" << endl;
+
+	//NPC 객체 생성
+	for (int i = 0; i < 5; i++)
+	{
+		std::shared_ptr<CMonster> monster(new CMonster(1000 + i, "Monster" + i));
+		monster->SetPosition(i, 0);
+		m_MonsterList.push_back(monster);
+	}
+}
+
+int ZoneServer::Handle_C_ENTER_GAME(NetMsg msg)
+{
+	cout << "[ZoneServer] Handle_C_ENTER_GAME" << endl;
+
+	//패킷 분해
+	Protocol::C_ENTER_GAME pkt;
+	if (false == ParsePkt(pkt, msg))
+	{
+		return static_cast<uint16_t>(ERRORTYPE::PKT_ERROR);
+	}
+
+	std::string playerName = "Player" + to_string(pkt.playerid());
+
+	cout << "[ZoneServer] " << playerName << " entering game..." << endl;
+
+	//플레이어 객체 생성
+	std::shared_ptr<CPlayer> player(new CPlayer(pkt.playerid(), playerName));
+	m_PlayerList.push_back(player);
+
+	cout << "[ZoneServer] " << playerName << " enter game success." << endl;
+
+	return 0;
+}
+```
+- Zone 모듈에는 Tick 함수가 존재합니다. Tick 함수는 약속된 주기(1초에 60번)로 반복적으로 실행하는 함수로 월드, 플레이어, NPC 등의 상태를 계속적으로 업데이트합니다.
+``` c++
+void ZoneServer::RunTick()
+{
+	m_CanTick = true;
+
+	while (m_CanTick)
+	{
+		// 마지막 틱으로 부터 경과한 시간(deltaTime) 계산
+		std::clock_t currentTime = std::clock();
+		float deltaTime = ((float)(currentTime - lastTickTime)) / CLOCKS_PER_SEC;
+
+		// deltaTime이 기준 프레임 시간 이상 되었는지 확인
+		if (deltaTime >= (1.0f / TICK_RATE)) 
+		{
+			//Tick함수 실행
+			Tick(deltaTime);
+
+			lastTickTime = currentTime;
+		}
+	}
+}
+
+//매 프레임 처리해야 할 작업 수행
+void ZoneServer::Tick(float deltaTime)
+{
+	for (auto player : m_PlayerList)
+	{
+		player->Update(deltaTime);
+	}
+
+	for (auto monster : m_MonsterList)
+	{
+		monster->Update(deltaTime);
+	}
+}
+```
 
 
 # Chat 모듈
