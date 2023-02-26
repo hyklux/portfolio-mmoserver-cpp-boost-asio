@@ -73,7 +73,7 @@ C++ Boost asio 라이브러리 기반 MMO 서버 프레임워크입니다.
       }
     }
 ```
-- 각 모듈은 개별 DLL 파일로 만들어져 있어 모듈 로드시 DLL 파일을 로드하 됩니다.
+- 각 모듈은 개별 DLL 파일로 만들어져 있어 모듈 로드시 DLL 파일을 로드하게 됩니다.
 ``` c++
 class ServerContainer
 {
@@ -110,6 +110,7 @@ class ServerContainer
 	//...(중략)
 }
 ```
+(사진) 모듈 로드 
 - Server Container는 해당 서버에 업로드된 모든 모듈을 관리하는 컨테이너로 모든 서버 모듈에 대한 참조를 갖고 있습니다.
 
 
@@ -169,6 +170,7 @@ void NetworkServer::RegisterAccept()
 	});
 }
 ```
+(사진) 세션 
 - 각 유저는 자신의 클라이언트와 연결된 서버의 세션 객체를 통해 패킷 통신을 하게 됩니다.
 ``` c++
 //클라이언트에게 Send 처리
@@ -505,3 +507,4 @@ void ChatServer::BroadCastAll(std::string broadcastMsgStr)
 	}
 }
 ```
+(사진) 채팅 메세지 처리
