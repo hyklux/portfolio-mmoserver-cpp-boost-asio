@@ -110,7 +110,7 @@ class ServerContainer
 	//...(중략)
 }
 ```
-(사진) 모듈 로드 
+ ![서버 모듈 로드](https://user-images.githubusercontent.com/96270683/221408977-60f10220-00cd-4dc3-a9bf-61efd9b04be6.PNG)
 - Server Container는 해당 서버에 업로드된 모든 모듈을 관리하는 컨테이너로 모든 서버 모듈에 대한 참조를 갖고 있습니다.
 
 
