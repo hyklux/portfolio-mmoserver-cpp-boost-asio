@@ -86,13 +86,16 @@ class ServerContainer
 		auto serverPair = m_ServerMap.emplace(name, new IServer());
 
 		auto executable = server.second.get<std::string>("executable");
+		
+		//DLL 파일 로드하기
 		HMODULE handle = LoadLibrary(executable.c_str());
 		if (nullptr == handle)
 		{
 			cout << "DLL load error. GetLastError :" << GetLastError() << std::endl;
 			continue;
 		}
-
+		
+		//로드한 모듈 실행
 		typedef int(*CREATE_SERVER_FUNC)(IServerContainer* pServerContainer, IServer*& pServer);
 		CREATE_SERVER_FUNC funcPtr = (CREATE_SERVER_FUNC)::GetProcAddress(handle, "CreateServerInstance");
 		int ret = (*funcPtr)((IServerContainer*)this, serverPair.first->second);
@@ -112,8 +115,61 @@ class ServerContainer
 
 # Network 모듈
 - Network 모듈은 클라이언트와의 통신을 담당하는 모듈입니다.
-- 클라이언트가 접속하면 NetGameSession 클래스를 생성하여 이 객체를 통해 각 클라이언트와 통신하게 됩니다.
-- Boost Asio 네트워크 라이브러리를 사용하여 네트워크 통신을 구현하였습니다.
+- 네트워크 통신은 Boost Asio 네트워크 라이브러리를 사용하여 구현했습니다.
+- 클라이언트가 접속하면 NetGameSession 클래스를 생성하고 이 객체를 통해 각 클라이언트와 통신하게 됩니다.
+``` c++
+bool NetworkServer::StartTcpServer()
+{
+	cout << "[NetworkServer] StartTcpServer" << endl;
+
+	try
+	{
+		//엔드포인트 설정
+		boost::asio::ip::tcp::endpoint endpoint_;
+		endpoint_.address(boost::asio::ip::address::from_string(m_IpAddr));
+		endpoint_.port(m_PortNo);
+
+		//서버 리슨 시작
+		m_Acceptor.open(endpoint_.protocol());
+		boost::asio::socket_base::reuse_address option(true);
+		m_Acceptor.set_option(option);
+		m_Acceptor.bind(endpoint_);
+		m_Acceptor.listen();
+
+		RegisterAccept();
+	}
+	catch (std::bad_weak_ptr& e)
+	{
+		return false;
+	}
+	catch (std::exception& e)
+	{
+		return false;
+	}
+
+	return true;
+}
+
+//소켓 연결되면 게임 세션 클래스를 생성
+void NetworkServer::RegisterAccept()
+{
+	m_Acceptor.async_accept([this](boost::system::error_code error, boost::asio::ip::tcp::socket socket)
+	{
+		cout << "[NetworkServer] OnAccept" << endl;
+
+		//클라이언트 소켓과 연결되면 게임 세션 클래스 생성
+		if (!error)
+		{
+			std::cout << "Client connection success." << std::endl;
+
+			std::shared_ptr<NetGameSession> newSession = std::make_shared<NetGameSession>(this, ++m_SessionIdIdx, socket);
+			newSession->RegisterReceive();
+		}
+
+		RegisterAccept();
+	});
+}
+```
 
 
 # User 모듈
