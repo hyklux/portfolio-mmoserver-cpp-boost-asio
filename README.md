@@ -115,7 +115,7 @@ class ServerContainer
 # Network 모듈
 - Network 모듈은 클라이언트와의 통신을 담당하는 모듈입니다.
 - 네트워크 통신은 Boost Asio 네트워크 라이브러리를 사용하여 구현했습니다.
-- 클라이언트가 접속하면 NetGameSession 클래스를 생성하고 이 객체를 통해 각 클라이언트와 통신하게 됩니다.
+- 클라이언트가 접속하면 NetGameSession 클래스를 생성합니다.
 ``` c++
 bool NetworkServer::StartTcpServer()
 {
@@ -168,7 +168,7 @@ void NetworkServer::RegisterAccept()
 	});
 }
 ```
-### **NetGameSession.cpp** ###
+- 각 유저는 자신의 클라이언트와 연결된 서버의 세션 객체를 통해 패킷 통신을 하게 됩니다.
 ``` c++
 //클라이언트에게 Send 처리
 void NetGameSession::RegisterSend(NetMsg msg)
