@@ -37,7 +37,8 @@ C++ Boost asio 라이브러리 기반 MMO 서버 프레임워크입니다.
 
 # Server Container
 - 서버가 시작되면 config.json 파일에 정의된 user, zone, chat 등의 모듈을 로드합니다.
-- 로드할 모듈은 해당 서버의 구성에 따라 달라질 수 있습니다. 예를 들어 어떤 서버에는 zone 모듈이 없거나 dbagent 모듈이 없을 수 있습니다.
+- 로드할 모듈은 해당 서버의 구성에 따라 달라질 수 있습니다.
+- 예를 들어 어떤 서버에는 zone 모듈이 없거나 dbagent 모듈이 없을 수 있습니다.
 ``` json
     {
       "name": "ZoneServer",
@@ -268,10 +269,12 @@ void ThreadPool::WorkerThread()
 	}
 }
 ```
-- User 모듈은 유저들의 주요 데이터 담당하는 역할도 합니다. 유저 주요 데이터는 반드시 User 모듈에서 참조하여야 하며, 다른 모듈에서 유저 정보가 변경되었을 시 User 모듈로 패킷을 보내 유저 데이터를 최신화해야 합니다.
+- User 모듈은 유저들의 주요 데이터 담당하는 역할도 합니다.
+- 유저 주요 데이터는 반드시 User 모듈에서 참조하여야 하며, 다른 모듈에서 유저 정보가 변경되었을 시 User 모듈로 패킷을 보내 유저 데이터를 최신화해야 합니다.
 
 # DBAgent 모듈
-- DBAgent 모듈은 DB에 대한 요청을 처리하는 모듈입니다. 모든 DB에 대한 요청은 DBAgent 모듈을 통해 수행됩니다.
+- DBAgent 모듈은 DB에 대한 요청을 처리하는 모듈입니다.
+- 모든 DB에 대한 요청은 DBAgent 모듈을 통해 수행됩니다.
 - 모듈 로드 시 DB와 연결을 설정합니다.
 ``` c++
 int DBAgent::ConnectToDB()
@@ -331,7 +334,8 @@ bool DBConn::Connect(const WCHAR* connectionString)
 	return (ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO);
 }
 ```
-- DB 처리에 대한 요청을 받으면 쿼리에 파라미터로 값을 연동하여 쿼리를 실행합니다. 로그인 요청 시 신규 유저이면 DB에 유저 데이터를 생성하도록 구현해 보았습니다.
+- DB 처리에 대한 요청을 받으면 쿼리에 파라미터로 값을 연동하여 쿼리를 실행합니다.
+- 로그인 요청 시 신규 유저이면 DB에 유저 데이터를 생성하도록 구현해 보았습니다.
 ``` c++
 int DBAgent::CreateUserToDB(std::string userName)
 {
@@ -411,7 +415,8 @@ int ZoneServer::Handle_C_ENTER_GAME(NetMsg msg)
 	return 0;
 }
 ```
-- Zone 모듈에는 Tick 함수가 존재합니다. Tick 함수는 약속된 주기(1초에 60번)로 반복적으로 실행하는 함수로 월드, 플레이어, NPC 등의 상태를 계속적으로 업데이트합니다.
+- Zone 모듈에는 Tick 함수가 존재합니다.
+- Tick 함수는 약속된 주기(1초에 60번)로 반복적으로 실행하는 함수로 월드, 플레이어, NPC 등의 상태를 계속적으로 업데이트합니다.
 ``` c++
 void ZoneServer::RunTick()
 {
