@@ -170,7 +170,7 @@ void NetworkServer::RegisterAccept()
 	});
 }
 ```
-
+![서버 세션 생성](https://user-images.githubusercontent.com/96270683/221409174-abcb4489-1e0e-43a7-93e6-bfb788c4846b.PNG)
 - 각 유저는 자신의 클라이언트와 연결된 서버의 세션 객체를 통해 패킷 통신을 하게 됩니다.
 ``` c++
 //클라이언트에게 Send 처리
