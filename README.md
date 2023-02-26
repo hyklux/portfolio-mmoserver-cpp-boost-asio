@@ -117,8 +117,6 @@ class ServerContainer
 - 네트워크 통신은 Boost Asio 네트워크 라이브러리를 사용하여 구현했습니다.
 - 클라이언트가 접속하면 NetGameSession 클래스를 생성하고 이 객체를 통해 각 클라이언트와 통신하게 됩니다.
 ``` c++
-//...(중략)
-
 bool NetworkServer::StartTcpServer()
 {
 	cout << "[NetworkServer] StartTcpServer" << endl;
@@ -169,13 +167,9 @@ void NetworkServer::RegisterAccept()
 		RegisterAccept();
 	});
 }
-
-//...(중략)
 ```
 ### **NetGameSession.cpp** ###
 ``` c++
-//...(중략)
-
 //클라이언트에게 Send 처리
 void NetGameSession::RegisterSend(NetMsg msg)
 {
@@ -207,16 +201,71 @@ void NetGameSession::RegisterReceive()
 		}
 	});
 }
-
-//...(중략)
 ```
 
 # User 모듈
 - User 모듈은 클라이언트로부터 온 요청을 실제로 실행하기 시작하는 시작점이 되는 모듈입니다.
 - 클라이언트부터 온 패킷을 분해하여 수행해야 할 요청을 해석한 후 User 모듈의 JobQueue에 Job의 형태로 담아줍니다.
+``` c++
+//JobQueue에 넣어준다.
+int UserServer::HandleMsg(const NetMsg msg, const std::shared_ptr<NetGameSession>& session)
+{
+	cout << "[UserServer] HandleMsg. PktId:" << msg.GetPktId() << endl;
+
+	switch (msg.GetPktId())
+	{
+	case MSG_C_LOGIN:
+		m_ThreadPool.EnqueueJob([this, msg, session]() {
+			this->Handle_C_LOGIN(msg, session);
+		});
+		break;
+	case MSG_C_ENTER_GAME:
+		m_ThreadPool.EnqueueJob([this, msg, session]() {
+			this->Handle_C_ENTER_GAME(msg, session);
+		});
+		break;
+	case MSG_C_CHAT:
+		m_ThreadPool.EnqueueJob([this, msg, session]() {
+			this->Handle_C_CHAT(msg, session);
+		});
+		break;
+	default:
+		break;
+	}
+
+	return 0;
+}
+```
 - User 모듈의 WorkerThread에서 JobQueue에 쌓인 Job을 하나씩 수행하게 됩니다.
-- User 모듈은 유저들의 주요 정보를 처리하는 역할도 합니다.
-- 유저 주요 정보는 반드시 User 모듈에서 참조하여야 하며, 다른 모듈에서 유저 정보가 변경되었을 시 User 모듈로 패킷을 보내 유저 정보를 최신화해야 합니다.
+``` c++
+void ThreadPool::WorkerThread() 
+{
+	while (true) 
+	{
+		std::unique_lock<std::mutex> lock(m_JobQueueMutex);
+		m_JobQueueCV.wait(lock, [this]() 
+		{ 
+			return !this->m_JobQueue.empty() || m_StopAll; 
+		});
+		
+		if (m_StopAll && this->m_JobQueue.empty()) 
+		{
+			return;
+		}
+
+		// 맨 앞의 job 을 뺀다.
+		std::function<void()> job = std::move(m_JobQueue.front());
+		m_JobQueue.pop();
+		lock.unlock();
+
+		cout << "[ThreadPool] Pushing job out of queue..." << endl;
+
+		// 해당 job 을 수행한다
+		job();
+	}
+}
+```
+- User 모듈은 유저들의 주요 데이터 담당하는 역할도 합니다. 유저 주요 데이터는 반드시 User 모듈에서 참조하여야 하며, 다른 모듈에서 유저 정보가 변경되었을 시 User 모듈로 패킷을 보내 유저 데이터를 최신화해야 합니다.
 
 # DBAgent 모듈
 - DBAgent 모듈은 DB에 대한 요청을 처리하는 모듈입니다.
