@@ -38,6 +38,52 @@ C++ Boost asio 라이브러리 기반 MMO 서버 프레임워크입니다.
 
 # Server Container
 - 서버가 시작되면 config.json 파일에 정의된 user, zone 등의 모듈을 로드합니다. 각 모듈은 개별 DLL 파일로 구성되어 있습니다.
+``` json
+ {
+      "name": "ConnectorServer",
+      "use": "true",
+      "servicetype": "1",
+      "executable": "../.././DLLs/ConnectorServer.dll",
+      "config": "../.././Config/ConnectorServer.json",
+      "log": {
+        "loglevel": "0",
+        "console": "false"
+      }
+    },
+    {
+      "name": "ZoneServer",
+      "use": "true",
+      "servicetype": "3",
+      "executable": "../.././DLLs/ZoneServer.dll",
+      "config": "../.././Config/ZoneServer.json",
+      "log": {
+        "loglevel": "0",
+        "console": "false"
+      }
+    },
+    {
+      "name": "ChatServer",
+      "use": "true",
+      "servicetype": "4",
+      "executable": "../.././DLLs/ChatServer.dll",
+      "config": "../.././Config/ChatServer.json",
+      "log": {
+        "loglevel": "0",
+        "console": "false"
+      }
+    },
+    {
+      "name": "UserServer",
+      "use": "true",
+      "servicetype": "2",
+      "executable": "../.././DLLs/UserServer.dll",
+      "config": "../.././Config/UserServer.json",
+      "log": {
+        "loglevel": "0",
+        "console": "false"
+      }
+    }
+```
 - 로드할 모듈은 해당 서버의 구성에 따라 달라질 수 있습니다. 예를 들어 어떤 서버에는 zone 모듈이 없다거나 어떤 서버에는 dbagent 모듈이 없을 수 있습니다.
 - Server Container는 해당 서버에 업로드된 모든 모듈을 관리하는 컨테이너로 모든 서버 모듈에 대한 참조를 갖고 있습니다.
 
