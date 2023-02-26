@@ -77,34 +77,34 @@ C++ Boost asio 라이브러리 기반 MMO 서버 프레임워크입니다.
 ``` c++
 class ServerContainer
 {
- ...
+    //...(중략)
  
  	auto servers = props.get_child("servers");
-		for (const auto& server : servers)
+	for (const auto& server : servers)
+	{
+		auto name = server.second.get<std::string>("name");
+		auto serverPair = m_ServerMap.emplace(name, new IServer());
+
+		auto executable = server.second.get<std::string>("executable");
+		HMODULE handle = LoadLibrary(executable.c_str());
+		if (nullptr == handle)
 		{
-			auto name = server.second.get<std::string>("name");
-			auto serverPair = m_ServerMap.emplace(name, new IServer());
-
-			auto executable = server.second.get<std::string>("executable");
-			HMODULE handle = LoadLibrary(executable.c_str());
-			if (nullptr == handle)
-			{
-				cout << "DLL load error. GetLastError :" << GetLastError() << std::endl;
-				continue;
-			}
-
-			typedef int(*CREATE_SERVER_FUNC)(IServerContainer* pServerContainer, IServer*& pServer);
-			CREATE_SERVER_FUNC funcPtr = (CREATE_SERVER_FUNC)::GetProcAddress(handle, "CreateServerInstance");
-			int ret = (*funcPtr)((IServerContainer*)this, serverPair.first->second);
-			if (ret != 0)
-			{
-				cout << "Server create error." << endl;
-				FreeLibrary(handle);
-				continue;
-			}
+			cout << "DLL load error. GetLastError :" << GetLastError() << std::endl;
+			continue;
 		}
+
+		typedef int(*CREATE_SERVER_FUNC)(IServerContainer* pServerContainer, IServer*& pServer);
+		CREATE_SERVER_FUNC funcPtr = (CREATE_SERVER_FUNC)::GetProcAddress(handle, "CreateServerInstance");
+		int ret = (*funcPtr)((IServerContainer*)this, serverPair.first->second);
+		if (ret != 0)
+		{
+			cout << "Server create error." << endl;
+			FreeLibrary(handle);
+			continue;
+		}
+	}
   
-  ...
+    //...(중략)
 }
 ```
 - Server Container는 해당 서버에 업로드된 모든 모듈을 관리하는 컨테이너로 모든 서버 모듈에 대한 참조를 갖고 있습니다.
