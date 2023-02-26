@@ -269,9 +269,103 @@ void ThreadPool::WorkerThread()
 
 # DBAgent 모듈
 - DBAgent 모듈은 DB에 대한 요청을 처리하는 모듈입니다. 모든 DB에 대한 요청은 DBAgent 모듈을 통해 수행됩니다.
-- 모듈 로드 시 DB와 연결을 설정하며, DB 처리에 대한 요청을 받으면 쿼리에 파라미터로 값을 연동하여 쿼리를 실행합니다.
-- 로그인 요청 시 신규 유저이면 DB에 유저 데이터를 생성하도록 구현해 보았습니다.
+- 모듈 로드 시 DB와 연결을 설정합니다.
+``` c++
+int DBAgent::ConnectToDB()
+{
+	cout << "[DBAgent] Connecting to DB..." << endl;
 
+	bool connResult = m_DbConn.Connect(L"Driver={SQL Server Native Client 11.0};Server=(localdb)\\MSSQLLocalDB;Database=UserDB;Trusted_Connection=Yes;");
+	if (!connResult)
+	{
+		cout << "[DBAgent] DB connection error." << endl;
+		return -1;
+	}
+
+	cout << "[DBAgent] DB connection success." << endl;
+	return 0;
+}
+
+bool DBConn::Connect(const WCHAR* connectionString)
+{
+	if (::SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &_environment) != SQL_SUCCESS)
+	{
+		return false;
+	}
+
+	if (::SQLSetEnvAttr(_environment, SQL_ATTR_ODBC_VERSION, reinterpret_cast<SQLPOINTER>(SQL_OV_ODBC3), 0) != SQL_SUCCESS)
+	{
+		return false;
+	}
+
+	if (::SQLAllocHandle(SQL_HANDLE_DBC, _environment, &_connection) != SQL_SUCCESS)
+	{
+		return false;
+	}
+
+	WCHAR stringBuffer[MAX_PATH] = { 0 };
+	::wcscpy_s(stringBuffer, connectionString);
+
+	WCHAR resultString[MAX_PATH] = { 0 };
+	SQLSMALLINT resultStringLen = 0;
+
+	SQLRETURN ret = ::SQLDriverConnectW(
+		_connection,
+		NULL,
+		reinterpret_cast<SQLWCHAR*>(stringBuffer),
+		_countof(stringBuffer),
+		OUT reinterpret_cast<SQLWCHAR*>(resultString),
+		_countof(resultString),
+		OUT & resultStringLen,
+		SQL_DRIVER_NOPROMPT
+	);
+
+	if (::SQLAllocHandle(SQL_HANDLE_STMT, _connection, &_statement) != SQL_SUCCESS)
+	{
+		return false;
+	}
+
+	return (ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO);
+}
+```
+- DB 처리에 대한 요청을 받으면 쿼리에 파라미터로 값을 연동하여 쿼리를 실행합니다. 로그인 요청 시 신규 유저이면 DB에 유저 데이터를 생성하도록 구현해 보았습니다.
+``` c++
+int DBAgent::CreateUserToDB(std::string userName)
+{
+	m_DbConn.Unbind();
+
+	SQLLEN len = 0;
+
+	m_UserId++;
+	int userIdParam = m_UserId;
+	std::wstring usernameWStr = std::wstring(userName.begin(), userName.end());
+	const WCHAR* userNameParam = usernameWStr.c_str();
+
+	m_DbConn.BindParam(1, &userIdParam, &len);
+	m_DbConn.BindParam(2, userNameParam, &len);
+
+	auto query = L"INSERT INTO [dbo].[User]([userid], [username]) VALUES(?, ?)";
+	bool queryResult = m_DbConn.Execute(query);
+	if (!queryResult)
+	{
+		cout << "[DBAgent] User creation failed." << endl;
+		return -1;
+	}
+
+	cout << "[DBAgent] User creation success." << endl;
+	return 0;
+}
+
+bool DBConn::Execute(const WCHAR* query)
+{
+	SQLRETURN ret = ::SQLExecDirectW(_statement, (SQLWCHAR*)query, SQL_NTSL);
+	if (ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO)
+		return true;
+
+	HandleError(ret);
+	return false;
+}
+```
 
 # Zone 모듈
 - 게임에서 월드(맵)이 존재하는 모듈입니다.
