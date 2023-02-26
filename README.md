@@ -150,7 +150,6 @@ bool NetworkServer::StartTcpServer()
 	return true;
 }
 
-//소켓 연결되면 게임 세션 클래스를 생성
 void NetworkServer::RegisterAccept()
 {
 	m_Acceptor.async_accept([this](boost::system::error_code error, boost::asio::ip::tcp::socket socket)
