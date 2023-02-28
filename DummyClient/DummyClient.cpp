@@ -96,7 +96,8 @@ int main()
 	int randomPlayerId = std::rand() % 100;
 
 	Protocol::C_LOGIN loginPkt;
-	loginPkt.set_username("Player" + randomPlayerId);
+	std::string userName = "PlayerName" + to_string(randomPlayerId);
+	loginPkt.set_username(userName);
 
 	cout << "[Client] " << loginPkt.username() << " requesting login..." << endl;
 	NetMsg loginMsg;
