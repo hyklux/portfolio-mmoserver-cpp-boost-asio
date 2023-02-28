@@ -104,7 +104,7 @@ int DBAgent::HandleMsg(const NetMsg msg, const std::shared_ptr<NetGameSession>& 
 	return 0;
 }
 
-int DBAgent::Handle_C_LOGIN(const NetMsg msg, const std::shared_ptr<NetGameSession>& session)
+EResultType DBAgent::Handle_C_LOGIN(const NetMsg msg, const std::shared_ptr<NetGameSession>& session)
 {
 	cout << "[DBAgent] Handle_C_LOGIN" << endl;
 
@@ -112,7 +112,7 @@ int DBAgent::Handle_C_LOGIN(const NetMsg msg, const std::shared_ptr<NetGameSessi
 	Protocol::C_LOGIN pkt;
 	if (false == ParsePkt(pkt, msg))
 	{
-		return static_cast<uint16_t>(ERRORTYPE::PKT_ERROR);
+		return EResultType::PKT_ERROR;
 	}
 
 	cout << "[DBAgent] " << pkt.username() << " logging in..." << endl;
@@ -124,7 +124,7 @@ int DBAgent::Handle_C_LOGIN(const NetMsg msg, const std::shared_ptr<NetGameSessi
 
 	cout << "[DBAgent] " << pkt.username() << " login success." << endl;
 
-	return static_cast<uint16_t>(ERRORTYPE::NONE_ERROR);
+	return EResultType::SUCCESS;
 }
 
 bool DBAgent::ExistsUserInDB(std::string userName)

@@ -124,7 +124,7 @@ void ChatServer::BroadCastAll(std::string broadcastMsgStr)
 }
 
 //handlers
-int ChatServer::Handle_C_ENTER_GAME(const NetMsg msg, const std::shared_ptr<NetGameSession>& session)
+EResultType ChatServer::Handle_C_ENTER_GAME(const NetMsg msg, const std::shared_ptr<NetGameSession>& session)
 {
 	cout << "[ChatServer] Handle_C_ENTER_GAME" << endl;
 
@@ -132,17 +132,17 @@ int ChatServer::Handle_C_ENTER_GAME(const NetMsg msg, const std::shared_ptr<NetG
 	Protocol::C_ENTER_GAME pkt;
 	if (false == ParsePkt(pkt, msg))
 	{
-		return static_cast<uint16_t>(ERRORTYPE::PKT_ERROR);
+		return EResultType::PKT_ERROR;
 	}
 
 	cout << "[ChatServer] Player" << to_string(pkt.playerid()) << " has entered chat room." << endl;
 
 	m_UserSessionList.push_back(session);
 
-	return 0;
+	return EResultType::SUCCESS;
 }
 
-int ChatServer::Handle_C_CHAT(const NetMsg msg, const std::shared_ptr<NetGameSession>& session)
+EResultType ChatServer::Handle_C_CHAT(const NetMsg msg, const std::shared_ptr<NetGameSession>& session)
 {
 	cout << "[ChatServer] Handle_C_CHAT" << endl;
 
@@ -150,7 +150,7 @@ int ChatServer::Handle_C_CHAT(const NetMsg msg, const std::shared_ptr<NetGameSes
 	Protocol::C_CHAT pkt;
 	if (false == ParsePkt(pkt, msg))
 	{
-		return static_cast<uint16_t>(ERRORTYPE::PKT_ERROR);
+		return EResultType::PKT_ERROR;
 	}
 
 	cout << "[ChatServer] [Player" << to_string(pkt.playerid()) << "] " << pkt.msg() << endl;
@@ -158,5 +158,5 @@ int ChatServer::Handle_C_CHAT(const NetMsg msg, const std::shared_ptr<NetGameSes
 	std::string broadcastMsgStr = "[Player" + to_string(pkt.playerid()) + "] : " + pkt.msg();
 	BroadCastAll(broadcastMsgStr);
 
-	return 0;
+	return EResultType::SUCCESS;
 }

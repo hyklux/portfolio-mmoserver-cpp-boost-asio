@@ -41,7 +41,7 @@ private:
 	virtual int SetConnector() override;
 	void BroadCastAll(std::string broadcastMsgStr);
 	//handlers
-	int Handle_C_ENTER_GAME(const NetMsg msg, const std::shared_ptr<NetGameSession>& session);
-	int Handle_C_CHAT(const NetMsg msg, const std::shared_ptr<NetGameSession>& session);
+	EResultType Handle_C_ENTER_GAME(const NetMsg msg, const std::shared_ptr<NetGameSession>& session);
+	EResultType Handle_C_CHAT(const NetMsg msg, const std::shared_ptr<NetGameSession>& session);
 };
 
