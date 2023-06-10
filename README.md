@@ -29,7 +29,7 @@ This is a MMO server framework using C++ Boost Asio library.
 
 
 # Architecture
-![게임 서버 구조도](https://user-images.githubusercontent.com/96270683/221395601-73432038-1ac3-4c96-b880-fa8f73992428.png)
+![mmo_server_architecture](https://github.com/hyklux/portfolio-mmoserver-cpp-boost-asio/assets/96270683/d2273548-db3f-4d83-a699-7c4cb56f4bbe)
 - The server consists of a number of sub-modules, each functionally separated.
 - In actual live service, even the same module(say User module) can be exist more than one according to the number of users that can be accommodated.
 - Each module communicates with other modules through the Coordinator or Connector module, depending on the configuration.
