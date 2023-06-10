@@ -211,7 +211,7 @@ void NetGameSession::RegisterReceive()
 - The User module is the starting point for actually executing requests from clients.
 - After analyzing the request to be performed by disassembling the packet from the client, it is put in the JobQueue of the User module in the form of a Job.
 ``` c++
-//JobQueue에 넣어준다.
+//Put received messages in JobQueue.
 int UserServer::HandleMsg(const NetMsg msg, const std::shared_ptr<NetGameSession>& session)
 {
 	cout << "[UserServer] HandleMsg. PktId:" << msg.GetPktId() << endl;
