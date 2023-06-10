@@ -30,13 +30,13 @@ This is a MMO server framework using C++ Boost Asio library.
 
 # Architecture
 ![mmo_server_architecture](https://github.com/hyklux/portfolio-mmoserver-cpp-boost-asio/assets/96270683/d2273548-db3f-4d83-a699-7c4cb56f4bbe)
-- The server consists of a number of sub-modules, each functionally separated.
-- In actual live service, even the same module(say User module) can be exist more than one according to the number of users that can be accommodated.
-- Each module communicates with other modules through the Coordinator or Connector module, depending on the configuration.
+- The server consists of a number of sub-modules, each module defined to do ceratin tasks.
+- In an actual live service, even the same module(say User module) can exist more than one according to the number of users that can be accommodated for each one.
+- Each module communicates with other modules through Coordinator or Connector module, depending on the configuration.
 
 
 # Server Container
-- When the server starts, it loads the modules defined in the config.json file, such as user, zone, and chat.
+- When the server starts, it loads the modules defined in the config.json file, such as user, zone, chat and etc.
 - The modules to be loaded may depend on the configuration of your server.
 - For example, some servers may not have a zone module or may not have a dbagent module.
 ``` json
@@ -112,13 +112,13 @@ class ServerContainer
 }
 ```
  ![서버 모듈 로드](https://user-images.githubusercontent.com/96270683/221408977-60f10220-00cd-4dc3-a9bf-61efd9b04be6.PNG)
-- The Server Container is the container that manages all modules uploaded to that server and holds references to all server modules.
+- ServerContainer is the container that manages all modules uploaded to that server and holds references to all server modules.
 
 
 # Network module
-- Network module is a module responsible for communication with clients.
+- Network module is a module responsible for communicating with clients.
 - Network communication was implemented using the Boost Asio network library.
-- When a client connects, it creates a NetGameSession class.
+- When a client connects, it creates a NetGameSession instance.
 ``` c++
 bool NetworkServer::StartTcpServer()
 {
@@ -172,7 +172,7 @@ void NetworkServer::RegisterAccept()
 }
 ```
 ![서버 세션 생성](https://user-images.githubusercontent.com/96270683/221409174-abcb4489-1e0e-43a7-93e6-bfb788c4846b.PNG)
-- Each user performs packet communication through the session object of the server connected to his/her client.
+- Each user performs packet communication through the session instance of the server connected to his/her client.
 ``` c++
 //Send message to client
 void NetGameSession::RegisterSend(NetMsg msg)
@@ -208,8 +208,8 @@ void NetGameSession::RegisterReceive()
 ```
 
 # User module
-- The User module is the starting point for actually executing requests from clients.
-- After analyzing the request to be performed by disassembling the packet from the client, it is put in the JobQueue of the User module in the form of a Job.
+- The User module is the starting point for executing requests from clients.
+- After analyzing the request to be performed by disassembling the packet from the client, it is put in the JobQueue of the User module in the form of a Job instance.
 ``` c++
 //Put received messages in JobQueue.
 int UserServer::HandleMsg(const NetMsg msg, const std::shared_ptr<NetGameSession>& session)
@@ -268,8 +268,8 @@ void ThreadPool::WorkerThread()
 }
 ```
 - The User module is also responsible for the main data of users.
-- User main data must be referenced in the User module.
-- When user information is changed in another module, the user data must be updated by sending a packet to the User module.
+- User module holds the current data of each user connected to the server.
+- When user data is changed in another module, the user data in the User module must be updated by sending a packet to the User module.
 
 # DBAgent module
 - The DBAgent module handles requests to the DB.
@@ -334,7 +334,7 @@ bool DBConn::Connect(const WCHAR* connectionString)
 }
 ```
 - When a request for DB processing is received, the query is executed by linking values to the query as parameters.
-- When requesting a login, if it is a new user, I implemented it to create user data in the DB.
+- When requesting a login, if it is a new user, new user data is created in the DB.
 ``` c++
 int DBAgent::CreateUserToDB(std::string userName)
 {
@@ -376,8 +376,8 @@ bool DBConn::Execute(const WCHAR* query)
 
 
 # Zone module
-- A module in the game where the world (map) exists, in which the player interacts with other players or NPCs.
-- When the Zone module is executed, an NPC is created, and a Player object is created when the user enters the game.
+- Zone module is where the actual gmae world (map or level) exists, in which the player interacts with other players or NPCs.
+- When the Zone module is loaded, an NPC is created, and a player instance is created when the user enters the game.
 ``` c++
 void ZoneServer::CreateNPCs()
 {
@@ -416,7 +416,7 @@ EResultType ZoneServer::Handle_C_ENTER_GAME(NetMsg msg)
 }
 ```
 - The Zone module has a Tick function.
-- The Tick function is a function that is repeatedly executed at the promised cycle and continuously updates the state of the world, players, NPCs, etc.
+- The Tick function is a function that is repeatedly executed at the promised cycle and continuously updates the state of the world, players, NPCs and etc.
 ``` c++
 void ZoneServer::RunTick()
 {
@@ -456,7 +456,7 @@ void ZoneServer::Tick(float deltaTime)
 
 # Chat module
 - This module handles chat messages.
-- When a user enters the game, it is added to the user session list.
+- When a user enters the game, it is added to the user session list in the chat module.
 ``` c++
 EResultType ChatServer::Handle_C_ENTER_GAME(const NetMsg msg, const std::shared_ptr<NetGameSession>& session)
 {
