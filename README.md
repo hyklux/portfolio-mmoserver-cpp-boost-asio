@@ -1,5 +1,5 @@
 # portfolio-mmoserver-cpp-boost-asio
-C++ Boost Asio library based MMO server framework
+MMO server framework using C++ Boost Asio library
 
 
 # Introduction
