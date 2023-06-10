@@ -1,44 +1,44 @@
 # portfolio-mmoserver-cpp-boost-asio
-C++ Boost Asio 라이브러리 기반 MMO 서버 프레임워크
+C++ Boost Asio library based MMO server framework
 
 
-# 소개
-C++ Boost Asio 라이브러리 기반 MMO 서버 프레임워크입니다.
+# Introduction
+This is a MMO server framework using C++ Boost Asio library.
 
 
-# 기능
-:heavy_check_mark: 서버 아키텍처
+# Implemntation
+:heavy_check_mark: Architecture
 
 
 :heavy_check_mark: Server Container
 
 
-:heavy_check_mark: Network 모듈
+:heavy_check_mark: Network module
 
 
-:heavy_check_mark: User 모듈
+:heavy_check_mark: User module
 
 
-:heavy_check_mark: DBAgent 모듈
+:heavy_check_mark: DBAgent module
 
 
-:heavy_check_mark: Zone 모듈
+:heavy_check_mark: Zone module
 
 
-:heavy_check_mark: Chat 모듈
+:heavy_check_mark: Chat module
 
 
-# 서버 아키텍처
+# Architecture
 ![게임 서버 구조도](https://user-images.githubusercontent.com/96270683/221395601-73432038-1ac3-4c96-b880-fa8f73992428.png)
-- 서버는 다수의 세부 모듈로 구성되어 있으며 각 모듈은 기능적으로 분리되어 있습니다.
-- 실제 서비스에서는 같은 모듈이라도 수용 가능한 접속 유저 수에 따라 여러 개로 분리될 수 있습니다.
-- 각 모듈은 Connector 모듈을 통해 다른 모듈과 통신합니다.
+- The server consists of a number of sub-modules, each functionally separated.
+- In actual live service, even the same module(say User module) can be exist more than one according to the number of users that can be accommodated.
+- Each module communicates with other modules through the Coordinator or Connector module, depending on the configuration.
 
 
 # Server Container
-- 서버가 시작되면 config.json 파일에 정의된 user, zone, chat 등의 모듈을 로드합니다.
-- 로드할 모듈은 해당 서버의 구성에 따라 달라질 수 있습니다.
-- 예를 들어 어떤 서버에는 zone 모듈이 없거나 dbagent 모듈이 없을 수 있습니다.
+- When the server starts, it loads the modules defined in the config.json file, such as user, zone, and chat.
+- The modules to be loaded may depend on the configuration of your server.
+- For example, some servers may not have a zone module or may not have a dbagent module.
 ``` json
     {
       "name": "ZoneServer",
@@ -74,11 +74,11 @@ C++ Boost Asio 라이브러리 기반 MMO 서버 프레임워크입니다.
       }
     }
 ```
-- 각 모듈은 개별 DLL 파일로 만들어져 있어 모듈 로드시 DLL 파일을 로드하게 됩니다.
+- Each module is made of an individual DLL file, so the DLL file is loaded when the module is loaded.
 ``` c++
 class ServerContainer
 {
-	//...(중략)
+	//...(omitted)
  
 	auto servers = props.get_child("servers");
 	for (const auto& server : servers)
@@ -88,7 +88,7 @@ class ServerContainer
 
 		auto executable = server.second.get<std::string>("executable");
 		
-		//DLL 파일 로드하기
+		//Load DLL files
 		HMODULE handle = LoadLibrary(executable.c_str());
 		if (nullptr == handle)
 		{
@@ -96,7 +96,7 @@ class ServerContainer
 			continue;
 		}
 		
-		//로드한 모듈 실행
+		//Execute the loaded module
 		typedef int(*CREATE_SERVER_FUNC)(IServerContainer* pServerContainer, IServer*& pServer);
 		CREATE_SERVER_FUNC funcPtr = (CREATE_SERVER_FUNC)::GetProcAddress(handle, "CreateServerInstance");
 		int ret = (*funcPtr)((IServerContainer*)this, serverPair.first->second);
@@ -108,17 +108,17 @@ class ServerContainer
 		}
  	}
   
-	//...(중략)
+	//...(omitted)
 }
 ```
  ![서버 모듈 로드](https://user-images.githubusercontent.com/96270683/221408977-60f10220-00cd-4dc3-a9bf-61efd9b04be6.PNG)
-- Server Container는 해당 서버에 업로드된 모든 모듈을 관리하는 컨테이너로 모든 서버 모듈에 대한 참조를 갖고 있습니다.
+- The Server Container is the container that manages all modules uploaded to that server and holds references to all server modules.
 
 
-# Network 모듈
-- Network 모듈은 클라이언트와의 통신을 담당하는 모듈입니다.
-- 네트워크 통신은 Boost Asio 네트워크 라이브러리를 사용하여 구현했습니다.
-- 클라이언트가 접속하면 NetGameSession 클래스를 생성합니다.
+# Network module
+- Network module is a module responsible for communication with clients.
+- Network communication was implemented using the Boost Asio network library.
+- When a client connects, it creates a NetGameSession class.
 ``` c++
 bool NetworkServer::StartTcpServer()
 {
@@ -126,12 +126,12 @@ bool NetworkServer::StartTcpServer()
 
 	try
 	{
-		//엔드포인트 설정
+		//Set endpoint
 		boost::asio::ip::tcp::endpoint endpoint_;
 		endpoint_.address(boost::asio::ip::address::from_string(m_IpAddr));
 		endpoint_.port(m_PortNo);
 
-		//서버 리슨 시작
+		//Starts listening for connection request
 		m_Acceptor.open(endpoint_.protocol());
 		boost::asio::socket_base::reuse_address option(true);
 		m_Acceptor.set_option(option);
@@ -158,7 +158,7 @@ void NetworkServer::RegisterAccept()
 	{
 		cout << "[NetworkServer] OnAccept" << endl;
 
-		//클라이언트 소켓과 연결되면 게임 세션 클래스 생성
+		//Create game session class once connected with client socket
 		if (!error)
 		{
 			std::cout << "Client connection success." << std::endl;
@@ -172,9 +172,9 @@ void NetworkServer::RegisterAccept()
 }
 ```
 ![서버 세션 생성](https://user-images.githubusercontent.com/96270683/221409174-abcb4489-1e0e-43a7-93e6-bfb788c4846b.PNG)
-- 각 유저는 자신의 클라이언트와 연결된 서버의 세션 객체를 통해 패킷 통신을 하게 됩니다.
+- Each user performs packet communication through the session object of the server connected to his/her client.
 ``` c++
-//클라이언트에게 Send 처리
+//Send message to client
 void NetGameSession::RegisterSend(NetMsg msg)
 {
 	boost::asio::async_write(m_Socket, boost::asio::buffer(msg.GetData(), msg.GetLength()), [&](error_code error, std::size_t bytes_transferred)
@@ -183,7 +183,7 @@ void NetGameSession::RegisterSend(NetMsg msg)
 	});
 }
 
-//클라이언트로부터 Receive 처리
+//Receive message from client
 void NetGameSession::RegisterReceive()
 {
 	auto self(shared_from_this());
@@ -207,9 +207,9 @@ void NetGameSession::RegisterReceive()
 }
 ```
 
-# User 모듈
-- User 모듈은 클라이언트로부터 온 요청을 실제로 실행하기 시작하는 시작점이 되는 모듈입니다.
-- 클라이언트부터 온 패킷을 분해하여 수행해야 할 요청을 해석한 후 User 모듈의 JobQueue에 Job의 형태로 담아줍니다.
+# User module
+- The User module is the starting point for actually executing requests from clients.
+- After analyzing the request to be performed by disassembling the packet from the client, it is put in the JobQueue of the User module in the form of a Job.
 ``` c++
 //JobQueue에 넣어준다.
 int UserServer::HandleMsg(const NetMsg msg, const std::shared_ptr<NetGameSession>& session)
@@ -240,7 +240,7 @@ int UserServer::HandleMsg(const NetMsg msg, const std::shared_ptr<NetGameSession
 	return 0;
 }
 ```
-- User 모듈의 WorkerThread에서 JobQueue에 쌓인 Job을 하나씩 수행하게 됩니다.
+- In the WorkerThread of the User module, Jobs accumulated in the JobQueue are executed one by one by each thread.
 ``` c++
 void ThreadPool::WorkerThread() 
 {
@@ -257,26 +257,24 @@ void ThreadPool::WorkerThread()
 			return;
 		}
 
-		// 맨 앞의 job 을 뺀다.
 		std::function<void()> job = std::move(m_JobQueue.front());
 		m_JobQueue.pop();
 		lock.unlock();
 
 		cout << "[ThreadPool] Pushing job out of queue..." << endl;
 
-		// 해당 job 을 수행한다
 		job();
 	}
 }
 ```
-- User 모듈은 유저들의 주요 데이터 담당하는 역할도 합니다.
-- 유저 주요 데이터는 반드시 User 모듈에서 참조하여야 합니다.
-- 다른 모듈에서 유저 정보가 변경되었을 시 User 모듈로 패킷을 보내 유저 데이터를 최신화해야 합니다.
+- The User module is also responsible for the main data of users.
+- User main data must be referenced in the User module.
+- When user information is changed in another module, the user data must be updated by sending a packet to the User module.
 
-# DBAgent 모듈
-- DBAgent 모듈은 DB에 대한 요청을 처리하는 모듈입니다.
-- 모든 DB에 대한 요청은 DBAgent 모듈을 통해 수행됩니다.
-- 모듈 로드 시 DB와 연결을 설정합니다.
+# DBAgent module
+- The DBAgent module handles requests to the DB.
+- All DB requests are made through the DBAgent module.
+- When the module is loaded, it establishes a connection with the DB.
 ``` c++
 int DBAgent::ConnectToDB()
 {
@@ -335,8 +333,8 @@ bool DBConn::Connect(const WCHAR* connectionString)
 	return (ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO);
 }
 ```
-- DB 처리에 대한 요청을 받으면 쿼리에 파라미터로 값을 연동하여 쿼리를 실행합니다.
-- 로그인 요청 시 신규 유저이면 DB에 유저 데이터를 생성하도록 구현해 보았습니다.
+- When a request for DB processing is received, the query is executed by linking values to the query as parameters.
+- When requesting a login, if it is a new user, I implemented it to create user data in the DB.
 ``` c++
 int DBAgent::CreateUserToDB(std::string userName)
 {
@@ -377,15 +375,15 @@ bool DBConn::Execute(const WCHAR* query)
 ![서버 DB에 유저 생성](https://user-images.githubusercontent.com/96270683/221409525-69297530-1fa6-49e7-aa19-4f8ddeb63eca.PNG)
 
 
-# Zone 모듈
-- 게임에서 월드(맵)이 존재하는 모듈로 이 월드에서 플레이어가 다른 플레이어 또는 NPC와 인터랙션합니다.
-- Zone 모듈 실행 시 NPC를 생성하고, 유저가 게임에 입장하며 Player 객체를 생성하도록 했습니다.
+# Zone module
+- A module in the game where the world (map) exists, in which the player interacts with other players or NPCs.
+- When the Zone module is executed, an NPC is created, and a Player object is created when the user enters the game.
 ``` c++
 void ZoneServer::CreateNPCs()
 {
 	cout << "[ZoneServer] CreateNPCs" << endl;
 
-	//NPC 객체 생성
+	//Create NPC object
 	for (int i = 0; i < 5; i++)
 	{
 		std::shared_ptr<CMonster> monster(new CMonster(1000 + i, "Monster" + i));
@@ -398,7 +396,7 @@ EResultType ZoneServer::Handle_C_ENTER_GAME(NetMsg msg)
 {
 	cout << "[ZoneServer] Handle_C_ENTER_GAME" << endl;
 
-	//패킷 분해
+	//Disassemble packet
 	Protocol::C_ENTER_GAME pkt;
 	if (false == ParsePkt(pkt, msg))
 	{
@@ -417,8 +415,8 @@ EResultType ZoneServer::Handle_C_ENTER_GAME(NetMsg msg)
 	return EResultType::SUCCESS;
 }
 ```
-- Zone 모듈에는 Tick 함수가 존재합니다.
-- Tick 함수는 약속된 주기(1초에 60번)로 반복적으로 실행하는 함수로 월드, 플레이어, NPC 등의 상태를 계속적으로 업데이트합니다.
+- The Zone module has a Tick function.
+- The Tick function is a function that is repeatedly executed at the promised cycle and continuously updates the state of the world, players, NPCs, etc.
 ``` c++
 void ZoneServer::RunTick()
 {
@@ -426,14 +424,13 @@ void ZoneServer::RunTick()
 
 	while (m_CanTick)
 	{
-		// 마지막 틱으로 부터 경과한 시간(deltaTime) 계산
+		// Calculate the time since the last tick (deltaTime)
 		std::clock_t currentTime = std::clock();
 		float deltaTime = ((float)(currentTime - lastTickTime)) / CLOCKS_PER_SEC;
 
-		// deltaTime이 기준 프레임 시간 이상 되었는지 확인
+		// Check if deltaTime is greater than base frame time
 		if (deltaTime >= (1.0f / TICK_RATE)) 
 		{
-			//Tick함수 실행
 			Tick(deltaTime);
 
 			lastTickTime = currentTime;
@@ -441,7 +438,7 @@ void ZoneServer::RunTick()
 	}
 }
 
-//매 프레임 처리해야 할 작업 수행
+//Do what needs to be done every frame
 void ZoneServer::Tick(float deltaTime)
 {
 	for (auto player : m_PlayerList)
@@ -457,15 +454,15 @@ void ZoneServer::Tick(float deltaTime)
 ```
 
 
-# Chat 모듈
-- 채팅 메세지를 처리하는 모듈입니다.
-- 유저가 게임에 진입하면 유저 세션 리스트에 추가해 줍니다.
+# Chat module
+- This module handles chat messages.
+- When a user enters the game, it is added to the user session list.
 ``` c++
 EResultType ChatServer::Handle_C_ENTER_GAME(const NetMsg msg, const std::shared_ptr<NetGameSession>& session)
 {
 	cout << "[ChatServer] Handle_C_ENTER_GAME" << endl;
 
-	//패킷 분해
+	//Disassemble packet
 	Protocol::C_ENTER_GAME pkt;
 	if (false == ParsePkt(pkt, msg))
 	{
@@ -474,19 +471,19 @@ EResultType ChatServer::Handle_C_ENTER_GAME(const NetMsg msg, const std::shared_
 
 	cout << "[ChatServer] Player" << to_string(pkt.playerid()) << " has entered chat room." << endl;
 
-	//세션 리스트에 유저 추가
+	//Add user to session list
 	m_UserSessionList.push_back(session);
 
 	return EResultType::SUCCESS;
 }
 ```
-- 특정 유저가 채팅 메세지를 전송하면 다른 유저에게 브로드 캐스팅합니다.
+- When a specific user sends a chat message, it is broadcasted to other users.
 ``` c++
 EResultType ChatServer::Handle_C_CHAT(const NetMsg msg, const std::shared_ptr<NetGameSession>& session)
 {
 	cout << "[ChatServer] Handle_C_CHAT" << endl;
 
-	//패킷 분해
+	//Disassemble packet
 	Protocol::C_CHAT pkt;
 	if (false == ParsePkt(pkt, msg))
 	{
