@@ -373,7 +373,7 @@ bool DBConn::Execute(const WCHAR* query)
 
 
 # Zone module
-- Zone module is where the actual gmae world (map or level) exists, in which the player interacts with other players or NPCs.
+- Zone module is where the actual game world (map or level) exists, in which the player interacts with other players or NPCs.
 - When the Zone module is loaded, an NPC is created, and a player instance is created when the user enters the game.
 ``` c++
 void ZoneModule::CreateNPCs()
