@@ -124,12 +124,12 @@ int UserServer::SetConnector()
 	return m_pConnectorServer ? 0 : -1;
 }
 
-uint16_t UserServer::Handle_C_LOGIN(const NetMsg msg, const std::shared_ptr<NetGameSession>& session)
+EResultType UserServer::Handle_C_LOGIN(const NetMsg msg, const std::shared_ptr<NetGameSession>& session)
 {
 	//로그인
 	Protocol::S_LOGIN loginPkt;
 
-	if (0 == Login(msg, session))
+	if (EResultType::SUCCESS == Login(msg, session))
 	{
 		loginPkt.set_success(true);
 	}
@@ -138,15 +138,15 @@ uint16_t UserServer::Handle_C_LOGIN(const NetMsg msg, const std::shared_ptr<NetG
 	resMsg.MakeBuffer(loginPkt, MSG_S_LOGIN);
 	session->SendMsgToClient(resMsg);
 
-	return 0;
+	return EResultType::SUCCESS;
 }
 
-uint16_t UserServer::Handle_C_ENTER_GAME(const NetMsg msg, const std::shared_ptr<NetGameSession>& session)
+EResultType UserServer::Handle_C_ENTER_GAME(const NetMsg msg, const std::shared_ptr<NetGameSession>& session)
 {
 	//게임 진입
 	Protocol::S_ENTER_GAME enterGamePkt;
 
-	if (0 == EnterGame(msg, session))
+	if (EResultType::SUCCESS == EnterGame(msg, session))
 	{
 		enterGamePkt.set_success(true);
 	}
@@ -155,56 +155,64 @@ uint16_t UserServer::Handle_C_ENTER_GAME(const NetMsg msg, const std::shared_ptr
 	resMsg.MakeBuffer(enterGamePkt, MSG_S_ENTER_GAME);
 	session->SendMsgToClient(resMsg);
 
-	return 0;
+	return EResultType::SUCCESS;
 }
 
-uint16_t UserServer::Handle_C_CHAT(const NetMsg msg, const std::shared_ptr<NetGameSession>& session)
+EResultType UserServer::Handle_C_CHAT(const NetMsg msg, const std::shared_ptr<NetGameSession>& session)
 {
 	return Chat(msg, session);
 }
 
-uint16_t UserServer::Login(const NetMsg msg, const std::shared_ptr<NetGameSession>& session)
+EResultType UserServer::Login(const NetMsg msg, const std::shared_ptr<NetGameSession>& session)
 {
 	cout << "[UserModule] Login" << endl;
 
 	if (!m_pConnectorServer)
 	{
 		cout << "[UserModule] Error : Connector module is null." << endl;
-		return static_cast<uint16_t>(ERRORTYPE::NULL_ERROR);
+		return EResultType::NULL_ERROR;
 	}
 
 	m_pConnectorServer->DispatchMsgToServer(EDBAgentModule, msg, session);
 
-	return static_cast<uint16_t>(ERRORTYPE::NONE_ERROR);
+	return EResultType::SUCCESS;
 }
 
-uint16_t UserServer::EnterGame(const NetMsg msg, const std::shared_ptr<NetGameSession>& session)
+EResultType UserServer::EnterGame(const NetMsg msg, const std::shared_ptr<NetGameSession>& session)
 {
 	cout << "[UserModule] EnterGame" << endl;
 
 	if (!m_pConnectorServer)
 	{
 		cout << "[UserModule] Error : Connector module is null." << endl;
-		return static_cast<uint16_t>(ERRORTYPE::NULL_ERROR);
+		return EResultType::SUCCESS;
 	}
 
-	m_pConnectorServer->DispatchMsgToServer(EZoneModule, msg, session);
-	m_pConnectorServer->DispatchMsgToServer(EChatModule, msg, session);
+	//패킷 분해
+	Protocol::C_ENTER_GAME pkt;
+	if (false == ParsePkt(pkt, msg))
+	{
+		return EResultType::PKT_ERROR;
+	}
 
-	return static_cast<uint16_t>(ERRORTYPE::NONE_ERROR);
+	session->SetPlayerId(pkt.playerid());
+	m_pConnectorServer->DispatchMsgToServer(EZoneServer, msg, session);
+	m_pConnectorServer->DispatchMsgToServer(EChatServer, msg, session);
+
+	return EResultType::SUCCESS;
 }
 
-uint16_t UserServer::Chat(const NetMsg msg, const std::shared_ptr<NetGameSession>& session)
+EResultType UserServer::Chat(const NetMsg msg, const std::shared_ptr<NetGameSession>& session)
 {
 	cout << "[UserModule] Chat" << endl;
 
 	if (!m_pConnectorServer)
 	{
 		cout << "[UserModule] Error : Connector module is null." << endl;
-		return static_cast<uint16_t>(ERRORTYPE::NULL_ERROR);
+		return EResultType::NULL_ERROR;
 	}
 
 	m_pConnectorServer->DispatchMsgToServer(EChatModule, msg, session);
 
-	return static_cast<uint16_t>(ERRORTYPE::NONE_ERROR);
+	return EResultType::SUCCESS;
 }

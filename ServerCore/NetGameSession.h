@@ -31,7 +31,7 @@ private:
 public:
 	NetGameSession(IServerModule* pNetworkServer, uint32_t sessionId, boost::asio::ip::tcp::socket& _socket) : m_pNetworkServer(pNetworkServer), m_SessionId(sessionId), m_PlayerId(0), m_Socket(std::move(_socket))
 	{
-		cout << "Session created. SessionId:" << m_SessionId << endl;
+		cout << "[NetGameSession] Session created. SessionId:" << m_SessionId << endl;
 	}
 
 	~NetGameSession()
@@ -52,6 +52,11 @@ public:
 	uint64_t GetPlayerId()
 	{
 		return m_PlayerId;
+	}
+
+	void SetPlayerId(uint64_t playerId)
+	{
+		m_PlayerId = playerId;
 	}
 
 	void SendMsgToClient(NetMsg msg);

@@ -195,7 +195,7 @@ void NetworkServer::RegisterAccept()
 
 		if (!error)
 		{
-			std::cout << "Client connection success." << std::endl;
+			std::cout << "[NetworkServer] Client connection success." << std::endl;
 
 			std::shared_ptr<NetGameSession> newSession = std::make_shared<NetGameSession>(this, ++m_SessionIdIdx, socket);
 			newSession->RegisterReceive();

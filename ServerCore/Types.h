@@ -44,9 +44,9 @@ USING_SHARED_PTR(MsgJobQueue);
 
 #define _STOMP
 
-enum class ERRORTYPE : uint16_t
+enum class EResultType : uint16_t
 {
-	NONE_ERROR,
+	SUCCESS,
 	NULL_ERROR,
 	PKT_ERROR,
 	DBCONN_ERROR,

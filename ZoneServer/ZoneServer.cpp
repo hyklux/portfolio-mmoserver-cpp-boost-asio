@@ -176,7 +176,7 @@ void ZoneServer::CreateNPCs()
 }
 
 //handlers
-int ZoneServer::Handle_C_ENTER_GAME(NetMsg msg)
+EResultType ZoneServer::Handle_C_ENTER_GAME(NetMsg msg)
 {
 	cout << "[ZoneServer] Handle_C_ENTER_GAME" << endl;
 
@@ -184,7 +184,7 @@ int ZoneServer::Handle_C_ENTER_GAME(NetMsg msg)
 	Protocol::C_ENTER_GAME pkt;
 	if (false == ParsePkt(pkt, msg))
 	{
-		return static_cast<uint16_t>(ERRORTYPE::PKT_ERROR);
+		return EResultType::PKT_ERROR;
 	}
 
 	std::string playerName = "Player" + to_string(pkt.playerid());
@@ -196,5 +196,5 @@ int ZoneServer::Handle_C_ENTER_GAME(NetMsg msg)
 
 	cout << "[ZoneModule] " << playerName << " enter game success." << endl;
 
-	return 0;
+	return EResultType::SUCCESS;
 }

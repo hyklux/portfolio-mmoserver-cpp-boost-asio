@@ -51,6 +51,6 @@ private:
 	int InitDBTable();
 
 	//handlers
-	int Handle_C_LOGIN(const NetMsg msg, const std::shared_ptr<NetGameSession>& session);
+	EResultType Handle_C_LOGIN(const NetMsg msg, const std::shared_ptr<NetGameSession>& session);
 };
 

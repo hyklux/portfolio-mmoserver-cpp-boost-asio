@@ -88,8 +88,16 @@ int main()
 	m_IsServerOn = true;
 
 	//로그인 
+	
+	// Seed the random number generator with the current time
+	std::srand(std::time(nullptr));
+
+	// Generate a random number between 0 and 99
+	int randomPlayerId = std::rand() % 100;
+
 	Protocol::C_LOGIN loginPkt;
-	loginPkt.set_username("Player1");
+	std::string userName = "PlayerName" + to_string(randomPlayerId);
+	loginPkt.set_username(userName);
 
 	cout << "[Client] " << loginPkt.username() << " requesting login..." << endl;
 	NetMsg loginMsg;
@@ -105,7 +113,7 @@ int main()
 
 	//게임 진입
 	Protocol::C_ENTER_GAME enterGamePkt;
-	enterGamePkt.set_playerid(1);
+	enterGamePkt.set_playerid(randomPlayerId);
 
 	cout << "[Client] Player" << enterGamePkt.playerid() << " requesting enter game..." << endl;
 	NetMsg enterGameMsg;
@@ -124,6 +132,7 @@ int main()
 		
 		cout << "[Client] Writing message..." << endl;
 		Protocol::C_CHAT chatPkt;
+		chatPkt.set_playerid(randomPlayerId);
 		chatPkt.set_msg("Blah blah blah...");
 
 		NetMsg chatMsg;
