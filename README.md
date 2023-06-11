@@ -30,9 +30,9 @@ This is a MMO server framework using C++ Boost Asio library.
 
 # Architecture
 ![mmo_server_architecture](https://github.com/hyklux/portfolio-mmoserver-cpp-boost-asio/assets/96270683/d2273548-db3f-4d83-a699-7c4cb56f4bbe)
-- The server consists of a number of sub-modules, each module defined to do ceratin tasks.
+- The server consists of a number of sub-modules, each module defined to do certain tasks.
 - In an actual live service, even the same module(say User module) can exist more than one according to the number of users that can be accommodated for each one.
-- Each module communicates with other modules through Coordinator or Connector module, depending on the configuration.
+- Each module communicates with other modules through Connector module.
 
 
 # Server Container
@@ -41,33 +41,33 @@ This is a MMO server framework using C++ Boost Asio library.
 - For example, some servers may not have a zone module or may not have a dbagent module.
 ``` json
     {
-      "name": "ZoneServer",
+      "name": "ZoneModule",
       "use": "true",
       "servicetype": "3",
-      "executable": "../.././DLLs/ZoneServer.dll",
-      "config": "../.././Config/ZoneServer.json",
+      "executable": "../.././DLLs/ZoneModule.dll",
+      "config": "../.././Config/ZoneModule.json",
       "log": {
         "loglevel": "0",
         "console": "false"
       }
     },
     {
-      "name": "ChatServer",
+      "name": "ChatModule",
       "use": "true",
       "servicetype": "4",
-      "executable": "../.././DLLs/ChatServer.dll",
-      "config": "../.././Config/ChatServer.json",
+      "executable": "../.././DLLs/ChatModule.dll",
+      "config": "../.././Config/ChatModule.json",
       "log": {
         "loglevel": "0",
         "console": "false"
       }
     },
     {
-      "name": "UserServer",
+      "name": "UserModule",
       "use": "true",
       "servicetype": "2",
-      "executable": "../.././DLLs/UserServer.dll",
-      "config": "../.././Config/UserServer.json",
+      "executable": "../.././DLLs/UserModule.dll",
+      "config": "../.././Config/UserModule.json",
       "log": {
         "loglevel": "0",
         "console": "false"
@@ -82,23 +82,20 @@ class ServerContainer
  
 	auto servers = props.get_child("servers");
 	for (const auto& server : servers)
- 	{
+	{
 		auto name = server.second.get<std::string>("name");
-		auto serverPair = m_ServerMap.emplace(name, new IServer());
+		auto serverPair = m_ServerMap.emplace(name, new IServerModule());
 
 		auto executable = server.second.get<std::string>("executable");
-		
-		//Load DLL files
 		HMODULE handle = LoadLibrary(executable.c_str());
 		if (nullptr == handle)
 		{
 			cout << "DLL load error. GetLastError :" << GetLastError() << std::endl;
 			continue;
 		}
-		
-		//Execute the loaded module
-		typedef int(*CREATE_SERVER_FUNC)(IServerContainer* pServerContainer, IServer*& pServer);
-		CREATE_SERVER_FUNC funcPtr = (CREATE_SERVER_FUNC)::GetProcAddress(handle, "CreateServerInstance");
+
+		typedef int(*CREATE_SERVER_FUNC)(IServerContainer* pServerContainer, IServerModule*& pServer);
+		CREATE_SERVER_FUNC funcPtr = (CREATE_SERVER_FUNC)::GetProcAddress(handle, "CreateServerModuleInstance");
 		int ret = (*funcPtr)((IServerContainer*)this, serverPair.first->second);
 		if (ret != 0)
 		{
@@ -106,7 +103,7 @@ class ServerContainer
 			FreeLibrary(handle);
 			continue;
 		}
- 	}
+	}
   
 	//...(omitted)
 }
@@ -120,9 +117,9 @@ class ServerContainer
 - Network communication was implemented using the Boost Asio network library.
 - When a client connects, it creates a NetGameSession instance.
 ``` c++
-bool NetworkServer::StartTcpServer()
+bool NetworkModule::StartTcpServer()
 {
-	cout << "[NetworkServer] StartTcpServer" << endl;
+	cout << "[NetworkModule] StartTcpServer" << endl;
 
 	try
 	{
@@ -152,11 +149,11 @@ bool NetworkServer::StartTcpServer()
 	return true;
 }
 
-void NetworkServer::RegisterAccept()
+void NetworkModule::RegisterAccept()
 {
 	m_Acceptor.async_accept([this](boost::system::error_code error, boost::asio::ip::tcp::socket socket)
 	{
-		cout << "[NetworkServer] OnAccept" << endl;
+		cout << "[NetworkModule] OnAccept" << endl;
 
 		//Create game session class once connected with client socket
 		if (!error)
@@ -194,7 +191,7 @@ void NetGameSession::RegisterReceive()
 		{
 			if (m_Msg.DecodeHeader())
 			{
-				m_pNetworkServer->DispatchClientMsg(EUserServer, m_Msg, self);
+				m_pNetworkModule->DispatchClientMsg(EUserServer, m_Msg, self);
 			}
 
 			RegisterReceive();
@@ -212,9 +209,9 @@ void NetGameSession::RegisterReceive()
 - After analyzing the request to be performed by disassembling the packet from the client, it is put in the JobQueue of the User module in the form of a Job instance.
 ``` c++
 //Put received messages in JobQueue.
-int UserServer::HandleMsg(const NetMsg msg, const std::shared_ptr<NetGameSession>& session)
+int UserModule::HandleMsg(const NetMsg msg, const std::shared_ptr<NetGameSession>& session)
 {
-	cout << "[UserServer] HandleMsg. PktId:" << msg.GetPktId() << endl;
+	cout << "[UserModule] HandleMsg. PktId:" << msg.GetPktId() << endl;
 
 	switch (msg.GetPktId())
 	{
@@ -276,18 +273,18 @@ void ThreadPool::WorkerThread()
 - All DB requests are made through the DBAgent module.
 - When the module is loaded, it establishes a connection with the DB.
 ``` c++
-int DBAgent::ConnectToDB()
+int DBAgentModule::ConnectToDB()
 {
-	cout << "[DBAgent] Connecting to DB..." << endl;
+	cout << "[DBAgentModule] Connecting to DB..." << endl;
 
 	bool connResult = m_DbConn.Connect(L"Driver={SQL Server Native Client 11.0};Server=(localdb)\\MSSQLLocalDB;Database=UserDB;Trusted_Connection=Yes;");
 	if (!connResult)
 	{
-		cout << "[DBAgent] DB connection error." << endl;
+		cout << "[DBAgentModule] DB connection error." << endl;
 		return -1;
 	}
 
-	cout << "[DBAgent] DB connection success." << endl;
+	cout << "[DBAgentModule] DB connection success." << endl;
 	return 0;
 }
 
@@ -336,7 +333,7 @@ bool DBConn::Connect(const WCHAR* connectionString)
 - When a request for DB processing is received, the query is executed by linking values to the query as parameters.
 - When requesting a login, if it is a new user, new user data is created in the DB.
 ``` c++
-int DBAgent::CreateUserToDB(std::string userName)
+int DBAgentModule::CreateUserToDB(std::string userName)
 {
 	m_DbConn.Unbind();
 
@@ -379,9 +376,9 @@ bool DBConn::Execute(const WCHAR* query)
 - Zone module is where the actual gmae world (map or level) exists, in which the player interacts with other players or NPCs.
 - When the Zone module is loaded, an NPC is created, and a player instance is created when the user enters the game.
 ``` c++
-void ZoneServer::CreateNPCs()
+void ZoneModule::CreateNPCs()
 {
-	cout << "[ZoneServer] CreateNPCs" << endl;
+	cout << "[ZoneModule] CreateNPCs" << endl;
 
 	//Create NPC object
 	for (int i = 0; i < 5; i++)
@@ -392,33 +389,33 @@ void ZoneServer::CreateNPCs()
 	}
 }
 
-EResultType ZoneServer::Handle_C_ENTER_GAME(NetMsg msg)
+int ZoneModule::Handle_C_ENTER_GAME(NetMsg msg)
 {
-	cout << "[ZoneServer] Handle_C_ENTER_GAME" << endl;
+	cout << "[ZoneModule] Handle_C_ENTER_GAME" << endl;
 
 	//Disassemble packet
 	Protocol::C_ENTER_GAME pkt;
 	if (false == ParsePkt(pkt, msg))
 	{
-		return EResultType::PKT_ERROR;
+		return static_cast<uint16_t>(ERRORTYPE::PKT_ERROR);
 	}
 
 	std::string playerName = "Player" + to_string(pkt.playerid());
 
-	cout << "[ZoneServer] " << playerName << " entering game..." << endl;
+	cout << "[ZoneModule] " << playerName << " entering game..." << endl;
 
 	std::shared_ptr<CPlayer> player(new CPlayer(pkt.playerid(), playerName));
 	m_PlayerList.push_back(player);
 
-	cout << "[ZoneServer] " << playerName << " enter game success." << endl;
+	cout << "[ZoneModule] " << playerName << " enter game success." << endl;
 
-	return EResultType::SUCCESS;
+	return 0;
 }
 ```
 - The Zone module has a Tick function.
 - The Tick function is a function that is repeatedly executed at the promised cycle and continuously updates the state of the world, players, NPCs and etc.
 ``` c++
-void ZoneServer::RunTick()
+void ZoneModule::RunTick()
 {
 	m_CanTick = true;
 
@@ -439,7 +436,7 @@ void ZoneServer::RunTick()
 }
 
 //Do what needs to be done every frame
-void ZoneServer::Tick(float deltaTime)
+void ZoneModule::Tick(float deltaTime)
 {
 	for (auto player : m_PlayerList)
 	{
@@ -458,47 +455,46 @@ void ZoneServer::Tick(float deltaTime)
 - This module handles chat messages.
 - When a user enters the game, it is added to the user session list in the chat module.
 ``` c++
-EResultType ChatServer::Handle_C_ENTER_GAME(const NetMsg msg, const std::shared_ptr<NetGameSession>& session)
+int ChatModule::Handle_C_ENTER_GAME(const NetMsg msg, const std::shared_ptr<NetGameSession>& session)
 {
-	cout << "[ChatServer] Handle_C_ENTER_GAME" << endl;
+	cout << "[ChatModule] Handle_C_ENTER_GAME" << endl;
 
 	//Disassemble packet
 	Protocol::C_ENTER_GAME pkt;
 	if (false == ParsePkt(pkt, msg))
 	{
-		return EResultType::PKT_ERROR;
+		return static_cast<uint16_t>(ERRORTYPE::PKT_ERROR);
 	}
 
-	cout << "[ChatServer] Player" << to_string(pkt.playerid()) << " has entered chat room." << endl;
+	cout << "[ChatModule] Player" << to_string(pkt.playerid()) << " has entered chat room." << endl;
 
-	//Add user to session list
 	m_UserSessionList.push_back(session);
 
-	return EResultType::SUCCESS;
+	return 0;
 }
 ```
 - When a specific user sends a chat message, it is broadcasted to other users.
 ``` c++
-EResultType ChatServer::Handle_C_CHAT(const NetMsg msg, const std::shared_ptr<NetGameSession>& session)
+int ChatModule::Handle_C_CHAT(const NetMsg msg, const std::shared_ptr<NetGameSession>& session)
 {
-	cout << "[ChatServer] Handle_C_CHAT" << endl;
+	cout << "[ChatModule] Handle_C_CHAT" << endl;
 
 	//Disassemble packet
 	Protocol::C_CHAT pkt;
 	if (false == ParsePkt(pkt, msg))
 	{
-		return EResultType::PKT_ERROR;
+		return static_cast<uint16_t>(ERRORTYPE::PKT_ERROR);
 	}
 
-	cout << "[ChatServer] [Player" << to_string(pkt.playerid()) << "] " << pkt.msg() << endl;
+	cout << "[ChatModule] [Player" << to_string(pkt.playerid()+1) << "] " << pkt.msg() << endl;
 
-	std::string broadcastMsgStr = "[Player" + to_string(pkt.playerid()) + "] : " + pkt.msg();
+	std::string broadcastMsgStr = "[Player" + to_string(pkt.playerid()+1) + "] : " + pkt.msg();
 	BroadCastAll(broadcastMsgStr);
 
-	return EResultType::SUCCESS;
+	return 0;
 }
 
-void ChatServer::BroadCastAll(std::string broadcastMsgStr)
+void ChatModule::BroadCastAll(std::string broadcastMsgStr)
 {
 	NetMsg broadcastMsg;
 	Protocol::S_CHAT chatPkt;
