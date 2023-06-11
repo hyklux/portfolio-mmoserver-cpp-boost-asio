@@ -38,7 +38,7 @@ This is a MMO server framework using C++ Boost Asio library.
 # Server Container
 - When the server starts, it loads the modules defined in the config.json file, such as user, zone, chat and etc.
 - The modules to be loaded may depend on the configuration of your server.
-- For example, some servers may not have a zone module or may not have a dbagent module.
+- For example, some servers may not have a zone module or may not have a DBAgent module.
 ``` json
     {
       "name": "ZoneModule",
