@@ -210,7 +210,7 @@
     <ClInclude Include="IServerContainer.h">
       <Filter>AsioNetwork</Filter>
     </ClInclude>
-    <ClInclude Include="IServer.h">
+    <ClInclude Include="IServerModule.h">
       <Filter>AsioNetwork</Filter>
     </ClInclude>
     <ClInclude Include="CPlayer.h">

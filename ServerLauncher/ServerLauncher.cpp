@@ -17,8 +17,8 @@ int main(int argc, const char** argv)
 {
 	std::string serverRevision = "1";
 
-	cout << "[Server Launcher] Server launch : " << *argv << endl;
-	cout << "[Server Launcher] Server revision : " << serverRevision << endl;
+	cout << "[ServerLauncher] Server launch : " << *argv << endl;
+	cout << "[ServerLauncher] Server revision : " << serverRevision << endl;
 
 	int32_t ret = StartService(argc, argv);
 
@@ -29,16 +29,16 @@ int main(int argc, const char** argv)
 		int32_t ret = serverContainer.Load();
 		if (ret != 0)
 		{
-			cout << "[Server Launcher] Server container load error." << endl;
-			cout << "Server shutdown." << std::endl;
+			cout << "[ServerLauncher] Server container load error." << endl;
+			cout << "[ServerLauncher] Server shutdown." << std::endl;
 			return 0;
 		}
 
 		ret = serverContainer.Start();
 		if (ret != 0)
 		{
-			cout << "[Server Launcher] Server container start error." << endl;
-			cout << "Server shutdown." << std::endl;
+			cout << "[ServerLauncher] Server container start error." << endl;
+			cout << "[ServerLauncher] Server shutdown." << std::endl;
 			return 0;
 		}
 
@@ -58,11 +58,11 @@ int main(int argc, const char** argv)
 			}
 		} while (isContinue);
 
-		cout << "Shutting down server..." << std::endl;
+		cout << "[ServerLauncher] Shutting down server..." << std::endl;
 
 		//mainContainer.Unload();
 
-		cout << "Server shutdown." << std::endl;
+		cout << "[ServerLauncher] Server shutdown." << std::endl;
 	}
 	catch (const std::exception& e)
 	{

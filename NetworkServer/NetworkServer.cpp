@@ -3,9 +3,9 @@
 #include "NetTcpServer.h"
 
 
-int CreateServerInstance(IServerContainer* pServerContainer, IServer*& pServer)
+int CreateServerInstance(IServerContainer* pServerContainer, IServerModule*& pServer)
 {
-	cout << "[NetworkServer] Creating network server instance..." << endl;
+	cout << "[NetworkModule] Creating network module instance..." << endl;
 
 	NetworkServer* server = new NetworkServer();
 	if (nullptr == server)
@@ -15,7 +15,7 @@ int CreateServerInstance(IServerContainer* pServerContainer, IServer*& pServer)
 
 	server->OnCreate(pServerContainer, pServer);
 
-	cout << "[NetworkServer] Network server instance created." << endl;
+	cout << "[NetworkModule] Network server module created." << endl;
 
 	return 0;
 }
@@ -35,9 +35,9 @@ int NetworkServer::ReleaseRef(void)
 	return m_refs;
 }
 
-int NetworkServer::OnCreate(IServerContainer* pServerContainer, IServer*& pServer)
+int NetworkServer::OnCreate(IServerContainer* pServerContainer, IServerModule*& pServer)
 {
-	cout << "[NetworkServer] OnCreate" << endl;
+	cout << "[NetworkModule] OnCreate" << endl;
 
 	if (pServerContainer == nullptr)
 	{
@@ -46,7 +46,7 @@ int NetworkServer::OnCreate(IServerContainer* pServerContainer, IServer*& pServe
 
 	m_pServerContainer = pServerContainer;
 
-	pServer = static_cast<IServer*>(this);
+	pServer = static_cast<IServerModule*>(this);
 	pServer->AddRef();
 
 	return 0;
@@ -54,7 +54,7 @@ int NetworkServer::OnCreate(IServerContainer* pServerContainer, IServer*& pServe
 
 int NetworkServer::OnLoad()
 {
-	cout << "[NetworkServer] OnLoad" << endl;
+	cout << "[NetworkModule] OnLoad" << endl;
 
 	InitIOService();
 	InitThreads();
@@ -64,7 +64,7 @@ int NetworkServer::OnLoad()
 
 int NetworkServer::OnStart()
 {
-	cout << "[NetworkServer] OnStart" << endl;
+	cout << "[NetworkModule] OnStart" << endl;
 
 	StartTcpServer();
 
@@ -73,7 +73,7 @@ int NetworkServer::OnStart()
 
 int NetworkServer::OnUnload()
 {
-	cout << "[NetworkServer] OnUnload" << endl;
+	cout << "[NetworkModule] OnUnload" << endl;
 
 	// 작업이 없으면 io_service가 종료하도록
 	m_Work->get_io_context().restart();
@@ -103,7 +103,7 @@ int NetworkServer::SetConnector()
 	void* pContainerPtr = m_pServerContainer->GetConnectorServer();
 	if (pContainerPtr)
 	{
-		m_pConnectorServer = static_cast<IServer*>(pContainerPtr);
+		m_pConnectorServer = static_cast<IServerModule*>(pContainerPtr);
 	}
 
 	return m_pConnectorServer ? 0 : -1;
@@ -111,7 +111,7 @@ int NetworkServer::SetConnector()
 
 bool NetworkServer::InitIOService()
 {
-	cout << "[NetworkServer] InitIOService" << endl;
+	cout << "[NetworkModule] InitIOService" << endl;
 
 	try
 	{
@@ -132,7 +132,7 @@ bool NetworkServer::InitIOService()
 
 bool NetworkServer::InitThreads()
 {
-	cout << "[NetworkServer] InitThreads Cnt:" << m_ThreadCnt << endl;
+	cout << "[NetworkModule] InitThreads Cnt:" << m_ThreadCnt << endl;
 
 	try
 	{
@@ -159,7 +159,7 @@ bool NetworkServer::InitThreads()
 
 bool NetworkServer::StartTcpServer()
 {
-	cout << "[NetworkServer] StartTcpServer" << endl;
+	cout << "[NetworkModule] StartTcpServer" << endl;
 
 	try
 	{
@@ -191,7 +191,7 @@ void NetworkServer::RegisterAccept()
 {
 	m_Acceptor.async_accept([this](boost::system::error_code error, boost::asio::ip::tcp::socket socket)
 	{
-		cout << "[NetworkServer] OnAccept" << endl;
+		cout << "[NetworkModule] OnAccept" << endl;
 
 		if (!error)
 		{
@@ -209,12 +209,12 @@ void NetworkServer::OnAccept(const boost::system::error_code& error, const boost
 {
 }
 
-IServer* NetworkServer::GetUserServer()
+IServerModule* NetworkServer::GetUserServer()
 {
 	void* pContainerPtr = m_pServerContainer->GetUserServer();
 	if (pContainerPtr)
 	{
-		return static_cast<IServer*>(pContainerPtr);
+		return static_cast<IServerModule*>(pContainerPtr);
 	}
 
 	return nullptr;
@@ -222,9 +222,9 @@ IServer* NetworkServer::GetUserServer()
 
 void NetworkServer::DispatchClientMsg(uint16_t targetServer, NetMsg msg, const std::shared_ptr<NetGameSession>& session)
 {
-	cout << "[NetworkServer] DispatchClientMsg" << endl;
+	cout << "[NetworkModule] DispatchClientMsg" << endl;
 
-	IServer* pTargetServer = static_cast<IServer*>(m_pServerContainer->GetTargetServer(targetServer));
+	IServerModule* pTargetServer = static_cast<IServerModule*>(m_pServerContainer->GetTargetServer(targetServer));
 
 	if (pTargetServer)
 	{

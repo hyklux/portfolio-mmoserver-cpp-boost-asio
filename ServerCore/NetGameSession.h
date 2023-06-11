@@ -11,7 +11,7 @@
 #include <boost/asio.hpp>
 
 #include "NetMsg.h"
-#include "IServer.h"
+#include "IServerModule.h"
 
 using namespace std;
 
@@ -20,7 +20,7 @@ class NetMsg;
 class NetGameSession : public std::enable_shared_from_this<NetGameSession>
 {
 private:
-	IServer* m_pNetworkServer;
+	IServerModule* m_pNetworkServer;
 	uint32_t m_SessionId;
 	uint64_t m_PlayerId;
 
@@ -29,7 +29,7 @@ private:
 	NetMsg m_Msg;
 
 public:
-	NetGameSession(IServer* pNetworkServer, uint32_t sessionId, boost::asio::ip::tcp::socket& _socket) : m_pNetworkServer(pNetworkServer), m_SessionId(sessionId), m_PlayerId(0), m_Socket(std::move(_socket))
+	NetGameSession(IServerModule* pNetworkServer, uint32_t sessionId, boost::asio::ip::tcp::socket& _socket) : m_pNetworkServer(pNetworkServer), m_SessionId(sessionId), m_PlayerId(0), m_Socket(std::move(_socket))
 	{
 		cout << "Session created. SessionId:" << m_SessionId << endl;
 	}
@@ -61,9 +61,4 @@ public:
 	void RegisterReceive();
 
 	void Disconnect();
-
-private:
-	void OnSend(const boost::system::error_code& error, size_t bytes_transferred);
-
-	void OnReceive(error_code error, size_t bytes_transferred);
 };

@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include "IServer.h"
+#include "IServerModule.h"
 #include "NetMsg.h"
 
 class IServerContainer

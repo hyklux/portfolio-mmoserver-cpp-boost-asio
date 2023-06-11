@@ -1,14 +1,14 @@
 #include "pch.h"
 #include "DBAgent.h"
-#include "IServer.h"
+#include "IServerModule.h"
 #include "Types.h"
 #include "DBConn.h"
 
 #include "Protocol.pb.h"
 
-int CreateServerInstance(IServerContainer* pServerContainer, IServer*& pServer)
+int CreateServerInstance(IServerContainer* pServerContainer, IServerModule*& pServer)
 {
-	cout << "[DBAgent] Creating zone server instance..." << endl;
+	cout << "[DBAgentModule] Creating DBAgent module instance..." << endl;
 
 	DBAgent* server = new DBAgent();
 	if (nullptr == server)
@@ -18,7 +18,7 @@ int CreateServerInstance(IServerContainer* pServerContainer, IServer*& pServer)
 
 	server->OnCreate(pServerContainer, pServer);
 
-	cout << "[DBAgent] Zone server instance created." << endl;
+	cout << "[DBAgentModule] DBAgent server instance created." << endl;
 
 	return 0;
 }
@@ -38,9 +38,9 @@ int DBAgent::ReleaseRef(void)
 	return m_refs;
 }
 
-int DBAgent::OnCreate(IServerContainer* pServerContainer, IServer*& pServer)
+int DBAgent::OnCreate(IServerContainer* pServerContainer, IServerModule*& pServer)
 {
-	cout << "[DBAgent] OnCreate" << endl;
+	cout << "[DBAgentModule] OnCreate" << endl;
 
 	if (pServerContainer == nullptr)
 	{
@@ -49,7 +49,7 @@ int DBAgent::OnCreate(IServerContainer* pServerContainer, IServer*& pServer)
 
 	m_pServerContainer = pServerContainer;
 
-	pServer = static_cast<IServer*>(this);
+	pServer = static_cast<IServerModule*>(this);
 	pServer->AddRef();
 
 	return 0;
@@ -57,7 +57,7 @@ int DBAgent::OnCreate(IServerContainer* pServerContainer, IServer*& pServer)
 
 int DBAgent::OnLoad()
 {
-	cout << "[DBAgent] OnLoad" << endl;
+	cout << "[DBAgentModule] OnLoad" << endl;
 
 	//Connect
 	if (0 != ConnectToDB())
@@ -76,21 +76,21 @@ int DBAgent::OnLoad()
 
 int DBAgent::OnStart()
 {
-	cout << "[DBAgent] OnStart" << endl;
+	cout << "[DBAgentModule] OnStart" << endl;
 
 	return 0;
 }
 
 int DBAgent::OnUnload()
 {
-	cout << "[DBAgent] OnUnload" << endl;
+	cout << "[DBAgentModule] OnUnload" << endl;
 
 	return 0;
 }
 
 int DBAgent::HandleMsg(const NetMsg msg, const std::shared_ptr<NetGameSession>& session)
 {
-	cout << "[DBAgent] HandleMsg. PktId:" << msg.GetPktId() << endl;
+	cout << "[DBAgentModule] HandleMsg. PktId:" << msg.GetPktId() << endl;
 
 	switch (msg.GetPktId())
 	{
@@ -106,7 +106,7 @@ int DBAgent::HandleMsg(const NetMsg msg, const std::shared_ptr<NetGameSession>& 
 
 int DBAgent::Handle_C_LOGIN(const NetMsg msg, const std::shared_ptr<NetGameSession>& session)
 {
-	cout << "[DBAgent] Handle_C_LOGIN" << endl;
+	cout << "[DBAgentModule] Handle_C_LOGIN" << endl;
 
 	//패킷 분해
 	Protocol::C_LOGIN pkt;
@@ -115,14 +115,14 @@ int DBAgent::Handle_C_LOGIN(const NetMsg msg, const std::shared_ptr<NetGameSessi
 		return static_cast<uint16_t>(ERRORTYPE::PKT_ERROR);
 	}
 
-	cout << "[DBAgent] " << pkt.username() << " logging in..." << endl;
+	cout << "[DBAgentModule] " << pkt.username() << " logging in..." << endl;
 
 	if (!ExistsUserInDB(pkt.username()))
 	{
 		CreateUserToDB(pkt.username());
 	}
 
-	cout << "[DBAgent] " << pkt.username() << " login success." << endl;
+	cout << "[DBAgentModule] " << pkt.username() << " login success." << endl;
 
 	return static_cast<uint16_t>(ERRORTYPE::NONE_ERROR);
 }
@@ -143,11 +143,11 @@ bool DBAgent::ExistsUserInDB(std::string userName)
 	bool queryResult = m_DbConn.Execute(query);
 	if (!queryResult)
 	{
-		cout << "[DBAgent] User search failed." << endl;
+		cout << "[DBAgentModule] User search failed." << endl;
 		return false;
 	}
 
-	cout << "[DBAgent] User search success." << endl;
+	cout << "[DBAgentModule] User search success." << endl;
 
 	m_DbConn.Fetch();
 	return (outId != 0);
@@ -175,7 +175,7 @@ int DBAgent::CreateUserToDB(std::string userName)
 		return -1;
 	}
 
-	cout << "[DBAgent] User creation success." << endl;
+	cout << "[DBAgentModule] User creation success." << endl;
 	return 0;
 }
 
@@ -189,7 +189,7 @@ int DBAgent::SetConnector()
 	void* pContainerPtr = m_pServerContainer->GetConnectorServer();
 	if (pContainerPtr)
 	{
-		m_pConnectorServer = static_cast<IServer*>(pContainerPtr);
+		m_pConnectorServer = static_cast<IServerModule*>(pContainerPtr);
 	}
 
 	return m_pConnectorServer ? 0 : -1;
@@ -197,32 +197,32 @@ int DBAgent::SetConnector()
 
 int DBAgent::ConnectToDB()
 {
-	cout << "[DBAgent] Connecting to DB..." << endl;
+	cout << "[DBAgentModule] Connecting to DB..." << endl;
 
 	bool connResult = m_DbConn.Connect(L"Driver={SQL Server Native Client 11.0};Server=(localdb)\\MSSQLLocalDB;Database=UserDB;Trusted_Connection=Yes;");
 	if (!connResult)
 	{
-		cout << "[DBAgent] DB connection error." << endl;
+		cout << "[DBAgentModule] DB connection error." << endl;
 		return -1;
 	}
 
-	cout << "[DBAgent] DB connection success." << endl;
+	cout << "[DBAgentModule] DB connection success." << endl;
 	return 0;
 }
 
 int DBAgent::InitDBTable()
 {
-	cout << "[DBAgent] Initializing DB table..." << endl;
+	cout << "[DBAgentModule] Initializing DB table..." << endl;
 
 	auto query = L"DROP TABLE IF EXISTS [dbo].[User]; CREATE TABLE [dbo].[User] ([id] INT NOT NULL PRIMARY KEY IDENTITY, [userid] INT NOT NULL, [username] VARCHAR(100) NOT NULL);";
 
 	bool createTableResult = m_DbConn.Execute(query);
 	if (!createTableResult)
 	{
-		cout << "[DBAgent] DB create table failed." << endl;
+		cout << "[DBAgentModule] DB create table failed." << endl;
 		return -1;
 	}
 
-	cout << "[DBAgent] DB create table success." << endl;
+	cout << "[DBAgentModule] DB create table success." << endl;
 	return 0;
 }

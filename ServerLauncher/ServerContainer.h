@@ -1,6 +1,6 @@
 #pragma once
 
-#include "IServer.h"
+#include "IServerModule.h"
 #include "IServerContainer.h"
 
 #include <map>
@@ -16,7 +16,7 @@ class ServerContainer : public IServerContainer
 {
 private:
 	std::atomic_int m_refs = 0;
-	std::unordered_map<std::string, IServer*> m_ServerMap;
+	std::unordered_map<std::string, IServerModule*> m_ServerMap;
 
 public:
 	ServerContainer(const std::string& appDir, const std::string& serverRevision)
@@ -41,7 +41,7 @@ public:
 		for (const auto& server : servers)
 		{
 			auto name = server.second.get<std::string>("name");
-			auto serverPair = m_ServerMap.emplace(name, new IServer());
+			auto serverPair = m_ServerMap.emplace(name, new IServerModule());
 
 			auto executable = server.second.get<std::string>("executable");
 			HMODULE handle = LoadLibrary(executable.c_str());
@@ -51,7 +51,7 @@ public:
 				continue;
 			}
 
-			typedef int(*CREATE_SERVER_FUNC)(IServerContainer* pServerContainer, IServer*& pServer);
+			typedef int(*CREATE_SERVER_FUNC)(IServerContainer* pServerContainer, IServerModule*& pServer);
 			CREATE_SERVER_FUNC funcPtr = (CREATE_SERVER_FUNC)::GetProcAddress(handle, "CreateServerInstance");
 			int ret = (*funcPtr)((IServerContainer*)this, serverPair.first->second);
 			if (ret != 0)

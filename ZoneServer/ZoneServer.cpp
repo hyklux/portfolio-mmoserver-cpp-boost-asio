@@ -1,14 +1,14 @@
 #include "pch.h"
 #include "ZoneServer.h"
-#include "IServer.h"
+#include "IServerModule.h"
 
 #include "Protocol.pb.h"
 
 #define TICK_LENGTH_MILLISEC 16 //60 ticks per second
 
-int CreateServerInstance(IServerContainer* pServerContainer, IServer*& pServer)
+int CreateServerInstance(IServerContainer* pServerContainer, IServerModule*& pServer)
 {
-	cout << "[ZoneServer] Creating zone server instance..." << endl;
+	cout << "[ZoneModule] Creating zone server instance..." << endl;
 
 	ZoneServer* server = new ZoneServer();
 	if (nullptr == server)
@@ -18,7 +18,7 @@ int CreateServerInstance(IServerContainer* pServerContainer, IServer*& pServer)
 
 	server->OnCreate(pServerContainer, pServer);
 
-	cout << "[ZoneServer] Zone server instance created." << endl;
+	cout << "[ZoneModule] Zone server instance created." << endl;
 
 	return 0;
 }
@@ -38,9 +38,9 @@ int ZoneServer::ReleaseRef(void)
 	return m_refs;
 }
 
-int ZoneServer::OnCreate(IServerContainer* pServerContainer, IServer*& pServer)
+int ZoneServer::OnCreate(IServerContainer* pServerContainer, IServerModule*& pServer)
 {
-	cout << "[ZoneServer] OnCreate" << endl;
+	cout << "[ZoneModule] OnCreate" << endl;
 
 	if (pServerContainer == nullptr)
 	{
@@ -49,7 +49,7 @@ int ZoneServer::OnCreate(IServerContainer* pServerContainer, IServer*& pServer)
 
 	m_pServerContainer = pServerContainer;
 
-	pServer = static_cast<IServer*>(this);
+	pServer = static_cast<IServerModule*>(this);
 	pServer->AddRef();
 
 	return 0;
@@ -57,7 +57,7 @@ int ZoneServer::OnCreate(IServerContainer* pServerContainer, IServer*& pServer)
 
 int ZoneServer::OnLoad()
 {
-	cout << "[ZoneServer] OnLoad" << endl;
+	cout << "[ZoneModule] OnLoad" << endl;
 
 	SetConnector();
 
@@ -66,7 +66,7 @@ int ZoneServer::OnLoad()
 
 int ZoneServer::OnStart()
 {
-	cout << "[ZoneServer] OnStart" << endl;
+	cout << "[ZoneModule] OnStart" << endl;
 
 	InitZone();
 	RunTick();
@@ -76,7 +76,7 @@ int ZoneServer::OnStart()
 
 int ZoneServer::OnUnload()
 {
-	cout << "[ZoneServer] OnUnload" << endl;
+	cout << "[ZoneModule] OnUnload" << endl;
 
 	m_CanTick = false;
 
@@ -91,7 +91,7 @@ int ZoneServer::OnUnload()
 
 int ZoneServer::HandleMsg(const NetMsg msg, const std::shared_ptr<NetGameSession>& session)
 {
-	cout << "[ZoneServer] HandleMsg. PktId:" << msg.GetPktId() << endl;
+	cout << "[ZoneModule] HandleMsg. PktId:" << msg.GetPktId() << endl;
 
 	switch (msg.GetPktId())
 	{
@@ -117,7 +117,7 @@ int ZoneServer::SetConnector()
 	void* pContainerPtr = m_pServerContainer->GetConnectorServer();
 	if (pContainerPtr)
 	{
-		m_pConnectorServer = static_cast<IServer*>(pContainerPtr);
+		m_pConnectorServer = static_cast<IServerModule*>(pContainerPtr);
 	}
 
 	return m_pConnectorServer ? 0 : -1;
@@ -134,25 +134,24 @@ void ZoneServer::RunTick()
 
 	while (m_CanTick)
 	{
-		// Calculate the time since the last tick
+		// 마지막 틱으로 부터 경과한 시간(deltaTime) 계산
 		std::clock_t currentTime = std::clock();
 		float deltaTime = ((float)(currentTime - lastTickTime)) / CLOCKS_PER_SEC;
 
-		// Check if it's time to update the game state
+		// deltaTime이 기준 프레임 시간 이상 되었는지 확인
 		if (deltaTime >= (1.0f / TICK_RATE)) 
 		{
+			//Tick함수 실행
 			Tick(deltaTime);
 
-			// Update the last tick time
 			lastTickTime = currentTime;
 		}
 	}
 }
 
+//매 프레임 처리해야 할 작업 수행
 void ZoneServer::Tick(float deltaTime)
 {
-	//매 프레임 처리해야 할 작업 수행
-
 	for (auto player : m_PlayerList)
 	{
 		player->Update(deltaTime);
@@ -190,12 +189,12 @@ int ZoneServer::Handle_C_ENTER_GAME(NetMsg msg)
 
 	std::string playerName = "Player" + to_string(pkt.playerid());
 
-	cout << "[ZoneServer] " << playerName << " entering game..." << endl;
+	cout << "[ZoneModule] " << playerName << " entering game..." << endl;
 
 	std::shared_ptr<CPlayer> player(new CPlayer(pkt.playerid(), playerName));
 	m_PlayerList.push_back(player);
 
-	cout << "[ZoneServer] " << playerName << " enter game success." << endl;
+	cout << "[ZoneModule] " << playerName << " enter game success." << endl;
 
 	return 0;
 }

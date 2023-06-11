@@ -68,7 +68,7 @@ bool Handle_C_ENTER_GAME(PacketSessionRef& session, Protocol::C_ENTER_GAME& pkt)
 {
 	GameSessionRef gameSession = static_pointer_cast<GameSession>(session);
 
-	uint64 index = pkt.playerindex();
+	uint64 index = pkt.playerid();
 	// TODO : Validation
 
 	gameSession->_currentPlayer = gameSession->_players[index]; // READ_ONLY?

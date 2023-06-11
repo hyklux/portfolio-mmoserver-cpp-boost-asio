@@ -9,7 +9,7 @@
 #include <boost/bind.hpp>
 #include <boost/asio.hpp>
 
-#include "IServer.h"
+#include "IServerModule.h"
 #include "Protocol.pb.h"
 
 using namespace std;

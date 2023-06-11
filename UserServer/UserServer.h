@@ -1,6 +1,6 @@
 #pragma once
 
-#include "IServer.h"
+#include "IServerModule.h"
 #include "IServerContainer.h"
 
 #include "Protocol.pb.h"
@@ -20,17 +20,17 @@
 
 using namespace std;
 
-extern "C" __declspec(dllexport) int CreateServerInstance(IServerContainer * pServerContainer, IServer * &pServer);
+extern "C" __declspec(dllexport) int CreateServerInstance(IServerContainer * pServerContainer, IServerModule * &pServer);
 
 class UserConnection;
 class NetGameSession;
 
-class UserServer : public IServer
+class UserServer : public IServerModule
 {
 private:
 	std::atomic_int m_refs = 0;
 	IServerContainer* m_pServerContainer;
-	IServer* m_pConnectorServer;
+	IServerModule* m_pConnectorServer;
 	vector<UserConnection> userConnectionList;
 	int8_t m_JobQueueThreadCnt = 3;
 	ThreadPool m_ThreadPool;
@@ -39,7 +39,7 @@ public:
 	virtual int AddRef(void) override;
 	virtual int ReleaseRef(void) override;
 
-	virtual int OnCreate(IServerContainer* pServerContainer, IServer*& pServer) override;
+	virtual int OnCreate(IServerContainer* pServerContainer, IServerModule*& pServer) override;
 	virtual int OnLoad() override;
 	virtual int OnStart() override;
 	virtual int OnUnload() override;

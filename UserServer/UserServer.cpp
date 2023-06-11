@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "UserServer.h"
-#include "IServer.h"
+#include "IServerModule.h"
 #include "NetGameSession.h"
 #include "NetMsg.h"
 #include "UserConnection.h"
@@ -8,9 +8,9 @@
 
 #include "Protocol.pb.h"
 
-int CreateServerInstance(IServerContainer* pServerContainer, IServer*& pServer)
+int CreateServerInstance(IServerContainer* pServerContainer, IServerModule*& pServer)
 {
-	cout << "[UserServer] Creating user server instance..." << endl;
+	cout << "[UserModule] Creating user module instance..." << endl;
 
 	UserServer* server = new UserServer();
 	if (nullptr == server)
@@ -20,7 +20,7 @@ int CreateServerInstance(IServerContainer* pServerContainer, IServer*& pServer)
 
 	server->OnCreate(pServerContainer, pServer);
 
-	cout << "[UserServer] User server instance created." << endl;
+	cout << "[UserModule] User module instance created." << endl;
 
 	return 0;
 }
@@ -40,9 +40,9 @@ int UserServer::ReleaseRef(void)
 	return m_refs;
 }
 
-int UserServer::OnCreate(IServerContainer* pServerContainer, IServer*& pServer)
+int UserServer::OnCreate(IServerContainer* pServerContainer, IServerModule*& pServer)
 {
-	cout << "[UserServer] OnCreate" << endl;
+	cout << "[UserModule] OnCreate" << endl;
 
 	if (pServerContainer == nullptr)
 	{
@@ -51,7 +51,7 @@ int UserServer::OnCreate(IServerContainer* pServerContainer, IServer*& pServer)
 
 	m_pServerContainer = pServerContainer;
 
-	pServer = static_cast<IServer*>(this);
+	pServer = static_cast<IServerModule*>(this);
 	pServer->AddRef();
 
 	return 0;
@@ -59,7 +59,7 @@ int UserServer::OnCreate(IServerContainer* pServerContainer, IServer*& pServer)
 
 int UserServer::OnLoad()
 {
-	cout << "[UserServer] OnLoad" << endl;
+	cout << "[UserModule] OnLoad" << endl;
 
 	SetConnector();
 	m_ThreadPool.Activate(m_JobQueueThreadCnt);
@@ -69,20 +69,20 @@ int UserServer::OnLoad()
 
 int UserServer::OnStart()
 {
-	cout << "[UserServer] OnStart" << endl;
+	cout << "[UserModule] OnStart" << endl;
 	return 0;
 }
 
 int UserServer::OnUnload()
 {
-	cout << "[UserServer] OnUnload" << endl;
+	cout << "[UserModule] OnUnload" << endl;
 	return 0;
 }
 
 //JobQueue에 넣어준다.
 int UserServer::HandleMsg(const NetMsg msg, const std::shared_ptr<NetGameSession>& session)
 {
-	cout << "[UserServer] HandleMsg. PktId:" << msg.GetPktId() << endl;
+	cout << "[UserModule] HandleMsg. PktId:" << msg.GetPktId() << endl;
 
 	switch (msg.GetPktId())
 	{
@@ -118,7 +118,7 @@ int UserServer::SetConnector()
 	void* pContainerPtr = m_pServerContainer->GetConnectorServer();
 	if (pContainerPtr)
 	{
-		m_pConnectorServer = static_cast<IServer*>(pContainerPtr);
+		m_pConnectorServer = static_cast<IServerModule*>(pContainerPtr);
 	}
 
 	return m_pConnectorServer ? 0 : -1;
@@ -165,46 +165,46 @@ uint16_t UserServer::Handle_C_CHAT(const NetMsg msg, const std::shared_ptr<NetGa
 
 uint16_t UserServer::Login(const NetMsg msg, const std::shared_ptr<NetGameSession>& session)
 {
-	cout << "[UserServer] Login" << endl;
+	cout << "[UserModule] Login" << endl;
 
 	if (!m_pConnectorServer)
 	{
-		cout << "[UserServer] Error : Connector server is null." << endl;
+		cout << "[UserModule] Error : Connector module is null." << endl;
 		return static_cast<uint16_t>(ERRORTYPE::NULL_ERROR);
 	}
 
-	m_pConnectorServer->DispatchMsgToServer(EDBAgent, msg, session);
+	m_pConnectorServer->DispatchMsgToServer(EDBAgentModule, msg, session);
 
 	return static_cast<uint16_t>(ERRORTYPE::NONE_ERROR);
 }
 
 uint16_t UserServer::EnterGame(const NetMsg msg, const std::shared_ptr<NetGameSession>& session)
 {
-	cout << "[UserServer] EnterGame" << endl;
+	cout << "[UserModule] EnterGame" << endl;
 
 	if (!m_pConnectorServer)
 	{
-		cout << "[UserServer] Error : Connector server is null." << endl;
+		cout << "[UserModule] Error : Connector module is null." << endl;
 		return static_cast<uint16_t>(ERRORTYPE::NULL_ERROR);
 	}
 
-	m_pConnectorServer->DispatchMsgToServer(EZoneServer, msg, session);
-	m_pConnectorServer->DispatchMsgToServer(EChatServer, msg, session);
+	m_pConnectorServer->DispatchMsgToServer(EZoneModule, msg, session);
+	m_pConnectorServer->DispatchMsgToServer(EChatModule, msg, session);
 
 	return static_cast<uint16_t>(ERRORTYPE::NONE_ERROR);
 }
 
 uint16_t UserServer::Chat(const NetMsg msg, const std::shared_ptr<NetGameSession>& session)
 {
-	cout << "[UserServer] Chat" << endl;
+	cout << "[UserModule] Chat" << endl;
 
 	if (!m_pConnectorServer)
 	{
-		cout << "[UserServer] Error : Connector server is null." << endl;
+		cout << "[UserModule] Error : Connector module is null." << endl;
 		return static_cast<uint16_t>(ERRORTYPE::NULL_ERROR);
 	}
 
-	m_pConnectorServer->DispatchMsgToServer(EChatServer, msg, session);
+	m_pConnectorServer->DispatchMsgToServer(EChatModule, msg, session);
 
 	return static_cast<uint16_t>(ERRORTYPE::NONE_ERROR);
 }

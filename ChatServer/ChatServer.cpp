@@ -1,13 +1,13 @@
 #include "pch.h"
 #include "ChatServer.h"
-#include "IServer.h"
+#include "IServerModule.h"
 #include "NetGameSession.h"
 
 #include "Protocol.pb.h"
 
-int CreateServerInstance(IServerContainer* pServerContainer, IServer*& pServer)
+int CreateServerInstance(IServerContainer* pServerContainer, IServerModule*& pServer)
 {
-	cout << "[ChatServer] Creating zone server instance..." << endl;
+	cout << "[ChatModule] Creating zone server instance..." << endl;
 
 	ChatServer* server = new ChatServer();
 	if (nullptr == server)
@@ -17,7 +17,7 @@ int CreateServerInstance(IServerContainer* pServerContainer, IServer*& pServer)
 
 	server->OnCreate(pServerContainer, pServer);
 
-	cout << "[ChatServer] Chat server instance created." << endl;
+	cout << "[ChatModule] Chat server instance created." << endl;
 
 	return 0;
 }
@@ -37,9 +37,9 @@ int ChatServer::ReleaseRef(void)
 	return m_refs;
 }
 
-int ChatServer::OnCreate(IServerContainer* pServerContainer, IServer*& pServer)
+int ChatServer::OnCreate(IServerContainer* pServerContainer, IServerModule*& pServer)
 {
-	cout << "[ChatServer] OnCreate" << endl;
+	cout << "[ChatModule] OnCreate" << endl;
 
 	if (pServerContainer == nullptr)
 	{
@@ -48,7 +48,7 @@ int ChatServer::OnCreate(IServerContainer* pServerContainer, IServer*& pServer)
 
 	m_pServerContainer = pServerContainer;
 
-	pServer = static_cast<IServer*>(this);
+	pServer = static_cast<IServerModule*>(this);
 	pServer->AddRef();
 
 	return 0;
@@ -56,7 +56,7 @@ int ChatServer::OnCreate(IServerContainer* pServerContainer, IServer*& pServer)
 
 int ChatServer::OnLoad()
 {
-	cout << "[ChatServer] OnLoad" << endl;
+	cout << "[ChatModule] OnLoad" << endl;
 
 	SetConnector();
 
@@ -65,19 +65,19 @@ int ChatServer::OnLoad()
 
 int ChatServer::OnStart()
 {
-	cout << "[ChatServer] OnStart" << endl;
+	cout << "[ChatModule] OnStart" << endl;
 	return 0;
 }
 
 int ChatServer::OnUnload()
 {
-	cout << "[ChatServer] OnUnload" << endl;
+	cout << "[ChatModule] OnUnload" << endl;
 	return 0;
 }
 
 int ChatServer::HandleMsg(const NetMsg msg, const std::shared_ptr<NetGameSession>& session)
 {
-	cout << "[ChatServer] HandleMsg. PktId:" << msg.GetPktId() << endl;
+	cout << "[ChatModule] HandleMsg. PktId:" << msg.GetPktId() << endl;
 
 	switch (msg.GetPktId())
 	{
@@ -104,7 +104,7 @@ int ChatServer::SetConnector()
 	void* pContainerPtr = m_pServerContainer->GetConnectorServer();
 	if (pContainerPtr)
 	{
-		m_pConnectorServer = static_cast<IServer*>(pContainerPtr);
+		m_pConnectorServer = static_cast<IServerModule*>(pContainerPtr);
 	}
 
 	return m_pConnectorServer ? 0 : -1;
@@ -126,7 +126,7 @@ void ChatServer::BroadCastAll(std::string broadcastMsgStr)
 //handlers
 int ChatServer::Handle_C_ENTER_GAME(const NetMsg msg, const std::shared_ptr<NetGameSession>& session)
 {
-	cout << "[ChatServer] Handle_C_ENTER_GAME" << endl;
+	cout << "[ChatModule] Handle_C_ENTER_GAME" << endl;
 
 	//패킷 분해
 	Protocol::C_ENTER_GAME pkt;
@@ -135,7 +135,7 @@ int ChatServer::Handle_C_ENTER_GAME(const NetMsg msg, const std::shared_ptr<NetG
 		return static_cast<uint16_t>(ERRORTYPE::PKT_ERROR);
 	}
 
-	cout << "[ChatServer] Player" << to_string(pkt.playerid()) << " has entered chat room." << endl;
+	cout << "[ChatModule] Player" << to_string(pkt.playerid()) << " has entered chat room." << endl;
 
 	m_UserSessionList.push_back(session);
 
@@ -144,7 +144,7 @@ int ChatServer::Handle_C_ENTER_GAME(const NetMsg msg, const std::shared_ptr<NetG
 
 int ChatServer::Handle_C_CHAT(const NetMsg msg, const std::shared_ptr<NetGameSession>& session)
 {
-	cout << "[ChatServer] Handle_C_CHAT" << endl;
+	cout << "[ChatModule] Handle_C_CHAT" << endl;
 
 	//패킷 분해
 	Protocol::C_CHAT pkt;
@@ -153,9 +153,9 @@ int ChatServer::Handle_C_CHAT(const NetMsg msg, const std::shared_ptr<NetGameSes
 		return static_cast<uint16_t>(ERRORTYPE::PKT_ERROR);
 	}
 
-	cout << "[ChatServer] [Player" << to_string(pkt.playerid()) << "] " << pkt.msg() << endl;
+	cout << "[ChatModule] [Player" << to_string(pkt.playerid()+1) << "] " << pkt.msg() << endl;
 
-	std::string broadcastMsgStr = "[Player" + to_string(pkt.playerid()) + "] : " + pkt.msg();
+	std::string broadcastMsgStr = "[Player" + to_string(pkt.playerid()+1) + "] : " + pkt.msg();
 	BroadCastAll(broadcastMsgStr);
 
 	return 0;

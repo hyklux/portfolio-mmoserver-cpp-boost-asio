@@ -73,7 +73,7 @@ void* ServerContainer::GetTargetServer(uint16_t targetServer)
 
 	switch (targetServer)
 	{
-	case EUserServer:
+	case EUserModule:
 	{
 		auto itr = m_ServerMap.find("UserServer");
 		if (itr != m_ServerMap.end())
@@ -82,7 +82,7 @@ void* ServerContainer::GetTargetServer(uint16_t targetServer)
 		}
 		break;
 	}
-	case EZoneServer:
+	case EZoneModule:
 	{
 		auto itr = m_ServerMap.find("ZoneServer");
 		if (itr != m_ServerMap.end())
@@ -91,7 +91,7 @@ void* ServerContainer::GetTargetServer(uint16_t targetServer)
 		}
 		break;
 	}
-	case EChatServer:
+	case EChatModule:
 	{
 		auto itr = m_ServerMap.find("ChatServer");
 		if (itr != m_ServerMap.end())
@@ -100,7 +100,7 @@ void* ServerContainer::GetTargetServer(uint16_t targetServer)
 		}
 		break;
 	}
-	case EDBAgent:
+	case EDBAgentModule:
 	{
 		auto itr = m_ServerMap.find("DBAgent");
 		if (itr != m_ServerMap.end())

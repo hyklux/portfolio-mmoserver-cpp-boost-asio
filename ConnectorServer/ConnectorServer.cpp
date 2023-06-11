@@ -2,9 +2,9 @@
 #include "ConnectorServer.h"
 #include "ConServerSession.h"
 
-int CreateServerInstance(IServerContainer* pServerContainer, IServer*& pServer)
+int CreateServerInstance(IServerContainer* pServerContainer, IServerModule*& pServer)
 {
-	cout << "[ConnectorServer] Creating connector server instance..." << endl;
+	cout << "[ConnectorModule] Creating connector module instance..." << endl;
 
 	ConnectorServer* server = new ConnectorServer();
 	if (nullptr == server)
@@ -14,7 +14,7 @@ int CreateServerInstance(IServerContainer* pServerContainer, IServer*& pServer)
 
 	server->OnCreate(pServerContainer, pServer);
 
-	cout << "[ConnectorServer] Connector server instance created." << endl;
+	cout << "[ConnectorModule] Connector module instance created." << endl;
 
 	return 0;
 }
@@ -34,9 +34,9 @@ int ConnectorServer::ReleaseRef(void)
 	return m_refs;
 }
 
-int ConnectorServer::OnCreate(IServerContainer* pServerContainer, IServer*& pServer)
+int ConnectorServer::OnCreate(IServerContainer* pServerContainer, IServerModule*& pServer)
 {
-	cout << "[ConnectorServer] OnCreate" << endl;
+	cout << "[ConnectorModule] OnCreate" << endl;
 
 	if (pServerContainer == nullptr)
 	{
@@ -45,7 +45,7 @@ int ConnectorServer::OnCreate(IServerContainer* pServerContainer, IServer*& pSer
 
 	m_pServerContainer = pServerContainer;
 
-	pServer = static_cast<IServer*>(this);
+	pServer = static_cast<IServerModule*>(this);
 	pServer->AddRef();
 
 	return 0;
@@ -53,7 +53,7 @@ int ConnectorServer::OnCreate(IServerContainer* pServerContainer, IServer*& pSer
 
 int ConnectorServer::OnLoad()
 {
-	cout << "[ConnectorServer] OnLoad" << endl;
+	cout << "[ConnectorModule] OnLoad" << endl;
 
 	InitIOService();
 	InitThreads();
@@ -63,7 +63,7 @@ int ConnectorServer::OnLoad()
 
 int ConnectorServer::OnStart()
 {
-	cout << "[ConnectorServer] OnStart" << endl;
+	cout << "[ConnectorModule] OnStart" << endl;
 
 	StartTcpServer();
 
@@ -72,7 +72,7 @@ int ConnectorServer::OnStart()
 
 int ConnectorServer::OnUnload()
 {
-	cout << "[ConnectorServer] OnUnload" << endl;
+	cout << "[ConnectorModule] OnUnload" << endl;
 
 	m_Work->get_io_context().restart();
 	m_IOService.stop();
@@ -82,7 +82,7 @@ int ConnectorServer::OnUnload()
 
 void ConnectorServer::DispatchMsgToServer(uint16_t targetServer, NetMsg msg, const std::shared_ptr<NetGameSession>& session)
 {
-	IServer* pTargetServer = static_cast<IServer*>(m_pServerContainer->GetTargetServer(targetServer));
+	IServerModule* pTargetServer = static_cast<IServerModule*>(m_pServerContainer->GetTargetServer(targetServer));
 
 	if (pTargetServer)
 	{
@@ -92,7 +92,7 @@ void ConnectorServer::DispatchMsgToServer(uint16_t targetServer, NetMsg msg, con
 
 bool ConnectorServer::InitIOService()
 {
-	cout << "[ConnectorServer] InitIOService" << endl;
+	cout << "[ConnectorModule] InitIOService" << endl;
 
 	try
 	{
@@ -113,7 +113,7 @@ bool ConnectorServer::InitIOService()
 
 bool ConnectorServer::InitThreads()
 {
-	cout << "[ConnectorServer] InitThreads Cnt:" << m_ThreadCnt << endl;
+	cout << "[ConnectorModule] InitThreads Cnt:" << m_ThreadCnt << endl;
 
 	try
 	{
@@ -140,7 +140,7 @@ bool ConnectorServer::InitThreads()
 
 bool ConnectorServer::StartTcpServer()
 {
-	cout << "[ConnectorServer] StartTcpServer" << endl;
+	cout << "[ConnectorModule] StartTcpServer" << endl;
 
 	try
 	{
@@ -172,7 +172,7 @@ void ConnectorServer::RegisterAccept()
 {
 	m_Acceptor.async_accept([this](boost::system::error_code error, boost::asio::ip::tcp::socket socket)
 	{
-		cout << "[ConnectorServer] OnAccept" << endl;
+		cout << "[ConnectorModule] OnAccept" << endl;
 
 		if (!error)
 		{

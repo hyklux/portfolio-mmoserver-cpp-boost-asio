@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "NetClient.h"
 #include "NetMsg.h"
-#include "IServer.h"
+#include "IServerModule.h"
 
 #include "Protocol.pb.h"
 
@@ -88,12 +88,14 @@ void NetClient::RegisterSend(std::string msgStr)
 	std::cout << "RegisterSend msg:" << msgStr << endl;
 
 	boost::asio::streambuf b;
-	b.prepare(128);
+	//b.prepare(128);
+	b.prepare(msgStr.length());
 	std::ostream os(&b);
 	os << msgStr;
-	b.commit(128);
+	//b.commit(128);
+	b.commit(msgStr.length());
 
-	boost::asio::async_write(m_Socket, b, boost::asio::transfer_exactly(128), [&](error_code error, std::size_t bytes_transferred)
+	boost::asio::async_write(m_Socket, b, boost::asio::transfer_exactly(msgStr.length()), [&](error_code error, std::size_t bytes_transferred)
 	{
 		std::cout << "[NetClient] All data has been sent. Bytes transferred:" << bytes_transferred << std::endl;
 	});

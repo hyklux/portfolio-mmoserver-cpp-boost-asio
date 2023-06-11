@@ -3,15 +3,15 @@
 #include <iostream>
 #include <boost/asio.hpp>
 
-#include "IServer.h"
+#include "IServerModule.h"
 #include "IServerContainer.h"
 #include "NetGameSession.h"
 
 using namespace std;
 
-extern "C" __declspec(dllexport) int CreateServerInstance(IServerContainer* pServerContainer, IServer*& pServer);
+extern "C" __declspec(dllexport) int CreateServerInstance(IServerContainer* pServerContainer, IServerModule*& pServer);
 
-class NetworkServer : public IServer
+class NetworkServer : public IServerModule
 {
 private:
 	const char* m_IpAddr = "127.0.0.1";
@@ -20,7 +20,7 @@ private:
 
 	std::atomic_int m_refs = 0;
 	IServerContainer* m_pServerContainer;
-	IServer* m_pConnectorServer;
+	IServerModule* m_pConnectorServer;
 
 	std::shared_ptr<boost::asio::io_service::work> m_Work;
 	boost::asio::io_service m_IOService;
@@ -45,13 +45,13 @@ public:
 	virtual int AddRef(void) override;
 	virtual int ReleaseRef(void) override;
 
-	virtual int OnCreate(IServerContainer* pServerContainer, IServer*& pServer) override;
+	virtual int OnCreate(IServerContainer* pServerContainer, IServerModule*& pServer) override;
 	virtual int OnLoad() override;
 	virtual int OnStart() override;
 	virtual int OnUnload() override;
 
 	void DispatchClientMsg(uint16_t targetServer, NetMsg msg, const std::shared_ptr<NetGameSession>& session);
-	IServer* GetUserServer();
+	IServerModule* GetUserServer();
 private:
 	virtual int SetConnector() override;
 

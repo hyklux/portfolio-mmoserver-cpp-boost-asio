@@ -1,6 +1,6 @@
 #pragma once
 
-#include "IServer.h"
+#include "IServerModule.h"
 #include "IServerContainer.h"
 #include "DBConn.h"
 
@@ -19,14 +19,14 @@
 
 using namespace std;
 
-extern "C" __declspec(dllexport) int CreateServerInstance(IServerContainer * pServerContainer, IServer*& pServer);
+extern "C" __declspec(dllexport) int CreateServerInstance(IServerContainer * pServerContainer, IServerModule*& pServer);
 
-class DBAgent : public IServer
+class DBAgent : public IServerModule
 {
 private:
 	std::atomic_int m_refs = 0;
 	IServerContainer* m_pServerContainer;
-	IServer* m_pConnectorServer;
+	IServerModule* m_pConnectorServer;
 	DBConn m_DbConn;
 	int m_UserId = 0;
 
@@ -34,7 +34,7 @@ public:
 	virtual int AddRef(void) override;
 	virtual int ReleaseRef(void) override;
 
-	virtual int OnCreate(IServerContainer* pServerContainer, IServer*& pServer) override;
+	virtual int OnCreate(IServerContainer* pServerContainer, IServerModule*& pServer) override;
 	virtual int OnLoad() override;
 	virtual int OnStart() override;
 	virtual int OnUnload() override;
