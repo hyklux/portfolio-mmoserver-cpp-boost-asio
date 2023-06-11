@@ -13,55 +13,55 @@
       }
     },
     {
-      "name": "ConnectorServer",
+      "name": "ConnectorModule",
       "use": "true",
       "servicetype": "1",
-      "executable": "../.././DLLs/ConnectorServer.dll",
-      "config": "../.././Config/ConnectorServer.json",
+      "executable": "../.././DLLs/ConnectorModule.dll",
+      "config": "../.././Config/ConnectorModule.json",
       "log": {
         "loglevel": "0",
         "console": "false"
       }
     },
     {
-      "name": "ZoneServer",
+      "name": "ZoneModule",
       "use": "true",
       "servicetype": "3",
-      "executable": "../.././DLLs/ZoneServer.dll",
-      "config": "../.././Config/ZoneServer.json",
+      "executable": "../.././DLLs/ZoneModule.dll",
+      "config": "../.././Config/ZoneModule.json",
       "log": {
         "loglevel": "0",
         "console": "false"
       }
     },
     {
-      "name": "ChatServer",
+      "name": "ChatModule",
       "use": "true",
       "servicetype": "4",
-      "executable": "../.././DLLs/ChatServer.dll",
-      "config": "../.././Config/ChatServer.json",
+      "executable": "../.././DLLs/ChatModule.dll",
+      "config": "../.././Config/ChatModule.json",
       "log": {
         "loglevel": "0",
         "console": "false"
       }
     },
     {
-      "name": "DBAgent",
+      "name": "DBAgentModule",
       "use": "true",
       "servicetype": "5",
-      "executable": "../.././DLLs/DBAgent.dll",
-      "config": "../.././Config/DBAgent.json",
+      "executable": "../.././DLLs/DBAgentModule.dll",
+      "config": "../.././Config/DBAgentModule.json",
       "log": {
         "loglevel": "0",
         "console": "false"
       }
     },
     {
-      "name": "UserServer",
+      "name": "UserModule",
       "use": "true",
       "servicetype": "2",
-      "executable": "../.././DLLs/UserServer.dll",
-      "config": "../.././Config/UserServer.json",
+      "executable": "../.././DLLs/UserModule.dll",
+      "config": "../.././Config/UserModule.json",
       "log": {
         "loglevel": "0",
         "console": "false"

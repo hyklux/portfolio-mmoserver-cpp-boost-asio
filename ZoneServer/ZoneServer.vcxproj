@@ -24,6 +24,7 @@
     <ProjectGuid>{dd6a5903-57ca-4776-9e6b-902dbe33c800}</ProjectGuid>
     <RootNamespace>ZoneServer</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>ZoneModule</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -176,7 +177,7 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="Protocol.pb.h" />
     <ClInclude Include="Struct.pb.h" />
-    <ClInclude Include="ZoneServer.h" />
+    <ClInclude Include="ZoneModule.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -204,7 +205,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="ZoneServer.cpp" />
+    <ClCompile Include="ZoneModule.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

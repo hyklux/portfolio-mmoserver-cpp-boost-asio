@@ -24,6 +24,7 @@
     <ProjectGuid>{61af007f-fb1e-46fb-9dc2-6b229aba9bf2}</ProjectGuid>
     <RootNamespace>UserServer</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>UserModule</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -181,7 +182,7 @@
     <ClInclude Include="Protocol.pb.h" />
     <ClInclude Include="Struct.pb.h" />
     <ClInclude Include="ThreadPool.h" />
-    <ClInclude Include="UserServer.h" />
+    <ClInclude Include="UserModule.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -210,7 +211,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="ThreadPool.cpp" />
-    <ClCompile Include="UserServer.cpp" />
+    <ClCompile Include="UserModule.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Common\Protobuf\bin\GenPackets.bat" />

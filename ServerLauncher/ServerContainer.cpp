@@ -55,57 +55,57 @@ int32_t ServerContainer::Unload()
 	return 0;
 }
 
-void* ServerContainer::GetConnectorServer()
+void* ServerContainer::GetConnectorModule()
 {
-	const auto itr = m_ServerMap.find("ConnectorServer");
+	const auto itr = m_ServerMap.find("ConnectorModule");
 	return itr == m_ServerMap.end() ? nullptr : (itr->second);
 }
 
-void* ServerContainer::GetUserServer()
+void* ServerContainer::GetUserModule()
 {
-	const auto itr = m_ServerMap.find("UserServer");
+	const auto itr = m_ServerMap.find("UserModule");
 	return itr == m_ServerMap.end() ? nullptr : (itr->second);
 }
 
-void* ServerContainer::GetTargetServer(uint16_t targetServer)
+void* ServerContainer::GetTargetModule(uint16_t targetModule)
 {
-	void* pTargetServer = nullptr;
+	void* pTargetModule = nullptr;
 
-	switch (targetServer)
+	switch (targetModule)
 	{
 	case EUserModule:
 	{
-		auto itr = m_ServerMap.find("UserServer");
+		auto itr = m_ServerMap.find("UserModule");
 		if (itr != m_ServerMap.end())
 		{
-			pTargetServer = itr->second;
+			pTargetModule = itr->second;
 		}
 		break;
 	}
 	case EZoneModule:
 	{
-		auto itr = m_ServerMap.find("ZoneServer");
+		auto itr = m_ServerMap.find("ZoneModule");
 		if (itr != m_ServerMap.end())
 		{
-			pTargetServer = itr->second;
+			pTargetModule = itr->second;
 		}
 		break;
 	}
 	case EChatModule:
 	{
-		auto itr = m_ServerMap.find("ChatServer");
+		auto itr = m_ServerMap.find("ChatModule");
 		if (itr != m_ServerMap.end())
 		{
-			pTargetServer = itr->second;
+			pTargetModule = itr->second;
 		}
 		break;
 	}
 	case EDBAgentModule:
 	{
-		auto itr = m_ServerMap.find("DBAgent");
+		auto itr = m_ServerMap.find("DBAgentModule");
 		if (itr != m_ServerMap.end())
 		{
-			pTargetServer = itr->second;
+			pTargetModule = itr->second;
 		}
 		break;
 	}
@@ -113,5 +113,5 @@ void* ServerContainer::GetTargetServer(uint16_t targetServer)
 		break;
 	}
 
-	return pTargetServer;
+	return pTargetModule;
 }

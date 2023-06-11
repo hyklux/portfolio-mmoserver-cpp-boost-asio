@@ -15,7 +15,7 @@
     <ClInclude Include="framework.h">
       <Filter>Main</Filter>
     </ClInclude>
-    <ClInclude Include="NetworkServer.h">
+    <ClInclude Include="NetworkModule.h">
       <Filter>Main</Filter>
     </ClInclude>
     <ClInclude Include="networkbase.h">
@@ -44,7 +44,7 @@
     <ClCompile Include="dllmain.cpp">
       <Filter>Main</Filter>
     </ClCompile>
-    <ClCompile Include="NetworkServer.cpp">
+    <ClCompile Include="NetworkModule.cpp">
       <Filter>Main</Filter>
     </ClCompile>
     <ClCompile Include="NetTcpServer.cpp">

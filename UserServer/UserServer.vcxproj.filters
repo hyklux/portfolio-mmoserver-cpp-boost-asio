@@ -24,7 +24,7 @@
     <ClInclude Include="Struct.pb.h">
       <Filter>Protocol</Filter>
     </ClInclude>
-    <ClInclude Include="UserServer.h">
+    <ClInclude Include="UserModule.h">
       <Filter>Main</Filter>
     </ClInclude>
     <ClInclude Include="ThreadPool.h">
@@ -47,7 +47,7 @@
     <ClCompile Include="Struct.pb.cc">
       <Filter>Protocol</Filter>
     </ClCompile>
-    <ClCompile Include="UserServer.cpp">
+    <ClCompile Include="UserModule.cpp">
       <Filter>Main</Filter>
     </ClCompile>
     <ClCompile Include="ThreadPool.cpp">

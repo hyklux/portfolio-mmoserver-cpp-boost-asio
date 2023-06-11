@@ -24,6 +24,7 @@
     <ProjectGuid>{51de2f23-c185-4418-b6ff-1f4cf1820756}</ProjectGuid>
     <RootNamespace>ConnectorServer</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>ConnectorModule</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -175,7 +176,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="ConnectorServer.h" />
+    <ClInclude Include="ConnectorModule.h" />
     <ClInclude Include="ConServerSession.h" />
     <ClInclude Include="ConTcpServer.h" />
     <ClInclude Include="Enum.pb.h" />
@@ -185,7 +186,7 @@
     <ClInclude Include="Struct.pb.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ConnectorServer.cpp" />
+    <ClCompile Include="ConnectorModule.cpp" />
     <ClCompile Include="ConServerSession.cpp" />
     <ClCompile Include="ConTcpServer.cpp" />
     <ClCompile Include="dllmain.cpp" />

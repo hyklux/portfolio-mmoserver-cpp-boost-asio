@@ -11,7 +11,7 @@ public:
 	virtual int AddRef(void) { return 0; }
 	virtual int ReleaseRef(void) { return 0; }
 
-	virtual void* GetConnectorServer() { return nullptr; }
-	virtual void* GetUserServer() { return nullptr; }
-	virtual void* GetTargetServer(uint16_t targetServer) { return nullptr; }
+	virtual void* GetConnectorModule() { return nullptr; }
+	virtual void* GetUserModule() { return nullptr; }
+	virtual void* GetTargetModule(uint16_t targetModule) { return nullptr; }
 };

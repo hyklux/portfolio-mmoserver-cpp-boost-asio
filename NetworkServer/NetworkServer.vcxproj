@@ -24,6 +24,7 @@
     <ProjectGuid>{ea82d7a8-8e41-47b2-8c30-ae595a958077}</ProjectGuid>
     <RootNamespace>NetworkServer</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>NetworkModule</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -180,7 +181,7 @@
     <ClInclude Include="framework.h" />
     <ClInclude Include="NetTcpServer.h" />
     <ClInclude Include="networkbase.h" />
-    <ClInclude Include="NetworkServer.h" />
+    <ClInclude Include="NetworkModule.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Protocol.pb.h" />
     <ClInclude Include="Struct.pb.h" />
@@ -195,7 +196,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="NetTcpServer.cpp" />
-    <ClCompile Include="NetworkServer.cpp" />
+    <ClCompile Include="NetworkModule.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

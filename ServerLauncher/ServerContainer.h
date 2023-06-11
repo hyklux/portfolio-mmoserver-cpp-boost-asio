@@ -35,7 +35,7 @@ public:
 		boost::property_tree::read_json(configDir, props);
 		cout << "[ServerLauncher] Config loaded." << endl;
 
-		cout << "\n[ServerLauncher] Creating server instances..." << endl;
+		cout << "\n[ServerLauncher] Creating module instances..." << endl;
 
 		auto servers = props.get_child("servers");
 		for (const auto& server : servers)
@@ -52,7 +52,7 @@ public:
 			}
 
 			typedef int(*CREATE_SERVER_FUNC)(IServerContainer* pServerContainer, IServerModule*& pServer);
-			CREATE_SERVER_FUNC funcPtr = (CREATE_SERVER_FUNC)::GetProcAddress(handle, "CreateServerInstance");
+			CREATE_SERVER_FUNC funcPtr = (CREATE_SERVER_FUNC)::GetProcAddress(handle, "CreateServerModuleInstance");
 			int ret = (*funcPtr)((IServerContainer*)this, serverPair.first->second);
 			if (ret != 0)
 			{
@@ -74,7 +74,7 @@ public:
 
 	virtual int AddRef(void) override;
 	virtual int ReleaseRef(void) override;
-	virtual void* GetConnectorServer() override;
-	virtual void* GetUserServer() override;
-	virtual void* GetTargetServer(uint16_t targetServer) override;
+	virtual void* GetConnectorModule() override;
+	virtual void* GetUserModule() override;
+	virtual void* GetTargetModule(uint16_t targetModule) override;
 };

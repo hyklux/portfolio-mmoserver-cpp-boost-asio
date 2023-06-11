@@ -15,7 +15,7 @@
     <ClInclude Include="framework.h">
       <Filter>Main</Filter>
     </ClInclude>
-    <ClInclude Include="ZoneServer.h">
+    <ClInclude Include="ZoneModule.h">
       <Filter>Main</Filter>
     </ClInclude>
     <ClInclude Include="Enum.pb.h">
@@ -35,7 +35,7 @@
     <ClCompile Include="pch.cpp">
       <Filter>Main</Filter>
     </ClCompile>
-    <ClCompile Include="ZoneServer.cpp">
+    <ClCompile Include="ZoneModule.cpp">
       <Filter>Main</Filter>
     </ClCompile>
     <ClCompile Include="Enum.pb.cc">
