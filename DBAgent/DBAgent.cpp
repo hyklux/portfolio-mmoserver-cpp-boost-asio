@@ -18,7 +18,7 @@ int CreateServerInstance(IServerContainer* pServerContainer, IServerModule*& pSe
 
 	server->OnCreate(pServerContainer, pServer);
 
-	cout << "[DBAgentModule] DBAgent server instance created." << endl;
+	cout << "[DBAgentModule] DBAgent module instance created." << endl;
 
 	return 0;
 }
@@ -104,7 +104,7 @@ int DBAgent::HandleMsg(const NetMsg msg, const std::shared_ptr<NetGameSession>& 
 	return 0;
 }
 
-EResultType DBAgent::Handle_C_LOGIN(const NetMsg msg, const std::shared_ptr<NetGameSession>& session)
+int DBAgent::Handle_C_LOGIN(const NetMsg msg, const std::shared_ptr<NetGameSession>& session)
 {
 	cout << "[DBAgentModule] Handle_C_LOGIN" << endl;
 
@@ -112,7 +112,7 @@ EResultType DBAgent::Handle_C_LOGIN(const NetMsg msg, const std::shared_ptr<NetG
 	Protocol::C_LOGIN pkt;
 	if (false == ParsePkt(pkt, msg))
 	{
-		return EResultType::PKT_ERROR;
+		return static_cast<uint16_t>(ERRORTYPE::PKT_ERROR);
 	}
 
 	cout << "[DBAgentModule] " << pkt.username() << " logging in..." << endl;
@@ -124,7 +124,7 @@ EResultType DBAgent::Handle_C_LOGIN(const NetMsg msg, const std::shared_ptr<NetG
 
 	cout << "[DBAgentModule] " << pkt.username() << " login success." << endl;
 
-	return EResultType::SUCCESS;
+	return static_cast<uint16_t>(ERRORTYPE::NONE_ERROR);
 }
 
 bool DBAgent::ExistsUserInDB(std::string userName)

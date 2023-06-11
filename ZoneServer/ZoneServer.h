@@ -57,6 +57,6 @@ private:
 	void CreateNPCs();
 
 	//handlers
-	EResultType Handle_C_ENTER_GAME(NetMsg msg);
+	int Handle_C_ENTER_GAME(NetMsg msg);
 };
 

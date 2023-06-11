@@ -47,14 +47,15 @@ public:
 	virtual int HandleMsg(const NetMsg msg, const std::shared_ptr<NetGameSession>& session) override;
 
 	// Handlers
-	EResultType Handle_C_LOGIN(const NetMsg msg, const std::shared_ptr<NetGameSession>& session);
-	EResultType Handle_C_ENTER_GAME(const NetMsg msg, const std::shared_ptr<NetGameSession>& session);
-	EResultType Handle_C_CHAT(const NetMsg msg, const std::shared_ptr<NetGameSession>& session);
+	uint16_t Handle_C_LOGIN(const NetMsg msg, const std::shared_ptr<NetGameSession>& session);
+	uint16_t Handle_C_ENTER_GAME(const NetMsg msg, const std::shared_ptr<NetGameSession>& session);
+	uint16_t Handle_C_CHAT(const NetMsg msg, const std::shared_ptr<NetGameSession>& session);
 private:
 	virtual int SetConnector() override;
 
-	EResultType Login(const NetMsg msg, const std::shared_ptr<NetGameSession>& session);
-	EResultType EnterGame(const NetMsg msg, const std::shared_ptr<NetGameSession>& session);
-	EResultType Chat(const NetMsg msg, const std::shared_ptr<NetGameSession>& session);
+
+	uint16_t Login(const NetMsg msg, const std::shared_ptr<NetGameSession>& session);
+	uint16_t EnterGame(const NetMsg msg, const std::shared_ptr<NetGameSession>& session);
+	uint16_t Chat(const NetMsg msg, const std::shared_ptr<NetGameSession>& session);
 };
 

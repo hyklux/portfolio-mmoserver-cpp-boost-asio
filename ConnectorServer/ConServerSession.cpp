@@ -37,7 +37,7 @@ void ConServerSession::OnReceive(error_code error, size_t bytes_transferred)
 
 		if (bytes_transferred > 0)
 		{
-			cout << "Session " << static_cast<int>(m_ServerId) << " received msg. Size :" << bytes_transferred << endl;
+			cout << "[ConServerSession] Session " << static_cast<int>(m_ServerId) << " received msg. Size :" << bytes_transferred << endl;
 
 			/*
 			Protocol::C_LOGIN loginPkt;

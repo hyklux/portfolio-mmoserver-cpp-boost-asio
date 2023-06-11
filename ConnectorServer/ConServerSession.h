@@ -24,7 +24,7 @@ private:
 public:
 	ConServerSession(uint16_t serverId, boost::asio::ip::tcp::socket& _socket) : m_ServerId(serverId), m_Socket(std::move(_socket))
 	{
-		cout << "Session created. ServerId:" << m_ServerId << endl;
+		cout << "[ConServerSession] Session created. ServerId:" << m_ServerId << endl;
 	}
 
 	~ConServerSession()

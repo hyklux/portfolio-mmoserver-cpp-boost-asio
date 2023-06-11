@@ -68,7 +68,7 @@ private:
 	}
 
 	// Handlers
-	EResultType Handle_S_LOGIN(const NetMsg msg);
-	EResultType Handle_S_ENTER_GAME(const NetMsg msg);
-	EResultType Handle_S_CHAT(const NetMsg msg);
+	uint16_t Handle_S_LOGIN(const NetMsg msg);
+	uint16_t Handle_S_ENTER_GAME(const NetMsg msg);
+	uint16_t Handle_S_CHAT(const NetMsg msg);
 };

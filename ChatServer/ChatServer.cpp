@@ -7,7 +7,7 @@
 
 int CreateServerInstance(IServerContainer* pServerContainer, IServerModule*& pServer)
 {
-	cout << "[ChatModule] Creating zone server instance..." << endl;
+	cout << "[ChatModule] Creating chat module instance..." << endl;
 
 	ChatServer* server = new ChatServer();
 	if (nullptr == server)
@@ -17,7 +17,7 @@ int CreateServerInstance(IServerContainer* pServerContainer, IServerModule*& pSe
 
 	server->OnCreate(pServerContainer, pServer);
 
-	cout << "[ChatModule] Chat server instance created." << endl;
+	cout << "[ChatModule] Chat module instance created." << endl;
 
 	return 0;
 }
@@ -124,7 +124,7 @@ void ChatServer::BroadCastAll(std::string broadcastMsgStr)
 }
 
 //handlers
-EResultType ChatServer::Handle_C_ENTER_GAME(const NetMsg msg, const std::shared_ptr<NetGameSession>& session)
+int ChatServer::Handle_C_ENTER_GAME(const NetMsg msg, const std::shared_ptr<NetGameSession>& session)
 {
 	cout << "[ChatModule] Handle_C_ENTER_GAME" << endl;
 
@@ -132,17 +132,17 @@ EResultType ChatServer::Handle_C_ENTER_GAME(const NetMsg msg, const std::shared_
 	Protocol::C_ENTER_GAME pkt;
 	if (false == ParsePkt(pkt, msg))
 	{
-		return EResultType::PKT_ERROR;
+		return static_cast<uint16_t>(ERRORTYPE::PKT_ERROR);
 	}
 
 	cout << "[ChatModule] Player" << to_string(pkt.playerid()) << " has entered chat room." << endl;
 
 	m_UserSessionList.push_back(session);
 
-	return EResultType::SUCCESS;
+	return 0;
 }
 
-EResultType ChatServer::Handle_C_CHAT(const NetMsg msg, const std::shared_ptr<NetGameSession>& session)
+int ChatServer::Handle_C_CHAT(const NetMsg msg, const std::shared_ptr<NetGameSession>& session)
 {
 	cout << "[ChatModule] Handle_C_CHAT" << endl;
 
@@ -150,7 +150,7 @@ EResultType ChatServer::Handle_C_CHAT(const NetMsg msg, const std::shared_ptr<Ne
 	Protocol::C_CHAT pkt;
 	if (false == ParsePkt(pkt, msg))
 	{
-		return EResultType::PKT_ERROR;
+		return static_cast<uint16_t>(ERRORTYPE::PKT_ERROR);
 	}
 
 	cout << "[ChatModule] [Player" << to_string(pkt.playerid()+1) << "] " << pkt.msg() << endl;
@@ -158,5 +158,5 @@ EResultType ChatServer::Handle_C_CHAT(const NetMsg msg, const std::shared_ptr<Ne
 	std::string broadcastMsgStr = "[Player" + to_string(pkt.playerid()+1) + "] : " + pkt.msg();
 	BroadCastAll(broadcastMsgStr);
 
-	return EResultType::SUCCESS;
+	return 0;
 }

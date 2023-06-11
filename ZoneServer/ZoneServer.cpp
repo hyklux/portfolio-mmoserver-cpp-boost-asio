@@ -8,7 +8,7 @@
 
 int CreateServerInstance(IServerContainer* pServerContainer, IServerModule*& pServer)
 {
-	cout << "[ZoneModule] Creating zone server instance..." << endl;
+	cout << "[ZoneModule] Creating zone module instance..." << endl;
 
 	ZoneServer* server = new ZoneServer();
 	if (nullptr == server)
@@ -18,7 +18,7 @@ int CreateServerInstance(IServerContainer* pServerContainer, IServerModule*& pSe
 
 	server->OnCreate(pServerContainer, pServer);
 
-	cout << "[ZoneModule] Zone server instance created." << endl;
+	cout << "[ZoneModule] Zone module instance created." << endl;
 
 	return 0;
 }
@@ -165,7 +165,7 @@ void ZoneServer::Tick(float deltaTime)
 
 void ZoneServer::CreateNPCs()
 {
-	cout << "[ZoneServer] CreateNPCs" << endl;
+	cout << "[ZoneModule] CreateNPCs" << endl;
 
 	for (int i = 0; i < 5; i++)
 	{
@@ -176,15 +176,15 @@ void ZoneServer::CreateNPCs()
 }
 
 //handlers
-EResultType ZoneServer::Handle_C_ENTER_GAME(NetMsg msg)
+int ZoneServer::Handle_C_ENTER_GAME(NetMsg msg)
 {
-	cout << "[ZoneServer] Handle_C_ENTER_GAME" << endl;
+	cout << "[ZoneModule] Handle_C_ENTER_GAME" << endl;
 
 	//패킷 분해
 	Protocol::C_ENTER_GAME pkt;
 	if (false == ParsePkt(pkt, msg))
 	{
-		return EResultType::PKT_ERROR;
+		return static_cast<uint16_t>(ERRORTYPE::PKT_ERROR);
 	}
 
 	std::string playerName = "Player" + to_string(pkt.playerid());
@@ -196,5 +196,5 @@ EResultType ZoneServer::Handle_C_ENTER_GAME(NetMsg msg)
 
 	cout << "[ZoneModule] " << playerName << " enter game success." << endl;
 
-	return EResultType::SUCCESS;
+	return 0;
 }

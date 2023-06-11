@@ -180,13 +180,13 @@ int NetClient::HandleMsg(const NetMsg msg)
 	return 0;
 }
 
-EResultType NetClient::Handle_S_LOGIN(const NetMsg msg)
+uint16_t NetClient::Handle_S_LOGIN(const NetMsg msg)
 {
 	//패킷 분해
 	Protocol::S_LOGIN pkt;
 	if (false == ParsePkt(pkt, msg))
 	{
-		return EResultType::PKT_ERROR;
+		return static_cast<uint16_t>(ERRORTYPE::PKT_ERROR);
 	}
 
 	//로그인 결과에 따른 처리
@@ -200,16 +200,16 @@ EResultType NetClient::Handle_S_LOGIN(const NetMsg msg)
 		cout << "[NetClient] Login failed." << endl;
 	}
 
-	return EResultType::SUCCESS;
+	return 0;
 }
 
-EResultType NetClient::Handle_S_ENTER_GAME(const NetMsg msg)
+uint16_t NetClient::Handle_S_ENTER_GAME(const NetMsg msg)
 {
 	//패킷 분해
 	Protocol::S_ENTER_GAME pkt;
 	if (false == ParsePkt(pkt, msg))
 	{
-		return EResultType::PKT_ERROR;
+		return static_cast<uint16_t>(ERRORTYPE::PKT_ERROR);
 	}
 
 	//게임 진입 결과에 따른 처리
@@ -223,21 +223,21 @@ EResultType NetClient::Handle_S_ENTER_GAME(const NetMsg msg)
 		cout << "[NetClient] Enter game failed." << endl;
 	}
 
-	return EResultType::SUCCESS;
+	return 0;
 }
 
-EResultType NetClient::Handle_S_CHAT(const NetMsg msg)
+uint16_t NetClient::Handle_S_CHAT(const NetMsg msg)
 {
 	//패킷 분해
 	Protocol::S_CHAT pkt;
 	if (false == ParsePkt(pkt, msg))
 	{
-		return EResultType::PKT_ERROR;
+		return static_cast<uint16_t>(ERRORTYPE::PKT_ERROR);
 	}
 
 	//채팅 메세지 출력
 	std::string chatMsg = pkt.msg();
 	cout << "[NetClient] " << chatMsg << endl;
 
-	return EResultType::SUCCESS;
+	return 0;
 }
