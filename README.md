@@ -6,7 +6,7 @@ MMO server framework using C++ Boost Asio library
 This is a MMO server framework using C++ Boost Asio library.
 
 
-# Implmentation
+# Implmentations
 :heavy_check_mark: Architecture
 
 
