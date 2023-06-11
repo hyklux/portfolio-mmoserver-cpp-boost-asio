@@ -108,7 +108,6 @@ class ServerContainer
 	//...(omitted)
 }
 ```
- ![서버 모듈 로드](https://user-images.githubusercontent.com/96270683/221408977-60f10220-00cd-4dc3-a9bf-61efd9b04be6.PNG)
 ![mmo_portfolio_server1](https://github.com/hyklux/portfolio-mmoserver-cpp-boost-asio/assets/96270683/9a037ff0-f536-4bc8-aa63-1673c4f60a22)
 - ServerContainer is the container that manages all modules uploaded to that server and holds references to all server modules.
 
@@ -169,7 +168,6 @@ void NetworkModule::RegisterAccept()
 	});
 }
 ```
-![서버 세션 생성](https://user-images.githubusercontent.com/96270683/221409174-abcb4489-1e0e-43a7-93e6-bfb788c4846b.PNG)
 ![mmo_portfolio_server2](https://github.com/hyklux/portfolio-mmoserver-cpp-boost-asio/assets/96270683/eb371985-e9ab-429a-b3e1-f355c8d08fbc)
 - Each user performs packet communication through the session instance of the server connected to his/her client.
 ``` c++
@@ -371,7 +369,6 @@ bool DBConn::Execute(const WCHAR* query)
 	return false;
 }
 ```
-![서버 DB에 유저 생성](https://user-images.githubusercontent.com/96270683/221409525-69297530-1fa6-49e7-aa19-4f8ddeb63eca.PNG)
 ![mmo_portfolio_server3](https://github.com/hyklux/portfolio-mmoserver-cpp-boost-asio/assets/96270683/f088ad35-fd5e-4377-9d7d-c6adb881e7b6)
 
 
