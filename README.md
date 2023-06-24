@@ -3,7 +3,7 @@ MMO server framework using C++ Boost Asio library
 
 
 # Introduction
-This is a MMO server framework using C++ Boost Asio library.
+This is a MMO game server using C++ Boost Asio library.
 
 
 # Implmentations
