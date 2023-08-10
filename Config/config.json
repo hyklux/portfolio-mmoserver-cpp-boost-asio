@@ -2,11 +2,11 @@
   "name": "ServerLauncher",
   "servers": [
     {
-      "name": "NetworkServer",
+      "name": "NetworkModule",
       "use": "true",
       "servicetype": "0",
-      "executable": "../.././DLLs/NetworkServer.dll",
-      "config": "../.././Config/NetworkServer.json",
+      "executable": "../.././DLLs/NetworkModule.dll",
+      "config": "../.././Config/NetworkModule.json",
       "log": {
         "loglevel": "0",
         "console": "false"
