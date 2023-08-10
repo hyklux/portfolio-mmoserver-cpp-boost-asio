@@ -15,22 +15,22 @@
 
 using namespace std;
 
-extern "C" __declspec(dllexport) int CreateServerModuleInstance(IServerContainer * pServerContainer, IServerModule * &pServer);
+extern "C" __declspec(dllexport) int CreateServerModuleInstance(IServerContainer * pServerContainer, IServerModule*& pModule);
 
 class ChatModule : public IServerModule
 {
 private:
 	std::atomic_int m_refs = 0;
 	IServerContainer* m_pServerContainer;
-	IServerModule* m_pConnectorServer;
+	IServerModule* m_pConnectorModule;
 
 	std::vector<std::shared_ptr<NetGameSession>> m_UserSessionList;
-
+	
 public:
 	virtual int AddRef(void) override;
 	virtual int ReleaseRef(void) override;
 
-	virtual int OnCreate(IServerContainer* pServerContainer, IServerModule*& pServer) override;
+	virtual int OnCreate(IServerContainer* pServerContainer, IServerModule*& pModule) override;
 	virtual int OnLoad() override;
 	virtual int OnStart() override;
 	virtual int OnUnload() override;

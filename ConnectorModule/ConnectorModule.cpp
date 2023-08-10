@@ -2,17 +2,17 @@
 #include "ConnectorModule.h"
 #include "ConServerSession.h"
 
-int CreateServerModuleInstance(IServerContainer * pServerContainer, IServerModule * &pServer)
+int CreateServerModuleInstance(IServerContainer* pServerContainer, IServerModule*& pModule)
 {
 	cout << "[ConnectorModule] Creating connector module instance..." << endl;
 
-	ConnectorModule* server = new ConnectorModule();
-	if (nullptr == server)
+	ConnectorModule* connectorModule = new ConnectorModule();
+	if (nullptr == connectorModule)
 	{
 		return -1;
 	}
 
-	server->OnCreate(pServerContainer, pServer);
+	connectorModule->OnCreate(pServerContainer, pModule);
 
 	cout << "[ConnectorModule] Connector module instance created." << endl;
 
@@ -34,7 +34,7 @@ int ConnectorModule::ReleaseRef(void)
 	return m_refs;
 }
 
-int ConnectorModule::OnCreate(IServerContainer* pServerContainer, IServerModule*& pServer)
+int ConnectorModule::OnCreate(IServerContainer* pServerContainer, IServerModule*& pModule)
 {
 	cout << "[ConnectorModule] OnCreate" << endl;
 
@@ -45,8 +45,8 @@ int ConnectorModule::OnCreate(IServerContainer* pServerContainer, IServerModule*
 
 	m_pServerContainer = pServerContainer;
 
-	pServer = static_cast<IServerModule*>(this);
-	pServer->AddRef();
+	pModule = static_cast<IServerModule*>(this);
+	pModule->AddRef();
 
 	return 0;
 }
@@ -80,13 +80,13 @@ int ConnectorModule::OnUnload()
 	return 0;
 }
 
-void ConnectorModule::DispatchMsgToServer(uint16_t targetServer, NetMsg msg, const std::shared_ptr<NetGameSession>& session)
+void ConnectorModule::DispatchMsgToServer(uint16_t targetModule, NetMsg msg, const std::shared_ptr<NetGameSession>& session)
 {
-	IServerModule* pTargetServer = static_cast<IServerModule*>(m_pServerContainer->GetTargetModule(targetServer));
+	IServerModule* pTargetModule = static_cast<IServerModule*>(m_pServerContainer->GetTargetModule(targetModule));
 
-	if (pTargetServer)
+	if (pTargetModule)
 	{
-		pTargetServer->HandleMsg(msg, session);
+		pTargetModule->HandleMsg(msg, session);
 	}
 }
 
@@ -176,9 +176,9 @@ void ConnectorModule::RegisterAccept()
 
 		if (!error)
 		{
-			std::cout << "Server connection success." << std::endl;
+			std::cout << "[ConnectorModule] Server connection success." << std::endl;
 
-			ConServerSession* newSession = new ConServerSession(1, socket);
+			ConServerSession* newSession = new ConServerSession(1 , socket);
 			newSession->RegisterReceive();
 			m_ServerSessions.push_back(std::move(newSession));
 		}

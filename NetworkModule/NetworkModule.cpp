@@ -3,17 +3,17 @@
 #include "NetTcpServer.h"
 
 
-int CreateServerModuleInstance(IServerContainer * pServerContainer, IServerModule * &pServer)
+int CreateServerModuleInstance(IServerContainer* pServerContainer, IServerModule*& pModule)
 {
 	cout << "[NetworkModule] Creating network module instance..." << endl;
 
-	NetworkModule* server = new NetworkModule();
-	if (nullptr == server)
+	NetworkModule* networkModule = new NetworkModule();
+	if (nullptr == networkModule)
 	{
 		return -1;
 	}
 
-	server->OnCreate(pServerContainer, pServer);
+	networkModule->OnCreate(pServerContainer, pModule);
 
 	cout << "[NetworkModule] Network server module created." << endl;
 
@@ -35,7 +35,7 @@ int NetworkModule::ReleaseRef(void)
 	return m_refs;
 }
 
-int NetworkModule::OnCreate(IServerContainer* pServerContainer, IServerModule*& pServer)
+int NetworkModule::OnCreate(IServerContainer* pServerContainer, IServerModule*& pModule)
 {
 	cout << "[NetworkModule] OnCreate" << endl;
 
@@ -46,8 +46,8 @@ int NetworkModule::OnCreate(IServerContainer* pServerContainer, IServerModule*& 
 
 	m_pServerContainer = pServerContainer;
 
-	pServer = static_cast<IServerModule*>(this);
-	pServer->AddRef();
+	pModule = static_cast<IServerModule*>(this);
+	pModule->AddRef();
 
 	return 0;
 }
@@ -195,7 +195,7 @@ void NetworkModule::RegisterAccept()
 
 		if (!error)
 		{
-			std::cout << "Client connection success." << std::endl;
+			std::cout << "[NetworkModule] Client connection success." << std::endl;
 
 			std::shared_ptr<NetGameSession> newSession = std::make_shared<NetGameSession>(this, ++m_SessionIdIdx, socket);
 			newSession->RegisterReceive();
@@ -209,7 +209,7 @@ void NetworkModule::OnAccept(const boost::system::error_code& error, const boost
 {
 }
 
-IServerModule* NetworkModule::GetUserServer()
+IServerModule* NetworkModule::GetUserModule()
 {
 	void* pContainerPtr = m_pServerContainer->GetUserModule();
 	if (pContainerPtr)
@@ -220,15 +220,15 @@ IServerModule* NetworkModule::GetUserServer()
 	return nullptr;
 }
 
-void NetworkModule::DispatchClientMsg(uint16_t targetServer, NetMsg msg, const std::shared_ptr<NetGameSession>& session)
+void NetworkModule::DispatchClientMsg(uint16_t targetModule, NetMsg msg, const std::shared_ptr<NetGameSession>& session)
 {
 	cout << "[NetworkModule] DispatchClientMsg" << endl;
 
-	IServerModule* pTargetServer = static_cast<IServerModule*>(m_pServerContainer->GetTargetModule(targetServer));
+	IServerModule* pTargetModule = static_cast<IServerModule*>(m_pServerContainer->GetTargetModule(targetModule));
 
-	if (pTargetServer)
+	if (pTargetModule)
 	{
-		pTargetServer->HandleMsg(msg, session);
+		pTargetModule->HandleMsg(msg, session);
 	}
 }
 

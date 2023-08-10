@@ -19,7 +19,7 @@
 
 using namespace std;
 
-extern "C" __declspec(dllexport) int CreateServerModuleInstance(IServerContainer * pServerContainer, IServerModule * &pServer);
+extern "C" __declspec(dllexport) int CreateServerModuleInstance(IServerContainer * pServerContainer, IServerModule*& pServer);
 
 class DBAgentModule : public IServerModule
 {
@@ -34,7 +34,7 @@ public:
 	virtual int AddRef(void) override;
 	virtual int ReleaseRef(void) override;
 
-	virtual int OnCreate(IServerContainer* pServerContainer, IServerModule*& pServer) override;
+	virtual int OnCreate(IServerContainer* pServerContainer, IServerModule*& pModule) override;
 	virtual int OnLoad() override;
 	virtual int OnStart() override;
 	virtual int OnUnload() override;

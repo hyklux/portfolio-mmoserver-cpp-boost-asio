@@ -4,19 +4,17 @@
 
 #include "Protocol.pb.h"
 
-#define TICK_LENGTH_MILLISEC 16 //60 ticks per second
-
-int CreateServerModuleInstance(IServerContainer* pServerContainer, IServerModule*& pServer)
+int CreateServerModuleInstance(IServerContainer* pServerContainer, IServerModule*& pModule)
 {
 	cout << "[ZoneModule] Creating zone module instance..." << endl;
 
-	ZoneModule* server = new ZoneModule();
-	if (nullptr == server)
+	ZoneModule* module = new ZoneModule();
+	if (nullptr == module)
 	{
 		return -1;
 	}
 
-	server->OnCreate(pServerContainer, pServer);
+	module->OnCreate(pServerContainer, pModule);
 
 	cout << "[ZoneModule] Zone module instance created." << endl;
 
@@ -38,7 +36,7 @@ int ZoneModule::ReleaseRef(void)
 	return m_refs;
 }
 
-int ZoneModule::OnCreate(IServerContainer* pServerContainer, IServerModule*& pServer)
+int ZoneModule::OnCreate(IServerContainer* pServerContainer, IServerModule*& pModule)
 {
 	cout << "[ZoneModule] OnCreate" << endl;
 
@@ -49,8 +47,8 @@ int ZoneModule::OnCreate(IServerContainer* pServerContainer, IServerModule*& pSe
 
 	m_pServerContainer = pServerContainer;
 
-	pServer = static_cast<IServerModule*>(this);
-	pServer->AddRef();
+	pModule = static_cast<IServerModule*>(this);
+	pModule->AddRef();
 
 	return 0;
 }
@@ -117,10 +115,10 @@ int ZoneModule::SetConnector()
 	void* pContainerPtr = m_pServerContainer->GetConnectorModule();
 	if (pContainerPtr)
 	{
-		m_pConnectorServer = static_cast<IServerModule*>(pContainerPtr);
+		m_pConnectorModule = static_cast<IServerModule*>(pContainerPtr);
 	}
 
-	return m_pConnectorServer ? 0 : -1;
+	return m_pConnectorModule ? 0 : -1;
 }
 
 void ZoneModule::InitZone()

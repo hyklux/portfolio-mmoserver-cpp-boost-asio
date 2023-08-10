@@ -6,17 +6,17 @@
 
 #include "Protocol.pb.h"
 
-int CreateServerModuleInstance(IServerContainer * pServerContainer, IServerModule * &pServer)
+int CreateServerModuleInstance(IServerContainer* pServerContainer, IServerModule*& pModule)
 {
 	cout << "[DBAgentModule] Creating DBAgent module instance..." << endl;
 
-	DBAgentModule* server = new DBAgentModule();
-	if (nullptr == server)
+	DBAgentModule* dbagentModule = new DBAgentModule();
+	if (nullptr == dbagentModule)
 	{
 		return -1;
 	}
 
-	server->OnCreate(pServerContainer, pServer);
+	dbagentModule->OnCreate(pServerContainer, pModule);
 
 	cout << "[DBAgentModule] DBAgent module instance created." << endl;
 
@@ -38,7 +38,7 @@ int DBAgentModule::ReleaseRef(void)
 	return m_refs;
 }
 
-int DBAgentModule::OnCreate(IServerContainer* pServerContainer, IServerModule*& pServer)
+int DBAgentModule::OnCreate(IServerContainer* pServerContainer, IServerModule*& pModule)
 {
 	cout << "[DBAgentModule] OnCreate" << endl;
 
@@ -49,8 +49,8 @@ int DBAgentModule::OnCreate(IServerContainer* pServerContainer, IServerModule*& 
 
 	m_pServerContainer = pServerContainer;
 
-	pServer = static_cast<IServerModule*>(this);
-	pServer->AddRef();
+	pModule = static_cast<IServerModule*>(this);
+	pModule->AddRef();
 
 	return 0;
 }

@@ -9,7 +9,7 @@
 
 using namespace std;
 
-extern "C" __declspec(dllexport) int CreateServerModuleInstance(IServerContainer * pServerContainer, IServerModule * &pServer);
+extern "C" __declspec(dllexport) int CreateServerModuleInstance(IServerContainer* pServerContainer, IServerModule*& pModule);
 
 class NetworkModule : public IServerModule
 {
@@ -45,13 +45,13 @@ public:
 	virtual int AddRef(void) override;
 	virtual int ReleaseRef(void) override;
 
-	virtual int OnCreate(IServerContainer* pServerContainer, IServerModule*& pServer) override;
+	virtual int OnCreate(IServerContainer* pServerContainer, IServerModule*& pModule) override;
 	virtual int OnLoad() override;
 	virtual int OnStart() override;
 	virtual int OnUnload() override;
 
-	void DispatchClientMsg(uint16_t targetServer, NetMsg msg, const std::shared_ptr<NetGameSession>& session);
-	IServerModule* GetUserServer();
+	void DispatchClientMsg(uint16_t targetModule, NetMsg msg, const std::shared_ptr<NetGameSession>& session);
+	IServerModule* GetUserModule();
 private:
 	virtual int SetConnector() override;
 

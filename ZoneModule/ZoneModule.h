@@ -18,19 +18,19 @@
 
 using namespace std;
 
-extern "C" __declspec(dllexport) int CreateServerModuleInstance(IServerContainer * pServerContainer, IServerModule*& pServer);
+extern "C" __declspec(dllexport) int CreateServerModuleInstance(IServerContainer * pServerContainer, IServerModule*& pModule);
 
 class ZoneModule : public IServerModule
 {
 private:
 	std::atomic_int m_refs = 0;
 	IServerContainer* m_pServerContainer;
-	IServerModule* m_pConnectorServer;
+	IServerModule* m_pConnectorModule;
 	
 	bool m_CanTick = false;
 
 	// Declare a constant for the desired tick rate (in ticks per second)
-	const int TICK_RATE = 60;
+	const float TICK_RATE = 10.0f;
 
 	// Declare a variable to store the last tick time
 	std::clock_t lastTickTime;
@@ -42,7 +42,7 @@ public:
 	virtual int AddRef(void) override;
 	virtual int ReleaseRef(void) override;
 
-	virtual int OnCreate(IServerContainer* pServerContainer, IServerModule*& pServer) override;
+	virtual int OnCreate(IServerContainer* pServerContainer, IServerModule*& pModule) override;
 	virtual int OnLoad() override;
 	virtual int OnStart() override;
 	virtual int OnUnload() override;

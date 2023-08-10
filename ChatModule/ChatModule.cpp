@@ -5,7 +5,7 @@
 
 #include "Protocol.pb.h"
 
-int CreateServerModuleInstance(IServerContainer * pServerContainer, IServerModule * &pServer)
+int CreateServerModuleInstance(IServerContainer* pServerContainer, IServerModule*& pModule)
 {
 	cout << "[ChatModule] Creating chat module instance..." << endl;
 
@@ -15,7 +15,7 @@ int CreateServerModuleInstance(IServerContainer * pServerContainer, IServerModul
 		return -1;
 	}
 
-	server->OnCreate(pServerContainer, pServer);
+	server->OnCreate(pServerContainer, pModule);
 
 	cout << "[ChatModule] Chat module instance created." << endl;
 
@@ -37,7 +37,7 @@ int ChatModule::ReleaseRef(void)
 	return m_refs;
 }
 
-int ChatModule::OnCreate(IServerContainer* pServerContainer, IServerModule*& pServer)
+int ChatModule::OnCreate(IServerContainer* pServerContainer, IServerModule*& pModule)
 {
 	cout << "[ChatModule] OnCreate" << endl;
 
@@ -48,8 +48,8 @@ int ChatModule::OnCreate(IServerContainer* pServerContainer, IServerModule*& pSe
 
 	m_pServerContainer = pServerContainer;
 
-	pServer = static_cast<IServerModule*>(this);
-	pServer->AddRef();
+	pModule = static_cast<IServerModule*>(this);
+	pModule->AddRef();
 
 	return 0;
 }
@@ -104,10 +104,10 @@ int ChatModule::SetConnector()
 	void* pContainerPtr = m_pServerContainer->GetConnectorModule();
 	if (pContainerPtr)
 	{
-		m_pConnectorServer = static_cast<IServerModule*>(pContainerPtr);
+		m_pConnectorModule = static_cast<IServerModule*>(pContainerPtr);
 	}
 
-	return m_pConnectorServer ? 0 : -1;
+	return m_pConnectorModule ? 0 : -1;
 }
 
 void ChatModule::BroadCastAll(std::string broadcastMsgStr)
@@ -153,9 +153,9 @@ int ChatModule::Handle_C_CHAT(const NetMsg msg, const std::shared_ptr<NetGameSes
 		return static_cast<uint16_t>(ERRORTYPE::PKT_ERROR);
 	}
 
-	cout << "[ChatModule] [Player" << to_string(pkt.playerid() + 1) << "] " << pkt.msg() << endl;
+	cout << "[ChatModule] [Player" << to_string(pkt.playerid()+1) << "] " << pkt.msg() << endl;
 
-	std::string broadcastMsgStr = "[Player" + to_string(pkt.playerid() + 1) + "] : " + pkt.msg();
+	std::string broadcastMsgStr = "[Player" + to_string(pkt.playerid()+1) + "] : " + pkt.msg();
 	BroadCastAll(broadcastMsgStr);
 
 	return 0;

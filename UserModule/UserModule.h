@@ -39,7 +39,7 @@ public:
 	virtual int AddRef(void) override;
 	virtual int ReleaseRef(void) override;
 
-	virtual int OnCreate(IServerContainer* pServerContainer, IServerModule*& pServer) override;
+	virtual int OnCreate(IServerContainer* pServerContainer, IServerModule*& pModule) override;
 	virtual int OnLoad() override;
 	virtual int OnStart() override;
 	virtual int OnUnload() override;

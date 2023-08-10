@@ -8,17 +8,17 @@
 
 #include "Protocol.pb.h"
 
-int CreateServerModuleInstance(IServerContainer * pServerContainer, IServerModule * &pServer)
+int CreateServerModuleInstance(IServerContainer* pServerContainer, IServerModule*& pModule)
 {
 	cout << "[UserModule] Creating user module instance..." << endl;
 
-	UserModule* server = new UserModule();
-	if (nullptr == server)
+	UserModule* userModule = new UserModule();
+	if (nullptr == userModule)
 	{
 		return -1;
 	}
 
-	server->OnCreate(pServerContainer, pServer);
+	userModule->OnCreate(pServerContainer, pModule);
 
 	cout << "[UserModule] User module instance created." << endl;
 

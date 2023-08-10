@@ -21,7 +21,7 @@ private:
 
 	std::atomic_int m_refs = 0;
 	IServerContainer* m_pServerContainer;
-	IServerModule* m_pConnectorServer;
+	IServerModule* m_pConnectorModule;
 
 	std::shared_ptr<boost::asio::io_service::work> m_Work;
 	boost::asio::io_service m_IOService;
@@ -46,11 +46,11 @@ public:
 	virtual int AddRef(void) override;
 	virtual int ReleaseRef(void) override;
 
-	virtual int OnCreate(IServerContainer* pServerContainer, IServerModule*& pServer) override;
+	virtual int OnCreate(IServerContainer* pServerContainer, IServerModule*& pModule) override;
 	virtual int OnLoad() override;
 	virtual int OnStart() override;
 	virtual int OnUnload() override;
-	virtual void DispatchMsgToServer(uint16_t targetServer, NetMsg msg, const std::shared_ptr<NetGameSession>& session) override;
+	virtual void DispatchMsgToServer(uint16_t targetModule, NetMsg msg, const std::shared_ptr<NetGameSession>& session) override;
 
 private:
 	bool InitIOService();
