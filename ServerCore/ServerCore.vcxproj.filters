@@ -210,9 +210,6 @@
     <ClInclude Include="IServerContainer.h">
       <Filter>AsioNetwork</Filter>
     </ClInclude>
-    <ClInclude Include="IServerModule.h">
-      <Filter>AsioNetwork</Filter>
-    </ClInclude>
     <ClInclude Include="CPlayer.h">
       <Filter>Actor</Filter>
     </ClInclude>
@@ -221,6 +218,9 @@
     </ClInclude>
     <ClInclude Include="CMonster.h">
       <Filter>Actor</Filter>
+    </ClInclude>
+    <ClInclude Include="IServerModule.h">
+      <Filter>AsioNetwork</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

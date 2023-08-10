@@ -186,8 +186,8 @@
     <ClInclude Include="GlobalQueue.h" />
     <ClInclude Include="IocpCore.h" />
     <ClInclude Include="IocpEvent.h" />
-    <ClInclude Include="IServerModule.h" />
     <ClInclude Include="IServerContainer.h" />
+    <ClInclude Include="IServerModule.h" />
     <ClInclude Include="Job.h" />
     <ClInclude Include="JobTimer.h" />
     <ClInclude Include="LockQueue.h" />
