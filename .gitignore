@@ -17,3 +17,6 @@ GameServer/x64/Debug
 ZoneModule/x64/Debug
 UserModule/x64/Debug
 NetworkModule/x64/Debug
+ConnectorModule/x64/Debug
+ChatModule/x64/Debug
+DBAgentModule/x64/Debug
