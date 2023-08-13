@@ -25,8 +25,6 @@ void NetClient::OnConnect(const boost::system::error_code& error)
 		std::cout << "[NetClient] Connected to server." << std::endl;
 		m_IsConnected = true;
 	}
-
-	StopIOService();
 }
 
 void NetClient::Disconnect()
@@ -109,11 +107,8 @@ void NetClient::RegisterSend(NetMsg msg)
 	{
 		std::cout << "[NetClient] All data has been sent. Bytes transferred:" << bytes_transferred << std::endl;
 
-		StopIOService();
 		RegisterReceive();
 	});
-
-	StartIOService();
 }
 
 void NetClient::RegisterReceive()
@@ -131,11 +126,7 @@ void NetClient::RegisterReceive()
 		{
 			Disconnect();
 		}
-
-		StopIOService();
 	});
-
-	StartIOService();
 }
 
 void NetClient::OnSend(const boost::system::error_code& error, size_t bytes_transferred)

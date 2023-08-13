@@ -68,17 +68,20 @@ int main()
 	//[boost asio 초기화]
 	boost::asio::io_service io_service;
 	std::shared_ptr<boost::asio::io_service::work> worker;
-
-	//before you call run() of the io_service yourIOService
 	worker = std::make_shared<boost::asio::io_service::work>(io_service);
 	worker->get_io_context().restart();
+	//std::thread thr(boost::bind(&boost::asio::io_service::run, &io_service));
+	auto thr = std::make_unique<std::thread>(boost::bind(&boost::asio::io_service::run, &io_service));
+	m_ThreadList.push_back(std::move(thr));
+
+	this_thread::sleep_for(1s);
+
+	//[클라이언트 생성]
+	NetClient netClient1(io_service);
 
 	//[서버 연결]
 	boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::address::from_string(SERVER_IP), PORT_NUMBER);
-
-	NetClient netClient1(io_service);
 	netClient1.Connect(endpoint);
-	io_service.run();
 
 	while (!netClient1.IsConnected())
 	{
