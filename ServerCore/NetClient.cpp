@@ -24,6 +24,7 @@ void NetClient::OnConnect(const boost::system::error_code& error)
 	{
 		std::cout << "[NetClient] Connected to server." << std::endl;
 		m_IsConnected = true;
+		Start();
 	}
 }
 
@@ -97,8 +98,6 @@ void NetClient::RegisterSend(std::string msgStr)
 	{
 		std::cout << "[NetClient] All data has been sent. Bytes transferred:" << bytes_transferred << std::endl;
 	});
-
-	RegisterReceive();
 }
 
 void NetClient::RegisterSend(NetMsg msg)
@@ -106,21 +105,43 @@ void NetClient::RegisterSend(NetMsg msg)
 	boost::asio::async_write(m_Socket, boost::asio::buffer(msg.GetData(), msg.GetLength()), [&](error_code error, std::size_t bytes_transferred)
 	{
 		std::cout << "[NetClient] All data has been sent. Bytes transferred:" << bytes_transferred << std::endl;
-
-		RegisterReceive();
 	});
 }
 
-void NetClient::RegisterReceive()
+void NetClient::RegisterReceiveHeader()
 {
-	boost::asio::async_read(m_Socket, boost::asio::buffer(m_Msg.GetData(), m_Msg.GetLength()), [&](boost::system::error_code error, std::size_t /*length*/)
+	//auto self(shared_from_this());
+
+	boost::asio::async_read(m_Socket, boost::asio::buffer(m_Msg.GetData(), NetMsg::HEADER_LENGTH), [this](boost::system::error_code error, std::size_t /*length*/)
 	{
 		if (!error)
 		{
 			if (m_Msg.DecodeHeader())
 			{
-				HandleMsg(m_Msg);
+				RegisterReceiveBody();
 			}
+			else
+			{
+				Disconnect();
+			}
+		}
+		else
+		{
+			Disconnect();
+		}
+	});
+}
+
+void NetClient::RegisterReceiveBody()
+{
+	//auto self(shared_from_this());
+
+	boost::asio::async_read(m_Socket, boost::asio::buffer(m_Msg.GetBody(), m_Msg.GetBodyLength()), [this](boost::system::error_code error, std::size_t /*length*/)
+	{
+		if (!error)
+		{
+			HandleMsg(m_Msg);
+			RegisterReceiveHeader();
 		}
 		else
 		{

@@ -16,6 +16,6 @@ void NetTcpServer::OnAccept(NetGameSession* pSession, const boost::system::error
 	{
 		std::cout << "[NetTcpServer] Client connection success." << std::endl;
 		std::cout << std::endl;
-		pSession->RegisterReceive();
+		pSession->Start();
 	}
 }

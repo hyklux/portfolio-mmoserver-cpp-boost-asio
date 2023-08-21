@@ -198,7 +198,7 @@ void NetworkModule::RegisterAccept()
 			std::cout << "[NetworkModule] Client connection success." << std::endl;
 
 			std::shared_ptr<NetGameSession> newSession = std::make_shared<NetGameSession>(this, ++m_SessionIdIdx, socket);
-			newSession->RegisterReceive();
+			newSession->Start();
 		}
 
 		RegisterAccept();

@@ -4,22 +4,23 @@
 #include <cstdlib>
 #include <cstring>
 #include <algorithm>
+#include <stdio.h>
 
 #include "NetHeader.h"
 
 class NetMsg
 {
 public:
-	enum { BUFFER_SIZE = 128 };
+	enum { HEADER_LENGTH = 4 };
+	enum { MAX_BODY_LENGTH = 512 };
 
 private:
-	char m_Data[BUFFER_SIZE];
-	uint16_t m_HeaderLength;
+	char m_Data[HEADER_LENGTH + MAX_BODY_LENGTH];
 	uint16_t m_BodyLength;
 	uint16_t m_PktId = -1;
 
 public:
-	NetMsg() : m_HeaderLength(sizeof(NetHeader)), m_BodyLength(0)
+	NetMsg() : m_BodyLength(0)
 	{
 
 	}
@@ -34,11 +35,6 @@ public:
 		return m_PktId;
 	}
 
-	uint16_t GetLength() const
-	{
-		return BUFFER_SIZE;
-	}
-
 	const char* GetData() const
 	{
 		return m_Data;
@@ -49,14 +45,19 @@ public:
 		return m_Data;
 	}
 
+	uint16_t GetLength() const
+	{
+		return HEADER_LENGTH + m_BodyLength;
+	}
+
 	const char* GetBody() const
 	{
-		return m_Data + m_HeaderLength;
+		return m_Data + HEADER_LENGTH;
 	}
 
 	char* GetBody()
 	{
-		return m_Data + m_HeaderLength;
+		return m_Data + HEADER_LENGTH;
 	}
 
 	uint16_t GetBodyLength() const
@@ -68,39 +69,48 @@ public:
 	{
 		m_BodyLength = new_length;
 
-		if (m_BodyLength > BUFFER_SIZE - m_HeaderLength)
+		if (m_BodyLength > MAX_BODY_LENGTH)
 		{
-			m_BodyLength = BUFFER_SIZE - m_HeaderLength;
+			m_BodyLength = MAX_BODY_LENGTH;
 		}
+	}
+
+	void SetData(const unsigned char* pktData, int pktLength)
+	{
+		memmove(m_Data, pktData, pktLength);
 	}
 
 	bool DecodeHeader()
 	{
-		NetHeader* header = reinterpret_cast<NetHeader*>(GetData());
+		NetHeader* header = reinterpret_cast<NetHeader*>(m_Data);
 		m_PktId = header->id;
-		m_BodyLength = static_cast<uint16_t>(header->size);
-		if (m_BodyLength > BUFFER_SIZE - m_HeaderLength)
+		m_BodyLength = header->size;
+
+		if (m_BodyLength > MAX_BODY_LENGTH)
 		{
 			m_BodyLength = 0;
 			return false;
 		}
-
 		return true;
 	}
 
-	void EncodeHeader(NetHeader netHeader)
+	void EncodeHeader(uint16_t dataBodySize, uint16_t pktId)
 	{
-		std::memcpy(m_Data, &netHeader, sizeof(NetHeader));
+		//char header[HEADER_LENGTH + 1] = "";
+		//sprintf_s(header, "%4d", static_cast<int>(m_BodyLength));
+		//std::memcpy(m_Data, header, HEADER_LENGTH);
+
+		NetHeader* header = reinterpret_cast<NetHeader*>(m_Data);
+		header->size = dataBodySize;
+		header->id = pktId;
 	}
 
 	template<typename T>
 	void MakeBuffer(T& pkt, uint16_t pktId)
 	{
-		const uint16_t dataSize = static_cast<uint16_t>(pkt.ByteSizeLong());
-
-		NetHeader* header = reinterpret_cast<NetHeader*>(GetData());
-		header->size = dataSize;
-		header->id = pktId;
-		pkt.SerializeToArray(GetBody(), dataSize);
+		const uint16_t dataBodySize = static_cast<uint16_t>(pkt.ByteSizeLong());
+		EncodeHeader(dataBodySize, pktId);
+		m_BodyLength = dataBodySize;
+		pkt.SerializeToArray(GetBody(), dataBodySize);
 	}
 };

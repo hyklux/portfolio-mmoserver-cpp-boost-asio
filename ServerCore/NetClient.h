@@ -51,9 +51,16 @@ private:
 
 	void RegisterSend(NetMsg msg);
 
-	void RegisterReceive();
+	void RegisterReceiveHeader();
+
+	void RegisterReceiveBody();
 
 	void OnConnect(const boost::system::error_code& error);
+
+	void Start()
+	{
+		RegisterReceiveHeader();
+	}
 
 	void OnSend(const boost::system::error_code& error, size_t bytes_transferred);
 

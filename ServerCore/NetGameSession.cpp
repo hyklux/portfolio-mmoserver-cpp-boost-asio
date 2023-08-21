@@ -20,20 +20,40 @@ void NetGameSession::RegisterSend(NetMsg msg)
 	});
 }
 
-void NetGameSession::RegisterReceive()
+void NetGameSession::RegisterReceiveHeader()
 {
 	auto self(shared_from_this());
 
-	boost::asio::async_read(m_Socket, boost::asio::buffer(m_Msg.GetData(), m_Msg.GetLength()), [this, self](boost::system::error_code error, std::size_t /*length*/)
+	boost::asio::async_read(m_Socket, boost::asio::buffer(m_Msg.GetData(), NetMsg::HEADER_LENGTH), [this, self](boost::system::error_code error, std::size_t /*length*/)
 	{
 		if (!error)
 		{
 			if (m_Msg.DecodeHeader())
 			{
-				m_pNetworkServer->DispatchClientMsg(EUserModule, m_Msg, self);
+				RegisterReceiveBody();
 			}
+			else
+			{
+				Disconnect();
+			}
+		}
+		else
+		{
+			Disconnect();
+		}
+	});
+}
 
-			RegisterReceive();
+void NetGameSession::RegisterReceiveBody()
+{
+	auto self(shared_from_this());
+
+	boost::asio::async_read(m_Socket, boost::asio::buffer(m_Msg.GetBody(), m_Msg.GetBodyLength()), [this, self](boost::system::error_code error, std::size_t /*length*/)
+	{
+		if (!error)
+		{
+			m_pNetworkServer->DispatchClientMsg(EUserModule, m_Msg, self);
+			RegisterReceiveHeader();
 		}
 		else
 		{
