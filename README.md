@@ -29,7 +29,7 @@ This is a MMO game server using C++ Boost Asio library.
 
 
 # Architecture
-![mmo_server_architecture2](https://github.com/hyklux/portfolio-mmoserver-cpp-boost-asio/assets/96270683/a1d02e0c-3c42-43b9-971e-7b873b141d86)
+![mmo_server_architecture_live](https://github.com/hyklux/portfolio-mmoserver-cpp-boost-asio/assets/96270683/2d87e756-f95d-45c8-b037-85294f15080c)
 - The server consists of a number of sub-modules, each module defined to do certain tasks.
 - In an actual live service, even the same module(say User module) can exist more than one according to the number of users that can be accommodated for each one.
 - Each module communicates with other modules through Connector module.
