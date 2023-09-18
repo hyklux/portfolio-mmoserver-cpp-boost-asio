@@ -40,6 +40,18 @@
     <Filter Include="Actor">
       <UniqueIdentifier>{c477de6b-743c-4390-a8a4-d92be3b16c7b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="BurningCarrot">
+      <UniqueIdentifier>{53efec63-1601-47db-ba81-c32e149a9d6e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BurningCarrot\pods">
+      <UniqueIdentifier>{88eef89f-b95d-4d37-bf8c-2c68a9f14d09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BurningCarrot\pods\details">
+      <UniqueIdentifier>{2c8536ac-c93a-44f6-8665-33918fae46ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BurningCarrot\pods\details\formats">
+      <UniqueIdentifier>{2c22158e-032e-44b0-85ad-ae020e5d033e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CorePch.h">
@@ -221,6 +233,102 @@
     </ClInclude>
     <ClInclude Include="IServerModule.h">
       <Filter>AsioNetwork</Filter>
+    </ClInclude>
+    <ClInclude Include="MemoryAllocator.h">
+      <Filter>BurningCarrot</Filter>
+    </ClInclude>
+    <ClInclude Include="MemoryManager.h">
+      <Filter>BurningCarrot</Filter>
+    </ClInclude>
+    <ClInclude Include="MemoryPoolManager.h">
+      <Filter>BurningCarrot</Filter>
+    </ClInclude>
+    <ClInclude Include="MemoryPoolObject.h">
+      <Filter>BurningCarrot</Filter>
+    </ClInclude>
+    <ClInclude Include="DispatchableObjectPool.h">
+      <Filter>BurningCarrot</Filter>
+    </ClInclude>
+    <ClInclude Include="DispatchableThread.h">
+      <Filter>BurningCarrot</Filter>
+    </ClInclude>
+    <ClInclude Include="ConditionThread.h">
+      <Filter>BurningCarrot</Filter>
+    </ClInclude>
+    <ClInclude Include="WorkerPool.h">
+      <Filter>BurningCarrot</Filter>
+    </ClInclude>
+    <ClInclude Include="pods\binary.h">
+      <Filter>BurningCarrot\pods</Filter>
+    </ClInclude>
+    <ClInclude Include="pods\buffers.h">
+      <Filter>BurningCarrot\pods</Filter>
+    </ClInclude>
+    <ClInclude Include="pods\errors.h">
+      <Filter>BurningCarrot\pods</Filter>
+    </ClInclude>
+    <ClInclude Include="pods\json.h">
+      <Filter>BurningCarrot\pods</Filter>
+    </ClInclude>
+    <ClInclude Include="pods\msgpack.h">
+      <Filter>BurningCarrot\pods</Filter>
+    </ClInclude>
+    <ClInclude Include="pods\pods.h">
+      <Filter>BurningCarrot\pods</Filter>
+    </ClInclude>
+    <ClInclude Include="pods\streams.h">
+      <Filter>BurningCarrot\pods</Filter>
+    </ClInclude>
+    <ClInclude Include="pods\types.h">
+      <Filter>BurningCarrot\pods</Filter>
+    </ClInclude>
+    <ClInclude Include="pods\details\base64.h">
+      <Filter>BurningCarrot\pods\details</Filter>
+    </ClInclude>
+    <ClInclude Include="pods\details\binary_wrappers.h">
+      <Filter>BurningCarrot\pods\details</Filter>
+    </ClInclude>
+    <ClInclude Include="pods\details\deserializer.h">
+      <Filter>BurningCarrot\pods\details</Filter>
+    </ClInclude>
+    <ClInclude Include="pods\details\endianness.h">
+      <Filter>BurningCarrot\pods\details</Filter>
+    </ClInclude>
+    <ClInclude Include="pods\details\names.h">
+      <Filter>BurningCarrot\pods\details</Filter>
+    </ClInclude>
+    <ClInclude Include="pods\details\rapidjson_wrappers.h">
+      <Filter>BurningCarrot\pods\details</Filter>
+    </ClInclude>
+    <ClInclude Include="pods\details\serializer.h">
+      <Filter>BurningCarrot\pods\details</Filter>
+    </ClInclude>
+    <ClInclude Include="pods\details\settings.h">
+      <Filter>BurningCarrot\pods\details</Filter>
+    </ClInclude>
+    <ClInclude Include="pods\details\utils.h">
+      <Filter>BurningCarrot\pods\details</Filter>
+    </ClInclude>
+    <ClInclude Include="pods\details\formats\binary_input.h">
+      <Filter>BurningCarrot\pods\details\formats</Filter>
+    </ClInclude>
+    <ClInclude Include="pods\details\formats\binary_output.h">
+      <Filter>BurningCarrot\pods\details\formats</Filter>
+    </ClInclude>
+    <ClInclude Include="pods\details\formats\json_input.h">
+      <Filter>BurningCarrot\pods\details\formats</Filter>
+    </ClInclude>
+    <ClInclude Include="pods\details\formats\json_output.h">
+      <Filter>BurningCarrot\pods\details\formats</Filter>
+    </ClInclude>
+    <ClInclude Include="pods\details\formats\msgpack_aux.h">
+      <Filter>BurningCarrot\pods\details\formats</Filter>
+    </ClInclude>
+    <ClInclude Include="pods\details\formats\msgpack_input.h">
+      <Filter>BurningCarrot\pods\details\formats</Filter>
+    </ClInclude>
+    <ClInclude Include="pods\details\formats\msgpack_output.h">
+      <Filter>BurningCarrot\pods\details\formats</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

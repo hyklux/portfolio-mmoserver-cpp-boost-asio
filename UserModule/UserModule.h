@@ -35,6 +35,7 @@ private:
 	int8_t m_JobQueueThreadCnt = 3;
 	ThreadPool m_ThreadPool;
 
+	WorkerPool m_UserWorkerPool;
 public:
 	virtual int AddRef(void) override;
 	virtual int ReleaseRef(void) override;

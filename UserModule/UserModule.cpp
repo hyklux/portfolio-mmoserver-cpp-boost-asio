@@ -63,6 +63,7 @@ int UserModule::OnLoad()
 
 	SetConnector();
 	m_ThreadPool.Activate(m_JobQueueThreadCnt);
+	m_UserWorkerPool.Init(m_JobQueueThreadCnt);
 
 	return 0;
 }
@@ -76,6 +77,9 @@ int UserModule::OnStart()
 int UserModule::OnUnload()
 {
 	cout << "[UserModule] OnUnload" << endl;
+
+	m_UserWorkerPool.Uninit();
+
 	return 0;
 }
 

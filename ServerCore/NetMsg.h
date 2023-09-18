@@ -75,11 +75,6 @@ public:
 		}
 	}
 
-	void SetData(const unsigned char* pktData, int pktLength)
-	{
-		memmove(m_Data, pktData, pktLength);
-	}
-
 	bool DecodeHeader()
 	{
 		NetHeader* header = reinterpret_cast<NetHeader*>(m_Data);
@@ -96,10 +91,6 @@ public:
 
 	void EncodeHeader(uint16_t dataBodySize, uint16_t pktId)
 	{
-		//char header[HEADER_LENGTH + 1] = "";
-		//sprintf_s(header, "%4d", static_cast<int>(m_BodyLength));
-		//std::memcpy(m_Data, header, HEADER_LENGTH);
-
 		NetHeader* header = reinterpret_cast<NetHeader*>(m_Data);
 		header->size = dataBodySize;
 		header->id = pktId;
