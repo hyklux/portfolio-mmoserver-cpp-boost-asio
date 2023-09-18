@@ -99,17 +99,17 @@ public:
 	ChunkMemory();
 	virtual ~ChunkMemory();
 
-	bool Init(int nBlockSize, int nBlockCount, int nMaxBlockCount);
+	bool Init(int _blockSize, int _blockCount, int _maxBlockCount);
 	void Uninit();
 	void* Allocate();
-	void Deallocate(void* pBack);
-	CHKMEMORY CheckMemory(void* pBack);
-	bool DEBUG_Trace(char* buffer, int len);
+	void Deallocate(void* _pBack);
+	CHKMEMORY CheckMemory(void* _pBack);
+	bool DEBUG_Trace(char* _buffer, int _len);
 
-	inline bool IsInitialize() { return (0 != m_nChunkSize || 0 != m_nBlockSize); }
-	inline int GetAllocationCount() { return m_nAllocCount; }
-	inline int GetFreeCount() { return m_nFreeCount; }
-	inline int GetBlockSize() { return m_nBlockSize; }
+	inline bool IsInitialize() { return (0 != m_ChunkSize || 0 != m_BlockSize); }
+	inline int GetAllocationCount() { return m_AllocCount; }
+	inline int GetFreeCount() { return m_FreeCount; }
+	inline int GetBlockSize() { return m_BlockSize; }
 
 private:
 	bool AddChunk();
@@ -117,14 +117,14 @@ private:
 private:
 	CHUNK_TYPE* m_pAvailableFirstBlock = nullptr;
 	CHUNK_HEAD_TYPE* m_pAvailableLaskChunk = nullptr;
-	int m_nGrIdx = 0;
-	int m_nGrIdxExt = 0;
-	int m_nBlockSize = 0;
-	int m_nChunkSize = 0;
-	int m_nMaxChunkSize = 0;
-	int m_nChunkHeadSize = 0;
-	int m_nAllocCount = 0;
-	int m_nFreeCount = 0;
+	int m_GrIdx = 0;
+	int m_GrIdxExt = 0;
+	int m_BlockSize = 0;
+	int m_ChunkSize = 0;
+	int m_MaxChunkSize = 0;
+	int m_ChunkHeadSize = 0;
+	int m_AllocCount = 0;
+	int m_FreeCount = 0;
 };
 
 template <class ALLOC, int ALIGNMENT>
@@ -132,14 +132,14 @@ ChunkMemory<ALLOC, ALIGNMENT>::ChunkMemory()
 {
 	m_pAvailableFirstBlock = nullptr;
 	m_pAvailableLaskChunk = nullptr;
-	m_nGrIdx = 0;
-	m_nGrIdxExt = 0;
-	m_nChunkSize = 0;
-	m_nMaxChunkSize = 0;
-	m_nBlockSize = 0;
-	m_nChunkHeadSize = 0;
-	m_nAllocCount = 0;
-	m_nFreeCount = 0;
+	m_GrIdx = 0;
+	m_GrIdxExt = 0;
+	m_ChunkSize = 0;
+	m_MaxChunkSize = 0;
+	m_BlockSize = 0;
+	m_ChunkHeadSize = 0;
+	m_AllocCount = 0;
+	m_FreeCount = 0;
 }
 
 template <class ALLOC, int ALIGNMENT>
@@ -157,19 +157,19 @@ ChunkMemory<ALLOC, ALIGNMENT>::~ChunkMemory()
 }
 
 template <class ALLOC, int ALIGNMENT>
-bool ChunkMemory<ALLOC, ALIGNMENT>::Init(int nRawBlockSize, int nBlockCount, int nMaxBlockCount)
+bool ChunkMemory<ALLOC, ALIGNMENT>::Init(int _rawBlockSize, int _blockCount, int _maxBlockCount)
 {
-	if (0 >= nRawBlockSize) return false;
+	if (0 >= _rawBlockSize) return false;
 
-	int nBlockSize = GET_ALIGNMENT_BY_SIZE(nRawBlockSize, MNGR_CHUNK_ALIGNMENT);
+	int blockSize = GET_ALIGNMENT_BY_SIZE(_rawBlockSize, MNGR_CHUNK_ALIGNMENT);
 
 	// 기본 사이즈보다 작다면.. 확보하자..
-	if (nBlockSize < ALIGNMENT_DEFAULT_SIZE) nBlockSize = ALIGNMENT_DEFAULT_SIZE;
+	if (blockSize < ALIGNMENT_DEFAULT_SIZE) blockSize = ALIGNMENT_DEFAULT_SIZE;
 
-	m_nChunkSize = nBlockSize * nBlockCount;
-	m_nMaxChunkSize = nBlockSize * nMaxBlockCount;
-	m_nBlockSize = nBlockSize;
-	m_nChunkHeadSize = GET_ALIGNMENT_BY_SIZE(MNGR_CHUNK_HEAD_TYPE_SIZE, MNGR_CHUNK_ALIGNMENT);
+	m_ChunkSize = blockSize * _blockCount;
+	m_MaxChunkSize = blockSize * _maxBlockCount;
+	m_BlockSize = blockSize;
+	m_ChunkHeadSize = GET_ALIGNMENT_BY_SIZE(MNGR_CHUNK_HEAD_TYPE_SIZE, MNGR_CHUNK_ALIGNMENT);
 
 	return true;
 }
@@ -182,9 +182,9 @@ void ChunkMemory<ALLOC, ALIGNMENT>::Uninit()
 template <class ALLOC, int ALIGNMENT>
 bool ChunkMemory<ALLOC, ALIGNMENT>::AddChunk()
 {
-	int nNewAllocSize = m_nChunkHeadSize + (m_nChunkSize << m_nGrIdx);
+	int newAllocSize = m_ChunkHeadSize + (m_ChunkSize << m_GrIdx);
 
-	CHUNK_HEAD_TYPE** ppNewChunk = reinterpret_cast<CHUNK_HEAD_TYPE**>(ALLOC::AllocateMemory(nNewAllocSize));
+	CHUNK_HEAD_TYPE** ppNewChunk = reinterpret_cast<CHUNK_HEAD_TYPE**>(ALLOC::AllocateMemory(newAllocSize));
 	if (nullptr == ppNewChunk) return false;
 
 	if (nullptr != m_pAvailableLaskChunk)
@@ -197,29 +197,29 @@ bool ChunkMemory<ALLOC, ALIGNMENT>::AddChunk()
 	}
 
 	m_pAvailableLaskChunk = reinterpret_cast<CHUNK_HEAD_TYPE*>(ppNewChunk);
-	m_pAvailableFirstBlock = reinterpret_cast<CHUNK_TYPE*>(reinterpret_cast<unsigned char*>(m_pAvailableLaskChunk) + m_nChunkHeadSize);
-	CHUNK_TYPE* pAvailableLastBlock = reinterpret_cast<CHUNK_TYPE*>(reinterpret_cast<unsigned char*>(m_pAvailableLaskChunk) + nNewAllocSize - m_nBlockSize);
+	m_pAvailableFirstBlock = reinterpret_cast<CHUNK_TYPE*>(reinterpret_cast<unsigned char*>(m_pAvailableLaskChunk) + m_ChunkHeadSize);
+	CHUNK_TYPE* pAvailableLastBlock = reinterpret_cast<CHUNK_TYPE*>(reinterpret_cast<unsigned char*>(m_pAvailableLaskChunk) + newAllocSize - m_BlockSize);
 	CHUNK_TYPE* pNextBlock = m_pAvailableFirstBlock;
 	CHUNK_TYPE** ppCurBlock = reinterpret_cast<CHUNK_TYPE**>(m_pAvailableFirstBlock);
 
 	for (; pNextBlock < pAvailableLastBlock;)
 	{
-		pNextBlock = reinterpret_cast<CHUNK_TYPE*>(reinterpret_cast<unsigned char*>(pNextBlock) + m_nBlockSize);
+		pNextBlock = reinterpret_cast<CHUNK_TYPE*>(reinterpret_cast<unsigned char*>(pNextBlock) + m_BlockSize);
 		*ppCurBlock = pNextBlock;
 		ppCurBlock = reinterpret_cast<CHUNK_TYPE**>(pNextBlock);
 	}
 
-	m_nFreeCount += (nNewAllocSize - m_nChunkHeadSize) / m_nBlockSize;
+	m_FreeCount += (newAllocSize - m_ChunkHeadSize) / m_BlockSize;
 	*ppCurBlock = nullptr;
 
-	int nNextNewAllocSize = m_nChunkHeadSize + (m_nChunkSize << (m_nGrIdx + 1));
-	if (m_nMaxChunkSize < nNextNewAllocSize || 0 > nNextNewAllocSize)
+	int nextNewAllocSize = m_nChunkHeadSize + (m_nChunkSize << (m_nGrIdx + 1));
+	if (m_nMaxChunkSize < nextNewAllocSize || 0 > nextNewAllocSize)
 	{
-		m_nGrIdxExt++;
+		m_GrIdxExt++;
 		return true;
 	}
 
-	m_nGrIdx++;
+	m_GrIdx++;
 	return true;
 }
 
@@ -231,8 +231,8 @@ void* ChunkMemory<ALLOC, ALIGNMENT>::Allocate()
 		if (false == AddChunk()) return nullptr;
 	}
 
-	m_nAllocCount++;
-	m_nFreeCount--;
+	m_AllocCount++;
+	m_FreeCount--;
 
 	CHUNK_TYPE** ppNextBlock = reinterpret_cast<CHUNK_TYPE**>(m_pAvailableFirstBlock);
 	m_pAvailableFirstBlock = *ppNextBlock;
@@ -241,48 +241,48 @@ void* ChunkMemory<ALLOC, ALIGNMENT>::Allocate()
 }
 
 template <class ALLOC, int ALIGNMENT>
-void ChunkMemory<ALLOC, ALIGNMENT>::Deallocate(void* pBack)
+void ChunkMemory<ALLOC, ALIGNMENT>::Deallocate(void* _pBack)
 {
-	if (nullptr == pBack) return;
+	if (nullptr == _pBack) return;
 
-	* (reinterpret_cast<CHUNK_TYPE**>(pBack)) = m_pAvailableFirstBlock;
-	m_pAvailableFirstBlock = reinterpret_cast<CHUNK_TYPE*>(pBack);
+	* (reinterpret_cast<CHUNK_TYPE**>(_pBack)) = m_pAvailableFirstBlock;
+	m_pAvailableFirstBlock = reinterpret_cast<CHUNK_TYPE*>(_pBack);
 
-	m_nAllocCount--;
-	m_nFreeCount++;
+	m_AllocCount--;
+	m_FreeCount++;
 }
 
 template <class ALLOC, int ALIGNMENT>
-bool ChunkMemory<ALLOC, ALIGNMENT>::DEBUG_Trace(char* buffer, int len)
+bool ChunkMemory<ALLOC, ALIGNMENT>::DEBUG_Trace(char* _buffer, int _len)
 {
-	if (nullptr == buffer || len < 28) return false;
+	if (nullptr == _buffer || _len < 28) return false;
 
-	int nGrIdx = m_nGrIdx;
-	int nGridxExt = m_nGrIdxExt;
-	int nChunkSize = m_nChunkSize;
-	int nBlockSize = m_nBlockSize;
-	int nChunkHeadSize = m_nChunkHeadSize;
-	int nAllockCount = m_nAllocCount;
-	int nFreeCount = m_nFreeCount;
+	int gridx = m_GrIdx;
+	int gridxExt = m_GrIdxExt;
+	int chunkSize = m_ChunkSize;
+	int blockSize = m_BlockSize;
+	int chunkHeadSize = m_ChunkHeadSize;
+	int allockCount = m_AllocCount;
+	int freeCount = m_FreeCount;
 
 	int offset = 0;
-	memcpy(buffer + offset, &nGrIdx, sizeof(nGrIdx)); offset += sizeof(nGrIdx);
-	memcpy(buffer + offset, &nGridxExt, sizeof(nGridxExt)); offset += sizeof(nGridxExt);
-	memcpy(buffer + offset, &nChunkSize, sizeof(nChunkSize)); offset += sizeof(nChunkSize);
-	memcpy(buffer + offset, &nBlockSize, sizeof(nBlockSize)); offset += sizeof(nBlockSize);
-	memcpy(buffer + offset, &nChunkHeadSize, sizeof(nChunkHeadSize)); offset += sizeof(nChunkHeadSize);
-	memcpy(buffer + offset, &nAllockCount, sizeof(nAllockCount)); offset += sizeof(nAllockCount);
-	memcpy(buffer + offset, &nFreeCount, sizeof(nFreeCount)); offset += sizeof(nFreeCount);
+	memcpy(buffer + offset, &gridx, sizeof(gridx)); offset += sizeof(gridx);
+	memcpy(buffer + offset, &gridxExt, sizeof(gridxExt)); offset += sizeof(gridxExt);
+	memcpy(buffer + offset, &chunkSize, sizeof(chunkSize)); offset += sizeof(chunkSize);
+	memcpy(buffer + offset, &blockSize, sizeof(blockSize)); offset += sizeof(blockSize);
+	memcpy(buffer + offset, &chunkHeadSize, sizeof(chunkHeadSize)); offset += sizeof(chunkHeadSize);
+	memcpy(buffer + offset, &allockCount, sizeof(allockCount)); offset += sizeof(allockCount);
+	memcpy(buffer + offset, &freeCount, sizeof(freeCount)); offset += sizeof(freeCount);
 
 	return true;
 }
 
 template <class ALLOC, int ALIGNMENT>
 typename ChunkMemory<ALLOC, ALIGNMENT>::CHKMEMORY
-ChunkMemory<ALLOC, ALIGNMENT>::CheckMemory(void* pBack)
+ChunkMemory<ALLOC, ALIGNMENT>::CheckMemory(void* _pBack)
 {
-	int nGrIdx = m_nGrIdx;
-	int nGridxExt = m_nGrIdxExt;
+	int gridx = m_GrIdx;
+	int gridxExt = m_GrIdxExt;
 
 	CHUNK_TYPE** ppFreeChunk = reinterpret_cast<CHUNK_TYPE**>(m_pAvailableLaskChunk);
 	CHUNK_TYPE* pNextChunk;
@@ -291,24 +291,24 @@ ChunkMemory<ALLOC, ALIGNMENT>::CheckMemory(void* pBack)
 
 	while (ppFreeChunk)
 	{
-		// nGridxExt는 maxblocksize이상으로 할당하고자 하는 메모리 블럭이 커지는 것을 막았기 떄문에...
-		// m_nGrIdx이것으로는 사이즈를 표현할 수 없게 되었다.. nGridxExt를 사용하여 nGrIdx의 사이즈를 표현함과 동시에 동일 사이즈의 갯수를 파악하도록 했다
-		if (0 < nGridxExt)
+		// gridxExt는 maxblocksize이상으로 할당하고자 하는 메모리 블럭이 커지는 것을 막았기 떄문에...
+		// m_GrIdx이것으로는 사이즈를 표현할 수 없게 되었다.. gridxExt를 사용하여 gridx의 사이즈를 표현함과 동시에 동일 사이즈의 갯수를 파악하도록 했다
+		if (0 < gridxExt)
 		{
-			nGridxExt--;
+			gridxExt--;
 		}
 		else
 		{
-			nGrIdx--;
+			gridx--;
 		}
 
 		pNextChunk = *ppFreeChunk;
-		pHead = reinterpret_cast<CHUNK_TYPE*>(ppFreeChunk) + m_nChunkHeadSize;
-		pTail = reinterpret_cast<CHUNK_TYPE*>(reinterpret_cast<CHUNK_TYPE*>(ppFreeChunk) + m_nChunkHeadSize + (m_nChunkSize << nGrIdx));
+		pHead = reinterpret_cast<CHUNK_TYPE*>(ppFreeChunk) + m_ChunkHeadSize;
+		pTail = reinterpret_cast<CHUNK_TYPE*>(reinterpret_cast<CHUNK_TYPE*>(ppFreeChunk) + m_ChunkHeadSize + (m_nChunkSize << gridx));
 
-		if (reinterpret_cast<CHUNK_TYPE*>(pHead) <= reinterpret_cast<CHUNK_TYPE*>(pBack) && reinterpret_cast<CHUNK_TYPE*>(pTail) > reinterpret_cast<CHUNK_TYPE*>(pBack))
+		if (reinterpret_cast<CHUNK_TYPE*>(pHead) <= reinterpret_cast<CHUNK_TYPE*>(_pBack) && reinterpret_cast<CHUNK_TYPE*>(pTail) > reinterpret_cast<CHUNK_TYPE*>(_pBack))
 		{
-			if (0 != ((reinterpret_cast<CHUNK_TYPE*>(pBack) - reinterpret_cast<CHUNK_TYPE*>(pHead)) % m_nBlockSize)) return CHKMEMORY_INVALIDPOINTER;
+			if (0 != ((reinterpret_cast<CHUNK_TYPE*>(_pBack) - reinterpret_cast<CHUNK_TYPE*>(pHead)) % m_blockSize)) return CHKMEMORY_INVALIDPOINTER;
 			return CHKMEMORY_OK;
 		}
 
@@ -337,36 +337,36 @@ public:
 	MemoryManager();
 	virtual ~MemoryManager();
 
-	bool Init(int nMinObjAlignmentSize, int nMaxObjAlignmentSize, int nMinExtansionBlockCount, int nMaxExtansionBlockCount);
+	bool Init(int _minObjAlignmentSize, int _maxObjAlignmentSize, int _minExtansionBlockCount, int _maxExtansionBlockCount);
 	void Uninit();
-	void* Allocate(int nSize);
-	void Deallocate(void* pBack);
+	void* Allocate(int _size);
+	void Deallocate(void* _pBack);
 	bool CheckMemory();
-	typename _CHKMEMORY_T CheckMemory(void* pBack);
+	typename _CHKMEMORY_T CheckMemory(void* _pBack);
 	int GetAllocationCount();
 	int GetFreeCount();
-	bool DEBUG_Trace(char** buffer, int& len);
+	bool DEBUG_Trace(char** _buffer, int& _len);
 
 public:
-	inline bool IsInitialize() { return (0 != m_nMinObjAlignmentSize || 0 != m_nChunkObjectCount); }
-	inline int GetCorruptCount() { return m_nCorruptCount; }
+	inline bool IsInitialize() { return (0 != m_MinObjAlignmentSize || 0 != m_ChunkObjectCount); }
+	inline int GetCorruptCount() { return m_CorruptCount; }
 
 private:
-	int m_nMinObjAlignmentSize;
-	int m_nChunkObjectCount;
-	int m_nMngrHeadSize;
-	int m_nCorruptCount;
-	lock_slot m_lockSlot;
+	int m_MinObjAlignmentSize;
+	int m_ChunkObjectCount;
+	int m_MngrHeadSize;
+	int m_CorruptCount;
+	lock_slot m_LockSlot;
 	_MEM_CHUNK_T* m_pChunk;
 };
 
 template <class ALLOC, int ALIGNMENT>
 MemoryManager<ALLOC, ALIGNMENT>::MemoryManager()
 {
-	m_nMinObjAlignmentSize = 0;
-	m_nChunkObjectCount = 0;
-	m_nMngrHeadSize = 0;
-	m_nCorruptCount = 0;
+	m_MinObjAlignmentSize = 0;
+	m_ChunkObjectCount = 0;
+	m_MngrHeadSize = 0;
+	m_CorruptCount = 0;
 	m_pChunk = nullptr;
 }
 
@@ -375,39 +375,37 @@ MemoryManager<ALLOC, ALIGNMENT>::~MemoryManager()
 {
 	if (m_pChunk)
 	{
-		ALLOC::template DeallocateArray<ChunkMemory<ALLOC, ALIGNMENT>>(m_nChunkObjectCount, m_pChunk);
+		ALLOC::template DeallocateArray<ChunkMemory<ALLOC, ALIGNMENT>>(m_ChunkObjectCount, m_pChunk);
 	}
 }
 
 template <class ALLOC, int ALIGNMENT>
-bool MemoryManager<ALLOC, ALIGNMENT>::Init(int nRawMinObjAlignmentSize, int nRawMaxObjAlignmentSize, int nMinExtansionBlockCount, int nMaxExtansionBlockCount)
+bool MemoryManager<ALLOC, ALIGNMENT>::Init(int _rawMinObjAlignmentSize, int _rawMaxObjAlignmentSize, int _minExtensionBlockCount, int _maxExtensionBlockCount)
 {
 	// 뭔가 초기화 후 재 초기화가 되는 걸까 ?
-	if (0 != m_nChunkObjectCount) return false;
+	if (0 != m_ChunkObjectCount) return false;
 
 	// 움.. 아무래도 헤더 사이즈를 넣어서 만드는게 이치에 맞는듯 해서..
-	int nMinObjAlignmentSize = GET_ALIGNMENT_BY_SIZE(nRawMinObjAlignmentSize + MNGR_HEAD_TYPE_SIZE, MNGR_ALIGNMENT);
-	//nMinObjAlignmentSize += GET_ALIGNMENT_BY_SIZE(MNGR_HEAD_TYPE_SIZE, MNGR_ALIGNMENT);
-	int nMaxObjAlignmentSize = GET_ALIGNMENT_BY_SIZE(nRawMaxObjAlignmentSize + MNGR_HEAD_TYPE_SIZE, MNGR_ALIGNMENT);
-	//nMaxObjAlignmentSize += GET_ALIGNMENT_BY_SIZE(MNGR_HEAD_TYPE_SIZE, MNGR_ALIGNMENT);
+	int minObjAlignmentSize = GET_ALIGNMENT_BY_SIZE(_rawMinObjAlignmentSize + MNGR_HEAD_TYPE_SIZE, MNGR_ALIGNMENT);
+	int maxObjAlignmentSize = GET_ALIGNMENT_BY_SIZE(_rawMaxObjAlignmentSize + MNGR_HEAD_TYPE_SIZE, MNGR_ALIGNMENT);
 
-	int nCount = GET_OFFSETCOUNT(nMaxObjAlignmentSize, nMinObjAlignmentSize);
-	if (0 >= nCount) return false;
+	int cnt = GET_OFFSETCOUNT(maxObjAlignmentSize, minObjAlignmentSize);
+	if (0 >= cnt) return false;
 
 	// lock의 수를 1/64 정도로 줄이자
-	if (false == m_lockSlot.Init(nCount >> 6)) return false;
+	if (false == m_lockSlot.Init(cnt >> 6)) return false;
 
-	m_pChunk = ALLOC::template AllocateArray<ChunkMemory<ALLOC, ALIGNMENT>>(nCount);
+	m_pChunk = ALLOC::template AllocateArray<ChunkMemory<ALLOC, ALIGNMENT>>(cnt);
 	if (nullptr == m_pChunk) return false;
 
-	for (int nStep = 0; nStep < nCount; nStep++)
+	for (int nStep = 0; nStep < cnt; nStep++)
 	{
-		if (false == m_pChunk[nStep].Init((nStep + 1) * nMinObjAlignmentSize, nMinExtansionBlockCount, nMaxExtansionBlockCount)) return false;
+		if (false == m_pChunk[nStep].Init((nStep + 1) * minObjAlignmentSize, _minExtensionBlockCount, _maxExtensionBlockCount)) return false;
 	}
 
-	m_nMinObjAlignmentSize = nMinObjAlignmentSize;
-	m_nMngrHeadSize = GET_ALIGNMENT_BY_SIZE(MNGR_HEAD_TYPE_SIZE, MNGR_ALIGNMENT);
-	m_nChunkObjectCount = nCount;
+	m_MinObjAlignmentSize = minObjAlignmentSize;
+	m_MngrHeadSize = GET_ALIGNMENT_BY_SIZE(MNGR_HEAD_TYPE_SIZE, MNGR_ALIGNMENT);
+	m_ChunkObjectCount = cnt;
 
 	return true;
 }
@@ -415,79 +413,79 @@ bool MemoryManager<ALLOC, ALIGNMENT>::Init(int nRawMinObjAlignmentSize, int nRaw
 template <class ALLOC, int ALIGNMENT>
 void MemoryManager<ALLOC, ALIGNMENT>::Uninit()
 {
-	for (int nStep = 0; nStep < m_nChunkObjectCount; nStep++)
+	for (int nStep = 0; nStep < m_ChunkObjectCount; nStep++)
 	{
 		m_pChunk[nStep].Uninit();
 	}
 
-	m_lockSlot.Uninit();
+	m_LockSlot.Uninit();
 }
 
 template <class ALLOC, int ALIGNMENT>
-void* MemoryManager<ALLOC, ALIGNMENT>::Allocate(int nSize)
+void* MemoryManager<ALLOC, ALIGNMENT>::Allocate(int _size)
 {
-	if (0 == m_nChunkObjectCount) return nullptr;
-	if (0 > nSize) return nullptr;
+	if (0 == m_ChunkObjectCount) return nullptr;
+	if (0 > _size) return nullptr;
 	
-	if (0 == nSize)
+	if (0 == _size)
 	{
-		nSize = 1;
+		_size = 1;
 	}
 
-	int nRealSize = m_nMngrHeadSize + nSize;
-	int nRealIndex = GET_OFFSETCOUNT(nRealSize, m_nMinObjAlignmentSize) - 1;
+	int realSize = m_MngrHeadSize + _size;
+	int realIndex = GET_OFFSETCOUNT(realSize, m_MinObjAlignmentSize) - 1;
 	void* pReturn;
 
-	if (nRealIndex >= m_nChunkObjectCount)
+	if (realIndex >= m_ChunkObjectCount)
 	{
-		pReturn = ALLOC::Allocate(nRealSize);
+		pReturn = ALLOC::Allocate(realSize);
 		if (nullptr == pReturn) return nullptr;
 		*(reinterpret_cast<MNGR_HEAD_TYPE*>(pReturn)) = static_cast<MNGR_HEAD_TYPE>(MMGR_POOLINDEX_NULL);
 	}
 	else
 	{
-		if (!(0 <= nRealIndex && nRealIndex < m_nChunkObjectCount)) (m_nCorruptCount)++;
-		if (!(nRealSize <= m_pChunk[nRealIndex].GetBlockSize())) (m_nCorruptCount)++;
+		if (!(0 <= realIndex && realIndex < m_nChunkObjectCount)) (m_nCorruptCount)++;
+		if (!(realSize <= m_pChunk[realIndex].GetBlockSize())) (m_nCorruptCount)++;
 
-		m_lockSlot.Lock(nRealIndex);
+		m_LockSlot.Lock(realIndex);
 
-		pReturn = m_pChunk[nRealIndex].Allocate();
+		pReturn = m_pChunk[realIndex].Allocate();
 		if (nullptr == pReturn)
 		{
-			m_lockSlot.Unlock(nRealIndex);
+			m_LockSlot.Unlock(realIndex);
 			return nullptr;
 		}
 
-		m_lockSlot.Unlock(nRealIndex);
-		*(reinterpret_cast<MNGR_HEAD_TYPE*>(pReturn)) = nRealIndex;
+		m_LockSlot.Unlock(realIndex);
+		*(reinterpret_cast<MNGR_HEAD_TYPE*>(pReturn)) = realIndex;
 	}
 
 	return (reinterpret_cast<unsigned char*>(pReturn) + m_nMngrHeadSize);
 }
 
 template <class ALLOC, int ALIGNMENT>
-void MemoryManager<ALLOC, ALIGNMENT>::Deallocate(void* pBack)
+void MemoryManager<ALLOC, ALIGNMENT>::Deallocate(void* _pBack)
 {
-	if (0 == m_nChunkObjectCount) return;
-	if (nullptr == pBack) return;
+	if (0 == m_ChunkObjectCount) return;
+	if (nullptr == _pBack) return;
 
-	void* pOrignLoc = reinterpret_cast<unsigned char*>(pBack) - m_nMngrHeadSize;
-	int nRealIndex = *(reinterpret_cast<MNGR_HEAD_TYPE*>(pOrignLoc));
+	void* pOrignLoc = reinterpret_cast<unsigned char*>(_pBack) - m_MngrHeadSize;
+	int realIndex = *(reinterpret_cast<MNGR_HEAD_TYPE*>(pOrignLoc));
 
-	if (static_cast<MNGR_HEAD_TYPE>(MMGR_POOLINDEX_NULL) == nRealIndex)
+	if (static_cast<MNGR_HEAD_TYPE>(MMGR_POOLINDEX_NULL) == realIndex)
 	{
 		ALLOC::Deallocate(reinterpret_cast<unsigned char*>(pOrignLoc));
 		return;
 	}
 
-	if (!(0 <= nRealIndex && nRealIndex < m_nChunkObjectCount))
+	if (!(0 <= realIndex && realIndex < m_ChunkObjectCount))
 	{
-		(m_nCorruptCount)++;
+		(m_CorruptCount)++;
 	}
 
-	m_lockSlot.Lock(nRealIndex);
-	m_pChunk[nRealIndex].Deallocate(pOrignLoc);
-	m_lockSlot.Unlock(nRealIndex);
+	m_LockSlot.Lock(realIndex);
+	m_pChunk[realIndex].Deallocate(pOrignLoc);
+	m_LockSlot.Unlock(realIndex);
 }
 
 template <class ALLOC, int ALIGNMENT>
@@ -498,19 +496,19 @@ bool MemoryManager<ALLOC, ALIGNMENT>::CheckMemory()
 
 template <class ALLOC, int ALIGNMENT>
 typename MemoryManager<ALLOC, ALIGNMENT>::_CHKMEMORY_T
-MemoryManager<ALLOC, ALIGNMENT>::CheckMemory(void* pBack)
+MemoryManager<ALLOC, ALIGNMENT>::CheckMemory(void* _pBack)
 {
-	void* pOrignLoc = reinterpret_cast<unsigned char*>(pBack) - m_nMngrHeadSize;
-	int nRealIndex = *(reinterpret_cast<MNGR_HEAD_TYPE*>(pOrignLoc));
+	void* pOrignLoc = reinterpret_cast<unsigned char*>(_pBack) - m_MngrHeadSize;
+	int realIndex = *(reinterpret_cast<MNGR_HEAD_TYPE*>(pOrignLoc));
 
-	if (0 <= nRealIndex && nRealIndex < m_nChunkObjectCount)
+	if (0 <= realIndex && realIndex < m_nChunkObjectCount)
 	{
-		m_lockSlot.Lock(nRealIndex);
-		bool ret = m_pChunk[nRealIndex].CheckMemory(pOrignLoc);
-		m_lockSlot.Unlock(nRealIndex);
+		m_LockSlot.Lock(realIndex);
+		bool ret = m_pChunk[realIndex].CheckMemory(pOrignLoc);
+		m_LockSlot.Unlock(realIndex);
 		return ret;
 	}
-	else if (MMGR_POOLINDEX_NULL == nRealIndex)
+	else if (MMGR_POOLINDEX_NULL == realIndex)
 	{
 		return _MEM_CHUNK_T::CHKMEMORY_OK;
 	}
@@ -523,7 +521,7 @@ int MemoryManager<ALLOC, ALIGNMENT>::GetAllocationCount()
 {
 	int nTotal = 0;
 
-	for (int nStep = 0; nStep < m_nChunkObjectCount; nStep++)
+	for (int nStep = 0; nStep < m_ChunkObjectCount; nStep++)
 	{
 		nTotal += m_pChunk[nStep].GetAllocationCount();
 	}
@@ -532,21 +530,21 @@ int MemoryManager<ALLOC, ALIGNMENT>::GetAllocationCount()
 }
 
 template <class ALLOC, int ALIGNMENT>
-bool MemoryManager<ALLOC, ALIGNMENT>::DEBUG_Trace(char** buffer, int& len)
+bool MemoryManager<ALLOC, ALIGNMENT>::DEBUG_Trace(char** _buffer, int& _len)
 {
-	int nChunkObjectCount = m_nChunkObjectCount;
-	int bufferSize = nChunkObjectCount * 28 + sizeof(nChunkObjectCount);
-	*buffer = new char[bufferSize];
-	memcpy(*buffer, &nChunkObjectCount, sizeof(nChunkObjectCount));
+	int chunkObjectCount = m_ChunkObjectCount;
+	int bufferSize = chunkObjectCount * 28 + sizeof(chunkObjectCount);
+	*_buffer = new char[bufferSize];
+	memcpy(*_buffer, &chunkObjectCount, sizeof(chunkObjectCount));
 
-	int offset = sizeof(nChunkObjectCount);
-	for (int nStep = 0; nStep < m_nChunkObjectCount; nStep++)
+	int offset = sizeof(chunkObjectCount);
+	for (int nStep = 0; nStep < m_ChunkObjectCount; nStep++)
 	{
-		m_pChunk[nStep].DEBUG_Trace(*buffer + offset, bufferSize - offset);
+		m_pChunk[nStep].DEBUG_Trace(*_buffer + offset, bufferSize - offset);
 		offset += 28;
 	}
 
-	len = offset;
+	_len = offset;
 	return true;
 }
 
@@ -554,7 +552,7 @@ template <class ALLOC, int ALIGNMENT>
 int MemoryManager<ALLOC, ALIGNMENT>::GetFreeCount()
 {
 	int nTotal = 0;
-	for (int nStep = 0; nStep < m_nChunkObjectCount; nStep++)
+	for (int nStep = 0; nStep < m_ChunkObjectCount; nStep++)
 	{
 		nTotal += m_pChunk[nStep].GetFreeCount();
 	}
@@ -581,37 +579,37 @@ public:
 	MemoryManagerWithoutLock();
 	virtual ~MemoryManagerWithoutLock();
 
-	bool Init(int nMinObjAlignmentSize, int nMaxObjAlignmentSize, int nMinExtansionBlockCount = 16, int nMaxExtansionBlockCount = 16);
+	bool Init(int _minObjAlignmentSize, int _maxObjAlignmentSize, int _minExtensionBlockCount = 16, int _maxExtensionBlockCount = 16);
 	void Uninit();
-	void* Allocate(int nSize);
-	void Deallocate(void* pBack);
+	void* Allocate(int _size);
+	void Deallocate(void* _pBack);
 	bool CheckMemory();
-	typename _CHKMEMORY_T CheckMemory(void* pBack);
+	typename _CHKMEMORY_T CheckMemory(void* _pBack);
 	int GetAllocationCount();
 	int GetFreeCount();
 
-	bool DEBUG_Trace(char** buffer, int& len);
+	bool DEBUG_Trace(char** _buffer, int& _len);
 
 public:
-	inline bool IsInitialize() { return (0 != m_nMinObjAlignmentSize || 0 != m_nChunkObjectCount); }
-	inline int GetCorruptCount() { return m_nCorruptCount; }
+	inline bool IsInitialize() { return (0 != m_MinObjAlignmentSize || 0 != m_ChunkObjectCount); }
+	inline int GetCorruptCount() { return m_CorruptCount; }
 
 private:
-	int m_nMinObjAlignmentSize;
-	int m_nChunkObjectCount;
-	int m_nMngrHeadSize;
-	int m_nCorruptCount;
+	int m_MinObjAlignmentSize;
+	int m_ChunkObjectCount;
+	int m_MngrHeadSize;
+	int m_CorruptCount;
 	_MEM_CHUNK_T* m_pChunk;
 };
 
 template <class ALLOC, int ALIGNMENT>
 MemoryManagerWithoutLock<ALLOC, ALIGNMENT>::MemoryManagerWithoutLock()
 {
-	m_nMinObjAlignmentSize = 0;
-	m_nChunkObjectCount = 0;
-	m_nMngrHeadSize = 0;
-	m_nCorruptCount = 0;
-	m_pChunk = nullptr;
+	m_MinObjAlignmentSize = 0;
+	m_ChunkObjectCount = 0;
+	m_MngrHeadSize = 0;
+	m_CorruptCount = 0;
+	m_Chunk = nullptr;
 }
 
 template <class ALLOC, int ALIGNMENT>
@@ -619,22 +617,20 @@ MemoryManagerWithoutLock<ALLOC, ALIGNMENT>::~MemoryManagerWithoutLock()
 {
 	if (m_pChunk)
 	{
-		ALLOC::template DestroyArray<ChunkMemory<ALLOC, ALIGNMENT>>(m_nChunkObjectCount, m_pChunk);
+		ALLOC::template DestroyArray<ChunkMemory<ALLOC, ALIGNMENT>>(m_ChunkObjectCount, m_pChunk);
 	}
 }
 
 template <class ALLOC, int ALIGNMENT>
-bool MemoryManagerWithoutLock<ALLOC, ALIGNMENT>::Init(int nRawMinObjAlignmentSize, int nRawMaxObjAlignmentSize, int nMinExtansionBlockCount, int nMaxExtansionBlockCount)
+bool MemoryManagerWithoutLock<ALLOC, ALIGNMENT>::Init(int _rawMinObjAlignmentSize, int _rawMaxObjAlignmentSize, int _minExtensionBlockCount, int _maxExtensionBlockCount)
 {
 	if (0 != m_nChunkObjectCount) return false;
 
 	// 움.. 아무래도 헤더 사이즈를 넣어서 만드는게 이치에 맞는듯 해서..
-	int nMinObjAlignmentSize = GET_ALIGNMENT_BY_SIZE(nRawMinObjAlignmentSize + MNGR_HEAD_TYPE_SIZE, MNGR_ALIGNMENT);
-	//nMinObjAlignmentSize += GET_ALIGNMENT_BY_SIZE(MNGR_HEAD_TYPE_SIZE, MNGR_ALIGNMENT);
-	int nMaxObjAlignmentSize = GET_ALIGNMENT_BY_SIZE(nRawMaxObjAlignmentSize + MNGR_HEAD_TYPE_SIZE, MNGR_ALIGNMENT);
-	//nMaxObjAlignmentSize += GET_ALIGNMENT_BY_SIZE(MNGR_HEAD_TYPE_SIZE, MNGR_ALIGNMENT);
+	int minObjAlignmentSize = GET_ALIGNMENT_BY_SIZE(_rawMinObjAlignmentSize + MNGR_HEAD_TYPE_SIZE, MNGR_ALIGNMENT);
+	int maxObjAlignmentSize = GET_ALIGNMENT_BY_SIZE(_rawMaxObjAlignmentSize + MNGR_HEAD_TYPE_SIZE, MNGR_ALIGNMENT);
 
-	int nCount = GET_OFFSETCOUNT(nMaxObjAlignmentSize, nMinObjAlignmentSize);
+	int nCount = GET_OFFSETCOUNT(maxObjAlignmentSize, minObjAlignmentSize);
 	if (0 >= nCount) return false;
 
 	m_pChunk = ALLOC::template CreateArray<ChunkMemory<ALLOC, ALIGNMENT>>(nCount);
@@ -642,12 +638,12 @@ bool MemoryManagerWithoutLock<ALLOC, ALIGNMENT>::Init(int nRawMinObjAlignmentSiz
 
 	for (int nStep = 0; nStep < nCount; nStep++)
 	{
-		if (false == m_pChunk[nStep].Init((nStep + 1) * nMinObjAlignmentSize, nMinExtansionBlockCount, nMaxExtansionBlockCount)) return false;
+		if (false == m_pChunk[nStep].Init((nStep + 1) * minObjAlignmentSize, _minExtensionBlockCount, _maxExtensionBlockCount)) return false;
 	}
 
-	m_nMinObjAlignmentSize = nMinObjAlignmentSize;
-	m_nMngrHeadSize = GET_ALIGNMENT_BY_SIZE(MNGR_HEAD_TYPE_SIZE, MNGR_ALIGNMENT);
-	m_nChunkObjectCount = nCount;
+	m_MinObjAlignmentSize = minObjAlignmentSize;
+	m_MngrHeadSize = GET_ALIGNMENT_BY_SIZE(MNGR_HEAD_TYPE_SIZE, MNGR_ALIGNMENT);
+	m_ChunkObjectCount = nCount;
 
 	return true;
 }
@@ -655,7 +651,7 @@ bool MemoryManagerWithoutLock<ALLOC, ALIGNMENT>::Init(int nRawMinObjAlignmentSiz
 template <class ALLOC, int ALIGNMENT>
 void MemoryManagerWithoutLock<ALLOC, ALIGNMENT>::Uninit()
 {
-	for (int nStep = 0; nStep < m_nChunkObjectCount; nStep++)
+	for (int nStep = 0; nStep < m_ChunkObjectCount; nStep++)
 	{
 		m_pChunk[nStep].Uninit();
 	}
@@ -664,7 +660,7 @@ void MemoryManagerWithoutLock<ALLOC, ALIGNMENT>::Uninit()
 template <class ALLOC, int ALIGNMENT>
 void* MemoryManagerWithoutLock<ALLOC, ALIGNMENT>::Allocate(int _size)
 {
-	if (0 == m_nChunkObjectCount) return nullptr;
+	if (0 == m_ChunkObjectCount) return nullptr;
 	if (0 > _size) return nullptr;
 
 	if (0 == _size)
@@ -672,52 +668,52 @@ void* MemoryManagerWithoutLock<ALLOC, ALIGNMENT>::Allocate(int _size)
 		_size = 1;
 	}
 
-	int nRealSize = m_nMngrHeadSize + _size;
-	int nRealIndex = GET_OFFSETCOUNT(nRealSize, m_nMinObjAlignmentSize) - 1;
+	int realSize = m_MngrHeadSize + _size;
+	int realIndex = GET_OFFSETCOUNT(realSize, m_MinObjAlignmentSize) - 1;
 	void* pReturn;
 
-	if (nRealIndex >= m_nChunkObjectCount)
+	if (realIndex >= m_ChunkObjectCount)
 	{
-		pReturn = ALLOC::Allocate(nRealSize);
+		pReturn = ALLOC::Allocate(realSize);
 		if (nullptr == pReturn) return nullptr;
 
 		*(reinterpret_cast<MNGR_HEAD_TYPE*>(pReturn)) = static_cast<MNGR_HEAD_TYPE>(MMGR_POOLINDEX_NULL);
 	}
 	else
 	{
-		if (!(0 <= nRealIndex && nRealIndex < m_nChunkObjectCount)) (m_nCorruptCount)++;
-		if (!(nRealSize <= m_pChunk[nRealIndex].GetBlockSize())) (m_nCorruptCount)++;
+		if (!(0 <= realIndex && realIndex < m_ChunkObjectCount)) (m_CorruptCount)++;
+		if (!(realSize <= m_pChunk[realIndex].GetBlockSize())) (m_CorruptCount)++;
 
-		pReturn = m_pChunk[nRealIndex].Allocate();
+		pReturn = m_pChunk[realIndex].Allocate();
 		if (nullptr == pReturn) return nullptr;
 
-		*(reinterpret_cast<MNGR_HEAD_TYPE*>(pReturn)) = nRealIndex;
+		*(reinterpret_cast<MNGR_HEAD_TYPE*>(pReturn)) = realIndex;
 	}
 
-	return (reinterpret_cast<unsigned char*>(pReturn) + m_nMngrHeadSize);
+	return (reinterpret_cast<unsigned char*>(pReturn) + m_MngrHeadSize);
 }
 
 template <class ALLOC, int ALIGNMENT>
 void MemoryManagerWithoutLock<ALLOC, ALIGNMENT>::Deallocate(void* _pBack)
 {
-	if (0 == m_nChunkObjectCount) return;
+	if (0 == m_ChunkObjectCount) return;
 	if (nullptr == _pBack) return;
 
-	void* pOrignLoc = reinterpret_cast<unsigned char*>(_pBack) - m_nMngrHeadSize;
-	int nRealIndex = *(reinterpret_cast<MNGR_HEAD_TYPE*>(pOrignLoc));
+	void* pOrignLoc = reinterpret_cast<unsigned char*>(_pBack) - m_MngrHeadSize;
+	int realIndex = *(reinterpret_cast<MNGR_HEAD_TYPE*>(pOrignLoc));
 
-	if (static_cast<MNGR_HEAD_TYPE>(MMGR_POOLINDEX_NULL) == nRealIndex)
+	if (static_cast<MNGR_HEAD_TYPE>(MMGR_POOLINDEX_NULL) == realIndex)
 	{
 		ALLOC::Deallocate(reinterpret_cast<unsigned char*>(pOrignLoc));
 		return;
 	}
 
-	if (!(0 <= nRealIndex && nRealIndex < m_nChunkObjectCount))
+	if (!(0 <= realIndex && realIndex < m_ChunkObjectCount))
 	{
-		(m_nCorruptCount)++;
+		(m_CorruptCount)++;
 	}
 
-	m_pChunk[nRealIndex].Deallocate(pOrignLoc);
+	m_pChunk[realIndex].Deallocate(pOrignLoc);
 }
 
 template <class ALLOC, int ALIGNMENT>
@@ -730,14 +726,14 @@ template <class ALLOC, int ALIGNMENT>
 typename MemoryManagerWithoutLock<ALLOC, ALIGNMENT>::_CHKMEMORY_T
 MemoryManagerWithoutLock<ALLOC, ALIGNMENT>::CheckMemory(void* _pBack)
 {
-	void* pOrignLoc = reinterpret_cast<unsigned char*>(_pBack) - m_nMngrHeadSize;
-	int nRealIndex = *(reinterpret_cast<MNGR_HEAD_TYPE*>(pOrignLoc));
+	void* pOrignLoc = reinterpret_cast<unsigned char*>(_pBack) - m_MngrHeadSize;
+	int realIndex = *(reinterpret_cast<MNGR_HEAD_TYPE*>(pOrignLoc));
 
-	if (0 <= nRealIndex && nRealIndex < m_nChunkObjectCount)
+	if (0 <= realIndex && realIndex < m_ChunkObjectCount)
 	{
-		return m_pChunk[nRealIndex].CheckMemory(pOrignLoc);
+		return m_pChunk[realIndex].CheckMemory(pOrignLoc);
 	}
-	else if (MMGR_POOLINDEX_NULL == nRealIndex)
+	else if (MMGR_POOLINDEX_NULL == realIndex)
 	{
 		return _MEM_CHUNK_T::CHKMEMORY_OK;
 	}
@@ -750,7 +746,7 @@ int MemoryManagerWithoutLock<ALLOC, ALIGNMENT>::GetAllocationCount()
 {
 	int nTotal = 0;
 
-	for (int nStep = 0; nStep < m_nChunkObjectCount; nStep++)
+	for (int nStep = 0; nStep < m_ChunkObjectCount; nStep++)
 	{
 		nTotal += m_pChunk[nStep].GetAllocationCount();
 	}
@@ -761,14 +757,14 @@ int MemoryManagerWithoutLock<ALLOC, ALIGNMENT>::GetAllocationCount()
 template <class ALLOC, int ALIGNMENT>
 bool MemoryManagerWithoutLock<ALLOC, ALIGNMENT>::DEBUG_Trace(char** _buffer, int& _len)
 {
-	int nChunkObjectCount = m_nChunkObjectCount;
-	int bufferSize = nChunkObjectCount * 28 + sizeof(nChunkObjectCount);
+	int chunkObjectCount = m_ChunkObjectCount;
+	int bufferSize = chunkObjectCount * 28 + sizeof(chunkObjectCount);
 	*_buffer = new char[bufferSize];
-	memcpy(*buffer, &nChunkObjectCount, sizeof(nChunkObjectCount));
+	memcpy(*buffer, &chunkObjectCount, sizeof(chunkObjectCount));
 
-	int offset = sizeof(nChunkObjectCount);
+	int offset = sizeof(chunkObjectCount);
 
-	for (int nStep = 0; nStep < m_nChunkObjectCount; nStep++)
+	for (int nStep = 0; nStep < m_ChunkObjectCount; nStep++)
 	{
 		m_pChunk[nStep].DEBUG_Trace(*_buffer + offset, bufferSize - offset);
 		offset += 28;
@@ -783,7 +779,7 @@ int MemoryManagerWithoutLock<ALLOC, ALIGNMENT>::GetFreeCount()
 {
 	int nTotal = 0;
 
-	for (int nStep = 0; nStep < m_nChunkObjectCount; nStep++)
+	for (int nStep = 0; nStep < m_ChunkObjectCount; nStep++)
 	{
 		nTotal += m_pChunk[nStep].GetFreeCount();
 	}
