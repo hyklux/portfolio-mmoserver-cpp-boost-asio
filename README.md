@@ -1,9 +1,9 @@
 # portfolio-mmoserver-cpp-boost-asio
-MMO gmae server engine using C++ Boost library
+MMO game server engine implemented using C++ Boost library
 
 
 # Introduction
-This is a MMO game server using C++ Boost Asio library.
+This is a MMO game server implemented  using C++ Boost Asio library.
 
 
 # Implmentations
